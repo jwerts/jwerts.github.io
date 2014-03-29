@@ -9,8 +9,8 @@
   <meta name="author" content="Josh Werts">
 
   
-  <meta name="description" content=" Blog Archive 2014 Testing This Out
-Mar 29 2014 posted in test Recent Posts Testing This Out ">
+  <meta name="description" content="Blog Archive 2014 Testing This Out
+Mar 29 2014 posted in test About Me Senior GIS Software Developer working remotely from Boone, NC for Patrick &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -32,6 +32,18 @@ Mar 29 2014 posted in test Recent Posts Testing This Out ">
 <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
   
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-49518677-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
 
 </head>
 
@@ -39,7 +51,7 @@ Mar 29 2014 posted in test Recent Posts Testing This Out ">
   <header role="banner"><hgroup>
   <h1><a href="/">Josh Werts</a></h1>
   
-    <h2>Testing out Octopress/Jekyll</h2>
+    <h2>{ 'work': ['gis', 'py', 'js' ...], 'fun': ['bike', 'hike', 'paddle', ...] }</h2>
   
 </hgroup>
 
@@ -102,6 +114,10 @@ Mar 29 2014 posted in test Recent Posts Testing This Out ">
 <aside class="sidebar">
   
     <section>
+  <h1>About Me</h1>
+  <p>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.  I do roughly equal portions of frontend web and backend ETL/service development primarily within the ESRI framework.  <br/><br/>I &#10084; Python!</p>
+</section>
+<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
     
@@ -112,8 +128,34 @@ Mar 29 2014 posted in test Recent Posts Testing This Out ">
   </ul>
 </section>
 
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/jwerts">@jwerts</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
 
-
+        github.showRepos({
+            user: 'jwerts',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
 
 
   
@@ -123,7 +165,7 @@ Mar 29 2014 posted in test Recent Posts Testing This Out ">
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Josh Werts -
+  Copyright &copy; 2014 - Josh Werts - <a href="mailto:joshwerts@gmail.com">joshwerts@gmail.com</a> - 
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
@@ -132,7 +174,24 @@ Mar 29 2014 posted in test Recent Posts Testing This Out ">
 
 
 
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
 
 
 
