@@ -3,11 +3,11 @@
 # ----------------------- #
 
 url: http://jwerts.github.io
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
+title: Josh Werts
+subtitle: Testing out Octopress/Jekyll
 author: Josh Werts
 simple_search: https://www.google.com/search
-description:
+description: Testing out Octopress/Jekyll
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in
