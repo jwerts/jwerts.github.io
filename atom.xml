@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[Josh Werts]]></title>
   <link href="http://jwerts.github.io/atom.xml" rel="self"/>
   <link href="http://jwerts.github.io/"/>
-  <updated>2014-03-29T10:54:38-04:00</updated>
+  <updated>2014-03-29T11:24:43-04:00</updated>
   <id>http://jwerts.github.io/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -12,15 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[joshwerts.com]]></title>
-    <link href="http://jwerts.github.io/blog/2014/03/29/joshwerts-dot-com/"/>
-    <updated>2014-03-29T10:04:52-04:00</updated>
-    <id>http://jwerts.github.io/blog/2014/03/29/joshwerts-dot-com</id>
-    <content type="html"><![CDATA[
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[Testing This Out]]></title>
