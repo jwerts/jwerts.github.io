@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[My Octopress Blog]]></title>
+  <link href="http://jwerts.github.io/atom.xml" rel="self"/>
+  <link href="http://jwerts.github.io/"/>
+  <updated>2014-03-29T10:54:38-04:00</updated>
+  <id>http://jwerts.github.io/</id>
+  <author>
+    <name><![CDATA[Josh Werts]]></name>
+    <email><![CDATA[joshwerts@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[joshwerts.com]]></title>
+    <link href="http://jwerts.github.io/blog/2014/03/29/joshwerts-dot-com/"/>
+    <updated>2014-03-29T10:04:52-04:00</updated>
+    <id>http://jwerts.github.io/blog/2014/03/29/joshwerts-dot-com</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Testing This Out]]></title>
+    <link href="http://jwerts.github.io/blog/2014/03/29/testing-this-out/"/>
+    <updated>2014-03-29T09:56:26-04:00</updated>
+    <id>http://jwerts.github.io/blog/2014/03/29/testing-this-out</id>
+    <content type="html"><![CDATA[<h4>I heart Python!</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;testing&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>
