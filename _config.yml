@@ -74,7 +74,7 @@ twitter_user:
 twitter_tweet_button: true
 
 # Google +1
-google_plus_one: true
+google_plus_one: false
 google_plus_one_size: small
 
 # Google Plus Profile
