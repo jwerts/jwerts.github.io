@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Python Arcmap Arcpy | Josh Werts]]></title>
+  <link href="http://jwerts.github.io/blog/categories/python-arcmap-arcpy/atom.xml" rel="self"/>
+  <link href="http://jwerts.github.io/"/>
+  <updated>2014-04-01T10:02:33-04:00</updated>
+  <id>http://jwerts.github.io/</id>
+  <author>
+    <name><![CDATA[Josh Werts]]></name>
+    <email><![CDATA[joshwerts@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Arcpy: Rename Fields]]></title>
+    <link href="http://jwerts.github.io/blog/2014/04/01/arcpy-rename-fields/"/>
+    <updated>2014-04-01T07:43:15-04:00</updated>
+    <id>http://jwerts.github.io/blog/2014/04/01/arcpy-rename-fields</id>
+    <content type="html"><![CDATA[<p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
+
+<p><img class="center" src="/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="&lsquo;alter field tool&rsquo; &lsquo;images&rsquo;" ></p>
+
+<p>This works well for a single field, but you may need something different if:</p>
+
+<ul>
+<li>you&rsquo;re still on 10.0/10.1,</li>
+<li>you want to rename several fields at once,</li>
+<li>you would prefer not to rename the fields in-place,</li>
+<li>you need to rename fields in a source unsupported by the Alter Field tool (hint: shapefiles).</li>
+</ul>
+
+
+<p>Here&rsquo;s a great function for renaming fields (and maintaining their order).  It can be used in the python console.</p>
+
+<p>```python
+def rename_fields(table, out_table, new_name_by_old_name):</p>
+
+<pre><code>""" Renames specified fields in input feature class/table 
+:table:                 input table (fc, table, layer, etc)
+:out_table:             output table (fc, table, layer, etc)
+:new_name_by_old_name:  {'old_field_name':'new_field_name',...}
+-&gt;  out_table
+"""
+existing_field_names = [field.name for field in arcpy.ListFields(table)]
+
+field_mappings = arcpy.FieldMappings()
+field_mappings.addTable(table)
+
+for old_field_name, new_field_name in new_name_by_old_name.iteritems():
+    if old_field_name not in existing_field_names:
+        message = "Field: {0} not in {1}".format(old_field_name, table)
+        raise Exception(message)
+
+    mapping_index = field_mappings.findFieldMapIndex(old_field_name)
+    field_map = field_mappings.fieldMappings[mapping_index]
+    output_field = field_map.outputField
+    output_field.name = new_field_name
+    output_field.aliasName = new_field_name
+    field_map.outputField = output_field
+    field_mappings.replaceFieldMap(mapping_index, field_map)
+
+# use merge with single input just to use new field_mappings
+arcpy.Merge_management(table, out_table, field_mappings)
+return out_table
+</code></pre>
+
+<p>```</p>
+
+<p>The function accepts the input feature class, path to output, and a dictionary mapping the old names to the new names:</p>
+
+<p>Usage:
+```python</p>
+
+<h1>does need need to include all fields, only those you want to rename</h1>
+
+<p>new_name_by_old_name = { &lsquo;old_name_1&rsquo;:&lsquo;new_name_1&rsquo;,</p>
+
+<pre><code>                     'old_name_2':'new_name_2' }
+</code></pre>
+
+<p>rename_fields(in_fc, renamed_fc, new_name_by_old_name)
+```</p>
+
+<p>This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -4,7 +4,7 @@
   <title><![CDATA[Josh Werts]]></title>
   <link href="http://jwerts.github.io/atom.xml" rel="self"/>
   <link href="http://jwerts.github.io/"/>
-  <updated>2014-03-30T08:24:17-04:00</updated>
+  <updated>2014-04-01T10:02:33-04:00</updated>
   <id>http://jwerts.github.io/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -12,6 +12,105 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Arcpy: Rename Fields]]></title>
+    <link href="http://jwerts.github.io/blog/2014/04/01/arcpy-rename-fields/"/>
+    <updated>2014-04-01T07:43:15-04:00</updated>
+    <id>http://jwerts.github.io/blog/2014/04/01/arcpy-rename-fields</id>
+    <content type="html"><![CDATA[<p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
+
+<p><img class="center" src="http://jwerts.github.io/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="alter field tool" alt="images"></p>
+
+<p>This works well for a single field, but you may need something different if:</p>
+
+<ul>
+<li>you&rsquo;re still on 10.0/10.1,</li>
+<li>you want to rename several fields at once,</li>
+<li>you would prefer not to rename the fields in-place,</li>
+<li>you need to rename fields in a source unsupported by the Alter Field tool (hint: shapefiles).</li>
+</ul>
+
+
+<p>Here&rsquo;s a great function for renaming fields (and maintaining their order).  It can be used in the python console.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">rename_fields</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">out_table</span><span class="p">,</span> <span class="n">new_name_by_old_name</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Renames specified fields in input feature class/table </span>
+</span><span class='line'><span class="sd">    :table:                 input table (fc, table, layer, etc)</span>
+</span><span class='line'><span class="sd">    :out_table:             output table (fc, table, layer, etc)</span>
+</span><span class='line'><span class="sd">    :new_name_by_old_name:  {&#39;old_field_name&#39;:&#39;new_field_name&#39;,...}</span>
+</span><span class='line'><span class="sd">    -&gt;  out_table</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">existing_field_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">ListFields</span><span class="p">(</span><span class="n">table</span><span class="p">)]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">field_mappings</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">FieldMappings</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">field_mappings</span><span class="o">.</span><span class="n">addTable</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="n">old_field_name</span><span class="p">,</span> <span class="n">new_field_name</span> <span class="ow">in</span> <span class="n">new_name_by_old_name</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">old_field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_field_names</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Field: {0} not in {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">old_field_name</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">mapping_index</span> <span class="o">=</span> <span class="n">field_mappings</span><span class="o">.</span><span class="n">findFieldMapIndex</span><span class="p">(</span><span class="n">old_field_name</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">field_map</span> <span class="o">=</span> <span class="n">field_mappings</span><span class="o">.</span><span class="n">fieldMappings</span><span class="p">[</span><span class="n">mapping_index</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">output_field</span> <span class="o">=</span> <span class="n">field_map</span><span class="o">.</span><span class="n">outputField</span>
+</span><span class='line'>        <span class="n">output_field</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">new_field_name</span>
+</span><span class='line'>        <span class="n">output_field</span><span class="o">.</span><span class="n">aliasName</span> <span class="o">=</span> <span class="n">new_field_name</span>
+</span><span class='line'>        <span class="n">field_map</span><span class="o">.</span><span class="n">outputField</span> <span class="o">=</span> <span class="n">output_field</span>
+</span><span class='line'>        <span class="n">field_mappings</span><span class="o">.</span><span class="n">replaceFieldMap</span><span class="p">(</span><span class="n">mapping_index</span><span class="p">,</span> <span class="n">field_map</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># use merge with single input just to use new field_mappings</span>
+</span><span class='line'>    <span class="n">arcpy</span><span class="o">.</span><span class="n">Merge_management</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">out_table</span><span class="p">,</span> <span class="n">field_mappings</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">out_table</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The function accepts the input feature class, path to output, and a dictionary mapping the old names to the new names:</p>
+
+<p>Usage:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># does need need to include all fields, only those you want to rename</span>
+</span><span class='line'><span class="n">new_name_by_old_name</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;old_name_1&#39;</span><span class="p">:</span><span class="s">&#39;new_name_1&#39;</span><span class="p">,</span>
+</span><span class='line'>                         <span class="s">&#39;old_name_2&#39;</span><span class="p">:</span><span class="s">&#39;new_name_2&#39;</span> <span class="p">}</span>
+</span><span class='line'><span class="n">rename_fields</span><span class="p">(</span><span class="n">in_fc</span><span class="p">,</span> <span class="n">renamed_fc</span><span class="p">,</span> <span class="n">new_name_by_old_name</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Testing This Out]]></title>
