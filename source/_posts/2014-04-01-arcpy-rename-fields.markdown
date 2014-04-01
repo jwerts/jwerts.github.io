@@ -7,9 +7,14 @@ categories: [python arcmap arcpy]
 ---
 In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management -> Alter Field).  
 
-{% img left /images/arcpy_rename_field_alter_field_tool.PNG 350 350 'alter field tool' 'images' %}
+{% img center /images/arcpy_rename_field_alter_field_tool.PNG 350 350 'alter field tool' 'images' %}
 
-This works well for a single field, but you may still be on 10.0/10.1, want to rename several fields at once, or would prefer not to rename the fields in-place.
+This works well for a single field, but you may need something different if:
+
++ you're still on 10.0/10.1, 
++ you want to rename several fields at once, 
++ you would prefer not to rename the fields in-place, 
++ you need to rename fields in a source unsupported by the Alter Field tool (hint: shapefiles).
 
 Here's a great function for renaming fields (and maintaining their order).  It can be used in the python console.
 
