@@ -1,23 +1,23 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/</loc>
+        <loc>http://jwerts.github.io/blog/2014/04/01/arcpy-rename-fields/</loc>
         <lastmod>2014-04-01T10:02:33-04:00</lastmod>
     </url>
     <url>
-        <loc>http://joshwerts.com/</loc>
+        <loc>http://jwerts.github.io/</loc>
         <lastmod>2014-04-01T10:02:33-04:00</lastmod>
     </url>
     <url>
-        <loc>http://joshwerts.com/about/</loc>
+        <loc>http://jwerts.github.io/about/</loc>
         <lastmod>2014-03-29T10:01:13-04:00</lastmod>
     </url>
     <url>
-        <loc>http://joshwerts.com/robots.txt</loc>
+        <loc>http://jwerts.github.io/robots.txt</loc>
         <lastmod>2014-03-29T09:42:59-04:00</lastmod>
     </url>
     <url>
-        <loc>http://joshwerts.com/blog/archives/</loc>
+        <loc>http://jwerts.github.io/blog/archives/</loc>
         <lastmod>2014-04-01T10:02:33-04:00</lastmod>
     </url>
 </urlset>
