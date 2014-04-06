@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Test | Josh Werts]]></title>
-  <link href="http://jwerts.github.io/blog/categories/test/atom.xml" rel="self"/>
-  <link href="http://jwerts.github.io/"/>
-  <updated>2014-04-01T10:02:33-04:00</updated>
-  <id>http://jwerts.github.io/</id>
+  <link href="http://joshwerts.com/blog/categories/test/atom.xml" rel="self"/>
+  <link href="http://joshwerts.com/"/>
+  <updated>2014-04-06T09:05:46-04:00</updated>
+  <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
     <email><![CDATA[joshwerts@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Testing This Out]]></title>
-    <link href="http://jwerts.github.io/blog/2014/03/29/testing-this-out/"/>
+    <link href="http://joshwerts.com/blog/2014/03/29/testing-this-out/"/>
     <updated>2014-03-29T09:56:26-04:00</updated>
-    <id>http://jwerts.github.io/blog/2014/03/29/testing-this-out</id>
+    <id>http://joshwerts.com/blog/2014/03/29/testing-this-out</id>
     <content type="html"><![CDATA[<h4>I heart Python!</h4>
 
 <p>```python

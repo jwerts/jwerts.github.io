@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Josh Werts]]></title>
-  <link href="http://jwerts.github.io/atom.xml" rel="self"/>
-  <link href="http://jwerts.github.io/"/>
-  <updated>2014-04-01T10:02:33-04:00</updated>
-  <id>http://jwerts.github.io/</id>
+  <link href="http://joshwerts.com/atom.xml" rel="self"/>
+  <link href="http://joshwerts.com/"/>
+  <updated>2014-04-06T09:05:46-04:00</updated>
+  <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
     <email><![CDATA[joshwerts@gmail.com]]></email>
@@ -15,12 +15,12 @@
   
   <entry>
     <title type="html"><![CDATA[Arcpy: Rename Fields]]></title>
-    <link href="http://jwerts.github.io/blog/2014/04/01/arcpy-rename-fields/"/>
+    <link href="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/"/>
     <updated>2014-04-01T07:43:15-04:00</updated>
-    <id>http://jwerts.github.io/blog/2014/04/01/arcpy-rename-fields</id>
+    <id>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields</id>
     <content type="html"><![CDATA[<p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
 
-<p><img class="center" src="http://jwerts.github.io/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="alter field tool" alt="images"></p>
+<p><img class="center" src="http://joshwerts.com/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="alter field tool" alt="images"></p>
 
 <p>This works well for a single field, but you may need something different if:</p>
 
@@ -114,9 +114,9 @@
   
   <entry>
     <title type="html"><![CDATA[Testing This Out]]></title>
-    <link href="http://jwerts.github.io/blog/2014/03/29/testing-this-out/"/>
+    <link href="http://joshwerts.com/blog/2014/03/29/testing-this-out/"/>
     <updated>2014-03-29T09:56:26-04:00</updated>
-    <id>http://jwerts.github.io/blog/2014/03/29/testing-this-out</id>
+    <id>http://joshwerts.com/blog/2014/03/29/testing-this-out</id>
     <content type="html"><![CDATA[<h4>I heart Python!</h4>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
