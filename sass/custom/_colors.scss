@@ -44,6 +44,10 @@ $subtitle-color: lighten($header-bg, 58);
 
 // From base/_theme.scss
 // Main Section Colors
-$main-bg: #ffffff !default;
-$page-bg: #ffffff !default;
-$article-border: #eeeeee !default;
+$main-bg: #ffffff;
+$page-bg: #ffffff;
+$article-border: #eeeeee;
+
+//$title-color: #000000;
+//$subtitle-color: #000000;
+//$text-color: #000000;

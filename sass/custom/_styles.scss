@@ -3,5 +3,15 @@
 
 header[role="banner"] {
      background-image: url(/images/josh_nh.png);
+     /*background-image: url(/images/linville_cross.png);*/
      /*background-repeat: no-repeat;*/
+}
+
+/* I have no idea why you wouldn't set these the same */
+.entry-title {
+    font-size: 1.8em;
+}
+
+.entry-title a {
+    font-size: 0.9em;
 }
