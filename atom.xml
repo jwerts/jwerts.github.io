@@ -1,118 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Josh Werts</title>
-  <meta name="author" content="Josh Werts">
-
-  
-  <meta name="description" content="In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field). This works well for a single field, &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><![CDATA[Josh Werts]]></title>
+  <link href="http://joshwerts.com/atom.xml" rel="self"/>
+  <link href="http://joshwerts.com/"/>
+  <updated>2014-04-06T10:12:09-04:00</updated>
+  <id>http://joshwerts.com/</id>
+  <author>
+    <name><![CDATA[Josh Werts]]></name>
+    <email><![CDATA[joshwerts@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-  <link rel="canonical" href="http://joshwerts.com">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Josh Werts" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <entry>
+    <title type="html"><![CDATA[Arcpy: Rename Fields]]></title>
+    <link href="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/"/>
+    <updated>2014-04-01T07:43:15-04:00</updated>
+    <id>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields</id>
+    <content type="html"><![CDATA[<p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
 
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-49518677-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">Josh Werts</a></h1>
-  
-    <h2>{ 'work': ['gis', 'py', 'js' ...], 'fun': ['bike', 'hike', 'paddle', ...] }</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:joshwerts.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-<!--   <li><a href="/about">About</a></li> -->
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/01/arcpy-rename-fields/">Arcpy: Rename Fields</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-01T07:43:15-04:00" pubdate data-updated="true">Apr 1<span>st</span>, 2014</time>
-        
-           | <a href="/blog/2014/04/01/arcpy-rename-fields/#disqus_thread"
-             data-disqus-identifier="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
-
-<p><img class="center" src="/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="alter field tool" alt="images"></p>
+<p><img class="center" src="http://joshwerts.com/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="alter field tool" alt="images"></p>
 
 <p>This works well for a single field, but you may need something different if:</p>
 
@@ -201,120 +109,7 @@
 
 
 <p>This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section>
-  <h1>About Me</h1>
-  <p>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.  I do roughly equal portions of frontend web and backend ETL/service development primarily within the ESRI framework.  <br/><br/>I &#10084; Python!</p>
-</section>
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2014/04/01/arcpy-rename-fields/">Arcpy: Rename Fields</a>
-      </li>
-    
-  </ul>
-</section>
-
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  
-  <a href="https://github.com/jwerts">@jwerts</a> on GitHub
-  
-  <script type="text/javascript">
-    $(document).ready(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'jwerts',
-            count: 0,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-  
-</aside>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Josh Werts - <a href="mailto:joshwerts@gmail.com">joshwerts@gmail.com</a> - 
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'jwerts';
-      
-        
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {return;}
-  js = d.createElement(s); js.id = id; js.async = true;
-  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
-</html>
+</feed>
