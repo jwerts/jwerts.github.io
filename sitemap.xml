@@ -1,10 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://joshwerts.com/blog/2014/03/29/testing-this-out/</loc>
-        <lastmod>2014-03-29T09:58:10-04:00</lastmod>
-    </url>
-    <url>
         <loc>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/</loc>
         <lastmod>2014-04-01T10:02:33-04:00</lastmod>
     </url>

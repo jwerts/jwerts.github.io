@@ -4,7 +4,7 @@
   <title><![CDATA[Josh Werts]]></title>
   <link href="http://joshwerts.com/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2014-04-06T09:05:46-04:00</updated>
+  <updated>2014-04-06T09:42:08-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -109,24 +109,6 @@
 
 
 <p>This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Testing This Out]]></title>
-    <link href="http://joshwerts.com/blog/2014/03/29/testing-this-out/"/>
-    <updated>2014-03-29T09:56:26-04:00</updated>
-    <id>http://joshwerts.com/blog/2014/03/29/testing-this-out</id>
-    <content type="html"><![CDATA[<h4>I heart Python!</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
-</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;testing&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
 ]]></content>
   </entry>
   
