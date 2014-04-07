@@ -3,7 +3,7 @@ layout: post
 title: "arcpy: rename fields"
 date: 2014-04-01 07:43:15 -0400
 comments: true
-categories: [python arcmap arcpy]
+categories: [python, arcmap, arcpy]
 ---
 In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management -> Alter Field).  
 
