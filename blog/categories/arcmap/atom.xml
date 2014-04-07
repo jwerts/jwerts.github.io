@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Python Arcmap Arcpy | Josh Werts]]></title>
-  <link href="http://jwerts.github.io/blog/categories/python-arcmap-arcpy/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Arcmap | Josh Werts]]></title>
+  <link href="http://jwerts.github.io/blog/categories/arcmap/atom.xml" rel="self"/>
   <link href="http://jwerts.github.io/"/>
-  <updated>2014-04-06T10:19:49-04:00</updated>
+  <updated>2014-04-07T19:13:04-04:00</updated>
   <id>http://jwerts.github.io/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
