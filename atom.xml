@@ -4,7 +4,7 @@
   <title><![CDATA[Josh Werts]]></title>
   <link href="http://joshwerts.com/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2014-04-08T19:28:29-04:00</updated>
+  <updated>2014-04-17T17:48:21-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -12,6 +12,119 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Arcpy: Reorder Fields]]></title>
+    <link href="http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/"/>
+    <updated>2014-04-17T17:34:45-04:00</updated>
+    <id>http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields</id>
+    <content type="html"><![CDATA[<p>Here&rsquo;s another handy function for re-ordering fields in a feature class.  Like the <code>rename_fields</code> function previously posted, it recreates the existing field mappings and modifies as necessary.  The output is a new feature class with fields in the order specified.</p>
+
+<p>The only caveat is that required fields always get pushed to the front (so the featureclass will start with OBJECTID, Shape, rest of fields&hellip;).  After required fields are out of the way, the rest of the fields are added in the order specified in the <code>field_order</code> list.  If any fields are missing, they are added to the end of the feature class.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">arcpy</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">reorder_fields</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">out_table</span><span class="p">,</span> <span class="n">field_order</span><span class="p">,</span> <span class="n">add_missing</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; </span>
+</span><span class='line'><span class="sd">    Reorders fields in input featureclass/table</span>
+</span><span class='line'><span class="sd">    :table:         input table (fc, table, layer, etc)</span>
+</span><span class='line'><span class="sd">    :out_table:     output table (fc, table, layer, etc)</span>
+</span><span class='line'><span class="sd">    :field_order:   order of fields (objectid, shape not necessary)</span>
+</span><span class='line'><span class="sd">    :add_missing:   add missing fields to end if True (leave out if False)</span>
+</span><span class='line'><span class="sd">    -&gt; path to output table</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">existing_fields</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">ListFields</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">existing_field_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">existing_fields</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">existing_mapping</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">FieldMappings</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">existing_mapping</span><span class="o">.</span><span class="n">addTable</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">new_mapping</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">FieldMappings</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">add_mapping</span><span class="p">(</span><span class="n">field_name</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">mapping_index</span> <span class="o">=</span> <span class="n">existing_mapping</span><span class="o">.</span><span class="n">findFieldMapIndex</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c"># required fields (OBJECTID, etc) will not be in existing mappings</span>
+</span><span class='line'>        <span class="c"># they are added automatically</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">mapping_index</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">field_map</span> <span class="o">=</span> <span class="n">existing_mapping</span><span class="o">.</span><span class="n">fieldMappings</span><span class="p">[</span><span class="n">mapping_index</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">new_mapping</span><span class="o">.</span><span class="n">addFieldMap</span><span class="p">(</span><span class="n">field_map</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># add user fields from field_order</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">field_order</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_field_names</span><span class="p">:</span>
+</span><span class='line'>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Field: {0} not in {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">table</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">add_mapping</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># add missing fields at end</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">add_missing</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">missing_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">existing_field_names</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">field_order</span><span class="p">]</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">missing_fields</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">add_mapping</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># use merge with single input just to use new field_mappings</span>
+</span><span class='line'>    <span class="n">arcpy</span><span class="o">.</span><span class="n">Merge_management</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">out_table</span><span class="p">,</span> <span class="n">new_mapping</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">out_table</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Usage:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">new_field_order</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;field2&quot;</span><span class="p">,</span> <span class="s">&quot;field3&quot;</span><span class="p">,</span> <span class="s">&quot;field1&quot;</span><span class="p">]</span>
+</span><span class='line'><span class="n">reorder_fields</span><span class="p">(</span><span class="n">in_fc</span><span class="p">,</span> <span class="n">out_fc</span><span class="p">,</span> <span class="n">new_field_order</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I&rsquo;ve tested this in 10.1.1+ &ndash; it may work in 10.0 as well and should work with any license level.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Arcpy: Rename Fields]]></title>

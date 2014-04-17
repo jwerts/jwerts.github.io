@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Josh Werts</title>
+  <title>Arcpy: Reorder Fields - Josh Werts</title>
   <meta name="author" content="Josh Werts">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://joshwerts.com">
+  <link rel="canonical" href="http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Josh Werts" type="application/atom+xml">
@@ -76,15 +76,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/04/17/arcpy-reorder-fields/">Arcpy: Reorder Fields</a></h1>
+      <h1 class="entry-title">Arcpy: Reorder Fields</h1>
     
     
       <p class="meta">
@@ -102,15 +99,15 @@
 
 <time datetime="2014-04-17T17:34:45-04:00" pubdate data-updated="true">Apr 17<span>th</span>, 2014</time>
         
-           | <a href="/blog/2014/04/17/arcpy-reorder-fields/#disqus_thread"
-             data-disqus-identifier="http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/">Comments</a>
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://joshwerts.com">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Here&rsquo;s another handy function for re-ordering fields in a feature class.  Like the <code>rename_fields</code> function previously posted, it recreates the existing field mappings and modifies as necessary.  The output is a new feature class with fields in the order specified.</p>
+<div class="entry-content"><p>Here&rsquo;s another handy function for re-ordering fields in a feature class.  Like the <code>rename_fields</code> function previously posted, it recreates the existing field mappings and modifies as necessary.  The output is a new feature class with fields in the order specified.</p>
 
 <p>The only caveat is that required fields always get pushed to the front (so the featureclass will start with OBJECTID, Shape, rest of fields&hellip;).  After required fields are out of the way, the rest of the fields are added in the order specified in the <code>field_order</code> list.  If any fields are missing, they are added to the end of the feature class.</p>
 
@@ -216,22 +213,16 @@
 
 <p>I&rsquo;ve tested this in 10.1.1+ &ndash; it may work in 10.0 as well and should work with any license level.</p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/01/arcpy-rename-fields/">Arcpy: Rename Fields</a></h1>
-    
-    
-      <p class="meta">
-        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Josh Werts</span></span>
+
+      
 
 
 
@@ -243,120 +234,46 @@
   
 
 
-<time datetime="2014-04-01T07:43:15-04:00" pubdate data-updated="true">Apr 1<span>st</span>, 2014</time>
-        
-           | <a href="/blog/2014/04/01/arcpy-rename-fields/#disqus_thread"
-             data-disqus-identifier="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/">Comments</a>
-        
-      </p>
+<time datetime="2014-04-17T17:34:45-04:00" pubdate data-updated="true">Apr 17<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/arcmap/'>arcmap</a>, <a class='category' href='/blog/categories/arcpy/'>arcpy</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
-
-<p><img class="center" src="/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="alter field tool" alt="images"></p>
-
-<p>This works well for a single field, but you may need something different if:</p>
-
-<ul>
-<li>you&rsquo;re still on 10.0/10.1,</li>
-<li>you want to rename several fields at once,</li>
-<li>you would prefer not to rename the fields in-place,</li>
-<li>you need to rename fields in a source unsupported by the Alter Field tool (hint: shapefiles).</li>
-</ul>
-
-
-<p>Here&rsquo;s a great function for renaming fields (and maintaining their order).  It can be used in the python console.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">rename_fields</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">out_table</span><span class="p">,</span> <span class="n">new_name_by_old_name</span><span class="p">):</span>
-</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Renames specified fields in input feature class/table </span>
-</span><span class='line'><span class="sd">    :table:                 input table (fc, table, layer, etc)</span>
-</span><span class='line'><span class="sd">    :out_table:             output table (fc, table, layer, etc)</span>
-</span><span class='line'><span class="sd">    :new_name_by_old_name:  {&#39;old_field_name&#39;:&#39;new_field_name&#39;,...}</span>
-</span><span class='line'><span class="sd">    -&gt;  out_table</span>
-</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
-</span><span class='line'>    <span class="n">existing_field_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">ListFields</span><span class="p">(</span><span class="n">table</span><span class="p">)]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">field_mappings</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">FieldMappings</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">field_mappings</span><span class="o">.</span><span class="n">addTable</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">for</span> <span class="n">old_field_name</span><span class="p">,</span> <span class="n">new_field_name</span> <span class="ow">in</span> <span class="n">new_name_by_old_name</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-</span><span class='line'>        <span class="k">if</span> <span class="n">old_field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_field_names</span><span class="p">:</span>
-</span><span class='line'>            <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Field: {0} not in {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">old_field_name</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
-</span><span class='line'>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">mapping_index</span> <span class="o">=</span> <span class="n">field_mappings</span><span class="o">.</span><span class="n">findFieldMapIndex</span><span class="p">(</span><span class="n">old_field_name</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">field_map</span> <span class="o">=</span> <span class="n">field_mappings</span><span class="o">.</span><span class="n">fieldMappings</span><span class="p">[</span><span class="n">mapping_index</span><span class="p">]</span>
-</span><span class='line'>        <span class="n">output_field</span> <span class="o">=</span> <span class="n">field_map</span><span class="o">.</span><span class="n">outputField</span>
-</span><span class='line'>        <span class="n">output_field</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">new_field_name</span>
-</span><span class='line'>        <span class="n">output_field</span><span class="o">.</span><span class="n">aliasName</span> <span class="o">=</span> <span class="n">new_field_name</span>
-</span><span class='line'>        <span class="n">field_map</span><span class="o">.</span><span class="n">outputField</span> <span class="o">=</span> <span class="n">output_field</span>
-</span><span class='line'>        <span class="n">field_mappings</span><span class="o">.</span><span class="n">replaceFieldMap</span><span class="p">(</span><span class="n">mapping_index</span><span class="p">,</span> <span class="n">field_map</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c"># use merge with single input just to use new field_mappings</span>
-</span><span class='line'>    <span class="n">arcpy</span><span class="o">.</span><span class="n">Merge_management</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">out_table</span><span class="p">,</span> <span class="n">field_mappings</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">out_table</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The function accepts the input feature class, path to output, and a dictionary mapping the old names to the new names:</p>
-
-<p>Usage:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># does need need to include all fields, only those you want to rename</span>
-</span><span class='line'><span class="n">new_name_by_old_name</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;old_name_1&#39;</span><span class="p">:</span><span class="s">&#39;new_name_1&#39;</span><span class="p">,</span>
-</span><span class='line'>                         <span class="s">&#39;old_name_2&#39;</span><span class="p">:</span><span class="s">&#39;new_name_2&#39;</span> <span class="p">}</span>
-</span><span class='line'><span class="n">rename_fields</span><span class="p">(</span><span class="n">in_fc</span><span class="p">,</span> <span class="n">renamed_fc</span><span class="p">,</span> <span class="n">new_name_by_old_name</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.</p>
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/" data-via="" data-counturl="http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/04/01/arcpy-rename-fields/" title="Previous Post: arcpy: rename fields">&laquo; arcpy: rename fields</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
+  </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -382,7 +299,7 @@
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/jwerts">@jwerts</a> on GitHub
@@ -412,6 +329,7 @@
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -426,7 +344,10 @@
       var disqus_shortname = 'jwerts';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/';
+        var disqus_url = 'http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
