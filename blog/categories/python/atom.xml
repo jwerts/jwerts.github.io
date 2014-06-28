@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | Josh Werts]]></title>
   <link href="http://joshwerts.com/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2014-04-21T19:37:22-04:00</updated>
+  <updated>2014-06-28T12:47:03-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -12,6 +12,93 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python: Recursion With Lists]]></title>
+    <link href="http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/"/>
+    <updated>2014-06-28T11:58:45-04:00</updated>
+    <id>http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists</id>
+    <content type="html"><![CDATA[<p>I rarely find use cases for recursion in my every day work, but every once in a while, there&rsquo;s a problem that comes up where I instantly think: &ldquo;Recursion!&rdquo; (typically followed by an equal mix of excitement and dread).</p>
+
+<p>I often try to get away from GIS related programming when I&rsquo;m not at work.  With limited free time, Python&rsquo;s the perfect language to focus on fundamentals without getting bogged down with other concerns.</p>
+
+<p>Recursion is challenging enough already but I find it even more difficult to wrap my head around when the end result is intended to be a list.  I love nested functions (and closure) in Python (as long as it doesn&rsquo;t get out of hand) and think it works well in this case to provide the expected simple interface to a function despite the fact that recursion is being used internally.</p>
+
+<p>Most of the code I write for work is proprietary and can&rsquo;t be posted here, so here&rsquo;s a classic problem I&rsquo;ve been playing around with simply for learning purposes.</p>
+
+<h4>Code:</h4>
+
+<p>```python
+def prime_factors(x):</p>
+
+<pre><code>""" returns all prime factors of x 
+ex:  prime_factors(21) = [3,7]
+ex:  prime_factors(24) = [2,2,2,3]
+"""
+
+def get_first_prime(y):
+    """ returns first prime of y """
+    # 0 and 1 are not prime, start with 2
+    i = 2 
+
+    while i &lt;= y:
+        if y % i == 0:
+            return i
+        i += 1
+
+def get_primes(y, primes):
+    """ Recursively appends primes of y
+        ex:  prime_factors(24) = [2,2,2,3]
+
+        24
+       /  \
+      2    12
+          /  \
+         2    6
+             / \
+            2   3
+
+    Appends end nodes of tree as it recurses down.
+    """
+    first_prime = get_first_prime(y)
+    primes.append(first_prime)
+
+    if y == first_prime:
+        return
+
+    else:
+        # Number is not prime and can be divided further.
+        # Divide by the first prime (left node) 
+        # to get the next test value (right node)
+        get_primes(y / first_prime, primes)
+
+
+primes = []
+if x &gt;= 2:
+    get_primes(x, primes)
+
+return primes
+</code></pre>
+
+<p>```</p>
+
+<h4>Usage:</h4>
+
+<p>```python</p>
+
+<blockquote><blockquote><blockquote><p>prime_factors(24)
+[2, 2, 2, 3]
+prime_factors(13595)
+[5, 7, 13, 29]
+prime_factors(23049820394)
+[2, 89, 139, 181, 5147]
+```</p></blockquote></blockquote></blockquote>
+
+<p>The list <code>primes</code> is passed by reference into the recursive function and simply appended to throughout the operation to keep track of the values.  There is no actual return value from the function.</p>
+
+<p>This could be difficult to follow if the end user used: <code>get_primes(y, primes) -&gt; void</code> directly but since it&rsquo;s wrapped in a simpler interface:  <code>prime_factors(x) -&gt; primes</code>, the end result is a returned list as expected.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Arcpy: Reorder Fields]]></title>

@@ -2,15 +2,19 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/</loc>
-        <lastmod>2014-04-07T19:10:14-04:00</lastmod>
+        <lastmod>2014-06-28T12:00:07-04:00</lastmod>
     </url>
     <url>
         <loc>http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/</loc>
-        <lastmod>2014-04-17T17:46:41-04:00</lastmod>
+        <lastmod>2014-06-28T12:00:05-04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/</loc>
+        <lastmod>2014-06-28T12:46:27-04:00</lastmod>
     </url>
     <url>
         <loc>http://joshwerts.com/</loc>
-        <lastmod>2014-04-17T17:46:41-04:00</lastmod>
+        <lastmod>2014-06-28T12:46:27-04:00</lastmod>
     </url>
     <url>
         <loc>http://joshwerts.com/about/</loc>
@@ -22,6 +26,6 @@
     </url>
     <url>
         <loc>http://joshwerts.com/blog/archives/</loc>
-        <lastmod>2014-04-17T17:46:41-04:00</lastmod>
+        <lastmod>2014-06-28T12:46:27-04:00</lastmod>
     </url>
 </urlset>

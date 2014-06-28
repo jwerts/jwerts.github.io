@@ -9,7 +9,7 @@
   <meta name="author" content="Josh Werts">
 
   
-  <meta name="description" content="Here&rsquo;s another handy function for re-ordering fields in a feature class. Like the rename_fields function previously posted, it recreates the &hellip;">
+  <meta name="description" content="I rarely find use cases for recursion in my every day work, but every once in a while, there&rsquo;s a problem that comes up where I instantly think &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +78,173 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/06/28/python-recursion-with-lists/">Python: Recursion With Lists</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-28T11:58:45-04:00" pubdate data-updated="true">Jun 28<span>th</span>, 2014</time>
+        
+           | <a href="/blog/2014/06/28/python-recursion-with-lists/#disqus_thread"
+             data-disqus-identifier="http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I rarely find use cases for recursion in my every day work, but every once in a while, there&rsquo;s a problem that comes up where I instantly think: &ldquo;Recursion!&rdquo; (typically followed by an equal mix of excitement and dread).</p>
+
+<p>I often try to get away from GIS related programming when I&rsquo;m not at work.  With limited free time, Python&rsquo;s the perfect language to focus on fundamentals without getting bogged down with other concerns.</p>
+
+<p>Recursion is challenging enough already but I find it even more difficult to wrap my head around when the end result is intended to be a list.  I love nested functions (and closure) in Python (as long as it doesn&rsquo;t get out of hand) and think it works well in this case to provide the expected simple interface to a function despite the fact that recursion is being used internally.</p>
+
+<p>Most of the code I write for work is proprietary and can&rsquo;t be posted here, so here&rsquo;s a classic problem I&rsquo;ve been playing around with simply for learning purposes.</p>
+
+<h4>Code:</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">prime_factors</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; returns all prime factors of x </span>
+</span><span class='line'><span class="sd">    ex:  prime_factors(21) = [3,7]</span>
+</span><span class='line'><span class="sd">    ex:  prime_factors(24) = [2,2,2,3]</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">get_first_prime</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+</span><span class='line'>        <span class="sd">&quot;&quot;&quot; returns first prime of y &quot;&quot;&quot;</span>
+</span><span class='line'>        <span class="c"># 0 and 1 are not prime, start with 2</span>
+</span><span class='line'>        <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">:</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">y</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">i</span>
+</span><span class='line'>            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">get_primes</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">primes</span><span class="p">):</span>
+</span><span class='line'>        <span class="sd">&quot;&quot;&quot; Recursively appends primes of y</span>
+</span><span class='line'><span class="sd">            ex:  prime_factors(24) = [2,2,2,3]</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">            24</span>
+</span><span class='line'><span class="sd">           /  \</span>
+</span><span class='line'><span class="sd">          2    12</span>
+</span><span class='line'><span class="sd">              /  \</span>
+</span><span class='line'><span class="sd">             2    6</span>
+</span><span class='line'><span class="sd">                 / \</span>
+</span><span class='line'><span class="sd">                2   3</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">        Appends end nodes of tree as it recurses down.</span>
+</span><span class='line'><span class="sd">        &quot;&quot;&quot;</span>
+</span><span class='line'>        <span class="n">first_prime</span> <span class="o">=</span> <span class="n">get_first_prime</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">primes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">first_prime</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">first_prime</span><span class="p">:</span>
+</span><span class='line'>            <span class="k">return</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="c"># Number is not prime and can be divided further.</span>
+</span><span class='line'>            <span class="c"># Divide by the first prime (left node) </span>
+</span><span class='line'>            <span class="c"># to get the next test value (right node)</span>
+</span><span class='line'>            <span class="n">get_primes</span><span class="p">(</span><span class="n">y</span> <span class="o">/</span> <span class="n">first_prime</span><span class="p">,</span> <span class="n">primes</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">primes</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">get_primes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">primes</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">primes</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Usage:</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="n">prime_factors</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+</span><span class='line'><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</span><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="n">prime_factors</span><span class="p">(</span><span class="mi">13595</span><span class="p">)</span>
+</span><span class='line'><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">29</span><span class="p">]</span>
+</span><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="n">prime_factors</span><span class="p">(</span><span class="mi">23049820394</span><span class="p">)</span>
+</span><span class='line'><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">139</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">5147</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The list <code>primes</code> is passed by reference into the recursive function and simply appended to throughout the operation to keep track of the values.  There is no actual return value from the function.</p>
+
+<p>This could be difficult to follow if the end user used: <code>get_primes(y, primes) -&gt; void</code> directly but since it&rsquo;s wrapped in a simpler interface:  <code>prime_factors(x) -&gt; primes</code>, the end result is a returned list as expected.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -367,6 +534,10 @@
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/06/28/python-recursion-with-lists/">Python: Recursion With Lists</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/04/17/arcpy-reorder-fields/">Arcpy: Reorder Fields</a>
