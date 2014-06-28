@@ -3,7 +3,7 @@ layout: post
 title: "arcpy: reorder fields"
 date: 2014-04-17 17:34:45 -0400
 comments: true
-categories: [python, arcmap, arcpy]
+categories: [python, arcmap, arcpy, gis]
 ---
 
 Here's another handy function for re-ordering fields in a feature class.  Like the ```rename_fields``` function previously posted, it recreates the existing field mappings and modifies as necessary.  The output is a new feature class with fields in the order specified.  
