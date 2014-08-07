@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Gis | Josh Werts]]></title>
   <link href="http://joshwerts.com/blog/categories/gis/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2014-07-08T18:24:08-04:00</updated>
+  <updated>2014-08-07T19:19:33-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -12,6 +12,91 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[arcpy.da Cursors and Readability Part 1]]></title>
+    <link href="http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/"/>
+    <updated>2014-08-07T18:36:54-04:00</updated>
+    <id>http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors</id>
+    <content type="html"><![CDATA[<p>The arcpy.da cursors (ie: arcpy.da.SearchCursor) are far and away better than the regular cursors (ie: arcpy.SearchCursor).  They&rsquo;re more pythonic, incredibly flexible, faster, and allow context management (with).  However, their straight-out-of-the-box-use may be a little hard to read and maintain.</p>
+
+<h3>Fun with Tuples</h3>
+
+<p>arcpy.da cursors return tuples (instead of objects that feel too much like writing ArcObjects).</p>
+
+<h4>Good:</h4>
+
+<p>It&rsquo;s perfectly valid to use tuple indexes to access the fields:</p>
+
+<p>```python
+total_cost_by_name = {}
+with arcpy.da.SearchCursor(costs_table, [&ldquo;name&rdquo;, &ldquo;unit_cost&rdquo;, &ldquo;quantity&rdquo;]) as curs:</p>
+
+<pre><code>for row in curs:
+    total_cost_by_name[row[0]] = row[1] * row[2]
+</code></pre>
+
+<p>```</p>
+
+<h4>Better:</h4>
+
+<p>This works fine, but the intent of our calculation is not really clear without some mental mapping.  How about this?
+```python
+total_cost_by_name = {}
+with arcpy.da.SearchCursor(costs_table, [&ldquo;name&rdquo;, &ldquo;unit_cost&rdquo;, &ldquo;quantity&rdquo;]) as curs:</p>
+
+<pre><code>for row in curs:
+    name = row[0]
+    unit_cost = row[1]
+    quantity = row[2]
+
+    total_cost_by_name[name] = unit_cost * quantity
+</code></pre>
+
+<p>```</p>
+
+<p>The intent in the calculation is much more clear here, but we&rsquo;ve gained a lot of verbosity that is perhaps unnecessary.</p>
+
+<h4>Best:</h4>
+
+<p>Of course, you could set the variables all on one line <code>name, unit_cost, quantity = row[0], row[1], row[2]</code>, but even better would be to take advantage of python&rsquo;s tuple unpacking:  <code>name, unit_cost, quantity = row</code>.  Taking that one step further, why not unpack every tuple as it&rsquo;s iterated over.  Now we have a process that is both concise and highly readable:</p>
+
+<p>```python
+total_cost_by_name = {}
+with arcpy.da.SearchCursor(costs_table, [&ldquo;name&rdquo;, &ldquo;unit_cost&rdquo;, &ldquo;quantity&rdquo;]) as curs:</p>
+
+<pre><code>for name, unit_cost, quantity in curs:
+    total_cost_by_name[name] = unit_cost * quantity
+</code></pre>
+
+<p>```</p>
+
+<p>Now what if we want to update a total cost field in the featureclass using an UpdateCursor instead?</p>
+
+<p>```python
+with arcpy.da.UpdateCursor(costs_table, [&ldquo;unit_cost&rdquo;, &ldquo;quantity&rdquo;, &ldquo;total_cost&rdquo;]) as curs:</p>
+
+<pre><code>for unit_cost, quantity, total_cost in curs:
+    total_cost = unit_cost * quantity
+    arcpy.updateRow( (unit_cost, quantity, total_cost) )
+</code></pre>
+
+<p>```</p>
+
+<p>To avoid &ldquo;re-constructing&rdquo; the tuple for the updateRow function, this is a reasonable alternative:</p>
+
+<p>```python
+with arcpy.da.UpdateCursor(costs_table, [&ldquo;unit_cost&rdquo;, &ldquo;quantity&rdquo;, &ldquo;total_cost&rdquo;]) as curs:</p>
+
+<pre><code>for row in curs:
+    unit_cost, quantity, total_cost = row
+    total_cost = unit_cost * quantity
+    arcpy.updateRow(row)
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Arcpy: Reorder Fields]]></title>

@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>arcpy.da Cursors and Readability Part 1 - Josh Werts</title>
+  <meta name="author" content="Josh Werts">
+
+  
+  <meta name="description" content="The arcpy.da cursors (ie: arcpy.da.SearchCursor) are far and away better than the regular cursors (ie: arcpy.SearchCursor). They&rsquo;re more &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Josh Werts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-49518677-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Josh Werts</a></h1>
+  
+    <h2>{ 'work': ['gis', 'py', 'js' ...], 'fun': ['bike', 'hike', 'paddle', ...] }</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:joshwerts.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+<!--   <li><a href="/about">About</a></li> -->
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">arcpy.da Cursors and Readability Part 1</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-07T18:36:54-04:00" pubdate data-updated="true">Aug 7<sup>th</sup>, 2014</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://joshwerts.com">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>The arcpy.da cursors (ie: arcpy.da.SearchCursor) are far and away better than the regular cursors (ie: arcpy.SearchCursor).  They&rsquo;re more pythonic, incredibly flexible, faster, and allow context management (with).  However, their straight-out-of-the-box-use may be a little hard to read and maintain.</p>
+
+<h3>Fun with Tuples</h3>
+
+<p>arcpy.da cursors return tuples (instead of objects that feel too much like writing ArcObjects).</p>
+
+<h4>Good:</h4>
+
+<p>It&rsquo;s perfectly valid to use tuple indexes to access the fields:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">total_cost_by_name</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'><span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">costs_table</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;unit_cost&quot;</span><span class="p">,</span> <span class="s">&quot;quantity&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">total_cost_by_name</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Better:</h4>
+
+<p>This works fine, but the intent of our calculation is not really clear without some mental mapping.  How about this?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">total_cost_by_name</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'><span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">costs_table</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;unit_cost&quot;</span><span class="p">,</span> <span class="s">&quot;quantity&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">unit_cost</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">quantity</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">total_cost_by_name</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit_cost</span> <span class="o">*</span> <span class="n">quantity</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The intent in the calculation is much more clear here, but we&rsquo;ve gained a lot of verbosity that is perhaps unnecessary.</p>
+
+<h4>Best:</h4>
+
+<p>Of course, you could set the variables all on one line <code>name, unit_cost, quantity = row[0], row[1], row[2]</code>, but even better would be to take advantage of python&rsquo;s tuple unpacking:  <code>name, unit_cost, quantity = row</code>.  Taking that one step further, why not unpack every tuple as it&rsquo;s iterated over.  Now we have a process that is both concise and highly readable:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">total_cost_by_name</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'><span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">costs_table</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;unit_cost&quot;</span><span class="p">,</span> <span class="s">&quot;quantity&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">unit_cost</span><span class="p">,</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">total_cost_by_name</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit_cost</span> <span class="o">*</span> <span class="n">quantity</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now what if we want to update a total cost field in the featureclass using an UpdateCursor instead?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">UpdateCursor</span><span class="p">(</span><span class="n">costs_table</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;unit_cost&quot;</span><span class="p">,</span> <span class="s">&quot;quantity&quot;</span><span class="p">,</span> <span class="s">&quot;total_cost&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">unit_cost</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">total_cost</span> <span class="ow">in</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">total_cost</span> <span class="o">=</span> <span class="n">unit_cost</span> <span class="o">*</span> <span class="n">quantity</span>
+</span><span class='line'>        <span class="n">arcpy</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span> <span class="p">(</span><span class="n">unit_cost</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">total_cost</span><span class="p">)</span> <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To avoid &ldquo;re-constructing&rdquo; the tuple for the updateRow function, this is a reasonable alternative:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">UpdateCursor</span><span class="p">(</span><span class="n">costs_table</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;unit_cost&quot;</span><span class="p">,</span> <span class="s">&quot;quantity&quot;</span><span class="p">,</span> <span class="s">&quot;total_cost&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">curs</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">unit_cost</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">total_cost</span> <span class="o">=</span> <span class="n">row</span>
+</span><span class='line'>        <span class="n">total_cost</span> <span class="o">=</span> <span class="n">unit_cost</span> <span class="o">*</span> <span class="n">quantity</span>
+</span><span class='line'>        <span class="n">arcpy</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Josh Werts</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-07T18:36:54-04:00" pubdate data-updated="true">Aug 7<sup>th</sup>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/arcmap/'>arcmap</a>, <a class='category' href='/blog/categories/arcpy/'>arcpy</a>, <a class='category' href='/blog/categories/gis/'>gis</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/" data-via="" data-counturl="http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/06/28/python-recursion-with-lists/" title="Previous Post: Python: Recursion with Lists">&laquo; Python: Recursion with Lists</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.  I do roughly equal portions of frontend web and backend ETL/service development primarily within the ESRI framework.  <br/><br/>I &#10084; Python!</p>
+  <p><a href="mailto:joshwerts@gmail.com"/>joshwerts@gmail.com</a></p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/08/07/arcpy-dot-da-cursors/">arcpy.da Cursors and Readability Part 1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/28/python-recursion-with-lists/">Python: Recursion With Lists</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/17/arcpy-reorder-fields/">Arcpy: Reorder Fields</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/01/arcpy-rename-fields/">Arcpy: Rename Fields</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/jwerts">@jwerts</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'jwerts',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Josh Werts - <a href="mailto:joshwerts@gmail.com">joshwerts@gmail.com</a> - 
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'jwerts';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/';
+        var disqus_url = 'http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
