@@ -56,5 +56,5 @@ Now what if we want to update a total cost field in the featureclass using an Up
 with arcpy.da.UpdateCursor(costs_table, ["unit_cost", "quantity", "total_cost"]) as curs:
     for unit_cost, quantity, total_cost in curs:
         total_cost = unit_cost * quantity
-        arcpy.updateRow( (unit_cost, quantity, total_cost) )
+        curs.updateRow( (unit_cost, quantity, total_cost) )
 ```
