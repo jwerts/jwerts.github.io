@@ -58,13 +58,3 @@ with arcpy.da.UpdateCursor(costs_table, ["unit_cost", "quantity", "total_cost"])
         total_cost = unit_cost * quantity
         arcpy.updateRow( (unit_cost, quantity, total_cost) )
 ```
-
-To avoid "re-constructing" the tuple for the updateRow function, this is a reasonable alternative:
-
-```python
-with arcpy.da.UpdateCursor(costs_table, ["unit_cost", "quantity", "total_cost"]) as curs:
-    for row in curs:
-        unit_cost, quantity, total_cost = row
-        total_cost = unit_cost * quantity
-        arcpy.updateRow(row)
-```
