@@ -4,7 +4,7 @@
   <title><![CDATA[Josh Werts]]></title>
   <link href="http://joshwerts.com/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2014-08-08T07:24:15-04:00</updated>
+  <updated>2014-08-08T07:28:12-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -88,7 +88,7 @@
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">UpdateCursor</span><span class="p">(</span><span class="n">costs_table</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;unit_cost&quot;</span><span class="p">,</span> <span class="s">&quot;quantity&quot;</span><span class="p">,</span> <span class="s">&quot;total_cost&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">curs</span><span class="p">:</span>
 </span><span class='line'>    <span class="k">for</span> <span class="n">unit_cost</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">total_cost</span> <span class="ow">in</span> <span class="n">curs</span><span class="p">:</span>
 </span><span class='line'>        <span class="n">total_cost</span> <span class="o">=</span> <span class="n">unit_cost</span> <span class="o">*</span> <span class="n">quantity</span>
-</span><span class='line'>        <span class="n">arcpy</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span> <span class="p">(</span><span class="n">unit_cost</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">total_cost</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>        <span class="n">curs</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span> <span class="p">(</span><span class="n">unit_cost</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">total_cost</span><span class="p">)</span> <span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
 ]]></content>

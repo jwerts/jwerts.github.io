@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Arcmap | Josh Werts]]></title>
   <link href="http://joshwerts.com/blog/categories/arcmap/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2014-08-08T07:24:15-04:00</updated>
+  <updated>2014-08-08T07:28:12-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -78,7 +78,7 @@ with arcpy.da.UpdateCursor(costs_table, [&ldquo;unit_cost&rdquo;, &ldquo;quantit
 
 <pre><code>for unit_cost, quantity, total_cost in curs:
     total_cost = unit_cost * quantity
-    arcpy.updateRow( (unit_cost, quantity, total_cost) )
+    curs.updateRow( (unit_cost, quantity, total_cost) )
 </code></pre>
 
 <p>```</p>
