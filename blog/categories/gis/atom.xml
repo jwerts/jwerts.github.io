@@ -4,6 +4,7 @@
   <title><![CDATA[Category: Gis | Josh Werts]]></title>
   <link href="http://joshwerts.com/blog/categories/gis/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
+
   <updated>2014-12-21T17:05:18-05:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
@@ -12,8 +13,9 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
+
   <entry>
+
     <title type="html"><![CDATA[arcpy.da Cursors and Readability Part 2]]></title>
     <link href="http://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/"/>
     <updated>2014-12-21T16:36:33-05:00</updated>
@@ -79,8 +81,9 @@ curs.updateRow( row.values() )
 <p>```</p>
 ]]></content>
   </entry>
-  
+
   <entry>
+
     <title type="html"><![CDATA[arcpy.da Cursors and Readability Part 1]]></title>
     <link href="http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/"/>
     <updated>2014-08-07T18:36:54-04:00</updated>
@@ -151,7 +154,7 @@ with arcpy.da.UpdateCursor(costs_table, [&ldquo;unit_cost&rdquo;, &ldquo;quantit
 <p>```</p>
 ]]></content>
   </entry>
-  
+
   <entry>
     <title type="html"><![CDATA[Arcpy: Reorder Fields]]></title>
     <link href="http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/"/>
@@ -166,7 +169,7 @@ import arcpy</p>
 
 <p>def reorder_fields(table, out_table, field_order, add_missing=True):</p>
 
-<pre><code>""" 
+<pre><code>"""
 Reorders fields in input featureclass/table
 :table:         input table (fc, table, layer, etc)
 :out_table:     output table (fc, table, layer, etc)
@@ -220,7 +223,7 @@ reorder_fields(in_fc, out_fc, new_field_order)
 <p>I&rsquo;ve tested this in 10.1.1+ &ndash; it may work in 10.0 as well and should work with any license level.</p>
 ]]></content>
   </entry>
-  
+
   <entry>
     <title type="html"><![CDATA[Arcpy: Rename Fields]]></title>
     <link href="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/"/>
@@ -245,7 +248,7 @@ reorder_fields(in_fc, out_fc, new_field_order)
 <p>```python
 def rename_fields(table, out_table, new_name_by_old_name):</p>
 
-<pre><code>""" Renames specified fields in input feature class/table 
+<pre><code>""" Renames specified fields in input feature class/table
 :table:                 input table (fc, table, layer, etc)
 :out_table:             output table (fc, table, layer, etc)
 :new_name_by_old_name:  {'old_field_name':'new_field_name',...}
@@ -294,5 +297,5 @@ return out_table
 <p>This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.</p>
 ]]></content>
   </entry>
-  
+
 </feed>
