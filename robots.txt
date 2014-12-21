@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://joshwerts.com/sitemap.xml 

@@ -1,116 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Josh Werts</title>
-  <meta name="author" content="Josh Werts">
-
-  
-  <meta name="description" content="arcpy.da cursors provide the simplest data structure by default (tuples). Python generators provide a pretty neat way of customizing these cursors to &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><![CDATA[Josh Werts]]></title>
+  <link href="http://joshwerts.com/atom.xml" rel="self"/>
+  <link href="http://joshwerts.com/"/>
+  <updated>2014-12-21T17:05:18-05:00</updated>
+  <id>http://joshwerts.com/</id>
+  <author>
+    <name><![CDATA[Josh Werts]]></name>
+    <email><![CDATA[joshwerts@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-  <link rel="canonical" href="http://joshwerts.com">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Josh Werts" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-49518677-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">Josh Werts</a></h1>
-  
-    <h2>{ 'work': ['gis', 'py', 'js' ...], 'fun': ['bike', 'hike', 'paddle', ...] }</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:joshwerts.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-<!--   <li><a href="/about">About</a></li> -->
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/">arcpy.da Cursors and Readability Part 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-12-21T16:36:33-05:00" pubdate data-updated="true">Dec 21<sup>st</sup>, 2014</time>
-        
-           | <a href="/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/#disqus_thread"
-             data-disqus-identifier="http://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>arcpy.da cursors provide the simplest data structure by default (tuples).  Python generators provide a pretty neat way of customizing these cursors to increase readability.</p>
+  <entry>
+    <title type="html"><![CDATA[arcpy.da Cursors and Readability Part 2]]></title>
+    <link href="http://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/"/>
+    <updated>2014-12-21T16:36:33-05:00</updated>
+    <id>http://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2</id>
+    <content type="html"><![CDATA[<p>arcpy.da cursors provide the simplest data structure by default (tuples).  Python generators provide a pretty neat way of customizing these cursors to increase readability.</p>
 
 <h3>SearchCursor:</h3>
 
@@ -181,45 +89,15 @@
 </span><span class='line'>    <span class="n">curs</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span> <span class="n">row</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/08/07/arcpy-dot-da-cursors/">arcpy.da Cursors and Readability Part 1</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-08-07T18:36:54-04:00" pubdate data-updated="true">Aug 7<sup>th</sup>, 2014</time>
-        
-           | <a href="/blog/2014/08/07/arcpy-dot-da-cursors/#disqus_thread"
-             data-disqus-identifier="http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The arcpy.da cursors (ie: arcpy.da.SearchCursor) are far and away better than the regular cursors (ie: arcpy.SearchCursor).  They&rsquo;re more pythonic, incredibly flexible, faster, and allow context management (with).  However, their straight-out-of-the-box-use may be a little hard to read and maintain.</p>
+  <entry>
+    <title type="html"><![CDATA[arcpy.da Cursors and Readability Part 1]]></title>
+    <link href="http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/"/>
+    <updated>2014-08-07T18:36:54-04:00</updated>
+    <id>http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors</id>
+    <content type="html"><![CDATA[<p>The arcpy.da cursors (ie: arcpy.da.SearchCursor) are far and away better than the regular cursors (ie: arcpy.SearchCursor).  They&rsquo;re more pythonic, incredibly flexible, faster, and allow context management (with).  However, their straight-out-of-the-box-use may be a little hard to read and maintain.</p>
 
 <h3>Fun with Tuples</h3>
 
@@ -292,45 +170,15 @@
 </span><span class='line'>        <span class="n">curs</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span> <span class="p">(</span><span class="n">unit_cost</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">total_cost</span><span class="p">)</span> <span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/06/28/python-recursion-with-lists/">Python: Recursion With Lists</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-06-28T11:58:45-04:00" pubdate data-updated="true">Jun 28<sup>th</sup>, 2014</time>
-        
-           | <a href="/blog/2014/06/28/python-recursion-with-lists/#disqus_thread"
-             data-disqus-identifier="http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I rarely find use cases for recursion in my every day work, but every once in a while, there&rsquo;s a problem that comes up where I instantly think: &ldquo;Recursion!&rdquo; (typically followed by an equal mix of excitement and dread).</p>
+  <entry>
+    <title type="html"><![CDATA[Python: Recursion With Lists]]></title>
+    <link href="http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/"/>
+    <updated>2014-06-28T11:58:45-04:00</updated>
+    <id>http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists</id>
+    <content type="html"><![CDATA[<p>I rarely find use cases for recursion in my every day work, but every once in a while, there&rsquo;s a problem that comes up where I instantly think: &ldquo;Recursion!&rdquo; (typically followed by an equal mix of excitement and dread).</p>
 
 <p>I often try to get away from GIS related programming when I&rsquo;m not at work.  With limited free time, Python&rsquo;s the perfect language to focus on fundamentals without getting bogged down with other concerns.</p>
 
@@ -459,45 +307,15 @@
 <p>The list <code>primes</code> is passed by reference into the recursive function and simply appended to throughout the operation to keep track of the values.  There is no actual return value from the function.</p>
 
 <p>This could be difficult to follow if the end user used: <code>get_primes(y, primes) -&gt; void</code> directly but since it&rsquo;s wrapped in a simpler interface:  <code>prime_factors(x) -&gt; primes</code>, the end result is a returned list as expected.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/17/arcpy-reorder-fields/">Arcpy: Reorder Fields</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-17T17:34:45-04:00" pubdate data-updated="true">Apr 17<sup>th</sup>, 2014</time>
-        
-           | <a href="/blog/2014/04/17/arcpy-reorder-fields/#disqus_thread"
-             data-disqus-identifier="http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Here&rsquo;s another handy function for re-ordering fields in a feature class.  Like the <code>rename_fields</code> function previously posted, it recreates the existing field mappings and modifies as necessary.  The output is a new feature class with fields in the order specified.</p>
+  <entry>
+    <title type="html"><![CDATA[Arcpy: Reorder Fields]]></title>
+    <link href="http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/"/>
+    <updated>2014-04-17T17:34:45-04:00</updated>
+    <id>http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields</id>
+    <content type="html"><![CDATA[<p>Here&rsquo;s another handy function for re-ordering fields in a feature class.  Like the <code>rename_fields</code> function previously posted, it recreates the existing field mappings and modifies as necessary.  The output is a new feature class with fields in the order specified.</p>
 
 <p>The only caveat is that required fields always get pushed to the front (so the featureclass will start with OBJECTID, Shape, rest of fields&hellip;).  After required fields are out of the way, the rest of the fields are added in the order specified in the <code>field_order</code> list.  If any fields are missing, they are added to the end of the feature class.</p>
 
@@ -602,47 +420,17 @@
 
 
 <p>I&rsquo;ve tested this in 10.1.1+ &ndash; it may work in 10.0 as well and should work with any license level.</p>
-</div>
+]]></content>
+  </entry>
   
-  
+  <entry>
+    <title type="html"><![CDATA[Arcpy: Rename Fields]]></title>
+    <link href="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/"/>
+    <updated>2014-04-01T07:43:15-04:00</updated>
+    <id>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields</id>
+    <content type="html"><![CDATA[<p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
 
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/01/arcpy-rename-fields/">Arcpy: Rename Fields</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-01T07:43:15-04:00" pubdate data-updated="true">Apr 1<sup>st</sup>, 2014</time>
-        
-           | <a href="/blog/2014/04/01/arcpy-rename-fields/#disqus_thread"
-             data-disqus-identifier="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
-
-<p><img class="center" src="/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="alter field tool" alt="images"></p>
+<p><img class="center" src="http://joshwerts.com/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="alter field tool" alt="images"></p>
 
 <p>This works well for a single field, but you may need something different if:</p>
 
@@ -731,137 +519,7 @@
 
 
 <p>This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section>
-  <h1>About Me</h1>
-  <p>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.  I do roughly equal portions of frontend web and backend ETL/service development primarily within the ESRI framework.  <br/><br/>I &#10084; Python!</p>
-  <p><a href="mailto:joshwerts@gmail.com"/>joshwerts@gmail.com</a></p>
-</section>
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/">arcpy.da Cursors and Readability Part 2</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/08/07/arcpy-dot-da-cursors/">arcpy.da Cursors and Readability Part 1</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/06/28/python-recursion-with-lists/">Python: Recursion With Lists</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/17/arcpy-reorder-fields/">Arcpy: Reorder Fields</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/01/arcpy-rename-fields/">Arcpy: Rename Fields</a>
-      </li>
-    
-  </ul>
-</section>
-
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  
-  <a href="https://github.com/jwerts">@jwerts</a> on GitHub
-  
-  <script type="text/javascript">
-    $(document).ready(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'jwerts',
-            count: 0,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-  
-</aside>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Josh Werts - <a href="mailto:joshwerts@gmail.com">joshwerts@gmail.com</a> - 
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'jwerts';
-      
-        
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {return;}
-  js = d.createElement(s); js.id = id; js.async = true;
-  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
-</html>
+</feed>
