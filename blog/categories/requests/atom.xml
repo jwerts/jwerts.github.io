@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Requests | Josh Werts]]></title>
+  <link href="http://joshwerts.com/blog/categories/requests/atom.xml" rel="self"/>
+  <link href="http://joshwerts.com/"/>
+  <updated>2015-04-13T10:41:58-04:00</updated>
+  <id>http://joshwerts.com/</id>
+  <author>
+    <name><![CDATA[Josh Werts]]></name>
+    <email><![CDATA[joshwerts@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Debugging Server Object Extensions (SOEs) in Style]]></title>
+    <link href="http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/"/>
+    <updated>2015-04-12T17:09:42-04:00</updated>
+    <id>http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style</id>
+    <content type="html"><![CDATA[<p>Server Object Extensions (SOEs) can be incredibly powerful, but they can also be a pain to debug.</p>
+
+<h4>Typical workflow:</h4>
+
+<ol>
+<li>Rebuild solution</li>
+<li>Open ArcGIS Manager in browser &ndash;> Site &ndash;> Extensions &ndash;> Update Extension by selecting .soe file.</li>
+<li>Restart all of the services that depended on the SOE.</li>
+<li>Attach Visual Studio to process.</li>
+</ol>
+
+
+<p>Steps 2 &amp; 3 are the really annoying ones, but they can be automated!</p>
+
+<p>It turns out this is really a post about REST and Python.</p>
+
+<p>When you update an SOE through the ArcGIS Manager app (<a href="http://localhost/arcgis/manager">http://localhost/arcgis/manager</a>), the web application is actually making calls to ArcGIS Server REST admin endpoints.</p>
+
+<h3>Automate with Python</h3>
+
+<p>I&rsquo;ll cut to the chase.</p>
+
+<p><strong>See the full script here:</strong><br/>
+<a href="https://github.com/jwerts/soe-updater">https://github.com/jwerts/soe-updater</a></p>
+
+<p>Usage (simply run from command line after rebuilding SOE solution):
+```
+C:\Projects_General_Code\soe-updater>python update_soe.py</p>
+
+<p>Retrieving token&hellip;
+Retrieved: oUK04q-J8ORWDUrSWGPfq8zAU29u3q5_YZ79ZvcFZx8kFneOMb5Z2Y2Yf19
+Uploading SOE&hellip;
+Uploaded: ibd792bae-a986-4861-8ac3-c16d42f4d610
+Updating SOE&hellip;
+Updated!
+Starting services&hellip;
+Starting service_folder/service.MapServer
+Started!
+```</p>
+
+<p>Your SOE will be updated and services restarted.  You can re-attach to the service processes or if you&rsquo;re using <code>System.Diagnostics.Debugger.Launch();</code> in your <code>Init()</code> function, you&rsquo;ll automatically be greeted with the dialog to attach your process once the script finishes and the services restart.</p>
+
+<br/><br/>
+
+
+<p>Now a little explanation of what&rsquo;s going on&hellip;</p>
+
+<h3>REST API Calls</h3>
+
+<h4>Generate token</h4>
+
+<p>Because we&rsquo;re going to automate this, we need a preliminary step.  We&rsquo;ll generate a token that can be passed to subsequent steps.
+<code>
+http://localhost/arcgis/rest/tokens
+</code></p>
+
+<h4>Upload the SOE</h4>
+
+<p>The .soe file that gets generated after building in Visual Studio is uploaded to ArcGIS Server and returns an itemID.
+<code>
+http://localhost/arcgis/admin/uploads/upload
+</code></p>
+
+<h4>Update the SOE</h4>
+
+<p>Another call references the uploaded .soe through the itemID and updates the extension.
+<code>
+http://localhost/arcgis/admin/services/types/extensions/update
+</code></p>
+
+<h4>Restart services</h4>
+
+<p>After the SOE is updated, all services that use it are stopped and must be restarted.  This can also be accomplished through REST calls:
+<code>
+http://localhost/arcgis/admin/services/[service_folder]/[service_name]/start
+</code></p>
+
+<p>These calls are all pretty straightford to automate in a Python script using the requests library (<a href="http://docs.python-requests.org/en/latest/">http://docs.python-requests.org/en/latest/</a>).</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | Josh Werts]]></title>
   <link href="http://joshwerts.com/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2014-12-21T17:05:18-05:00</updated>
+  <updated>2015-04-13T10:41:58-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -12,6 +12,92 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Debugging Server Object Extensions (SOEs) in Style]]></title>
+    <link href="http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/"/>
+    <updated>2015-04-12T17:09:42-04:00</updated>
+    <id>http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style</id>
+    <content type="html"><![CDATA[<p>Server Object Extensions (SOEs) can be incredibly powerful, but they can also be a pain to debug.</p>
+
+<h4>Typical workflow:</h4>
+
+<ol>
+<li>Rebuild solution</li>
+<li>Open ArcGIS Manager in browser &ndash;> Site &ndash;> Extensions &ndash;> Update Extension by selecting .soe file.</li>
+<li>Restart all of the services that depended on the SOE.</li>
+<li>Attach Visual Studio to process.</li>
+</ol>
+
+
+<p>Steps 2 &amp; 3 are the really annoying ones, but they can be automated!</p>
+
+<p>It turns out this is really a post about REST and Python.</p>
+
+<p>When you update an SOE through the ArcGIS Manager app (<a href="http://localhost/arcgis/manager">http://localhost/arcgis/manager</a>), the web application is actually making calls to ArcGIS Server REST admin endpoints.</p>
+
+<h3>Automate with Python</h3>
+
+<p>I&rsquo;ll cut to the chase.</p>
+
+<p><strong>See the full script here:</strong><br/>
+<a href="https://github.com/jwerts/soe-updater">https://github.com/jwerts/soe-updater</a></p>
+
+<p>Usage (simply run from command line after rebuilding SOE solution):
+```
+C:\Projects_General_Code\soe-updater>python update_soe.py</p>
+
+<p>Retrieving token&hellip;
+Retrieved: oUK04q-J8ORWDUrSWGPfq8zAU29u3q5_YZ79ZvcFZx8kFneOMb5Z2Y2Yf19
+Uploading SOE&hellip;
+Uploaded: ibd792bae-a986-4861-8ac3-c16d42f4d610
+Updating SOE&hellip;
+Updated!
+Starting services&hellip;
+Starting service_folder/service.MapServer
+Started!
+```</p>
+
+<p>Your SOE will be updated and services restarted.  You can re-attach to the service processes or if you&rsquo;re using <code>System.Diagnostics.Debugger.Launch();</code> in your <code>Init()</code> function, you&rsquo;ll automatically be greeted with the dialog to attach your process once the script finishes and the services restart.</p>
+
+<br/><br/>
+
+
+<p>Now a little explanation of what&rsquo;s going on&hellip;</p>
+
+<h3>REST API Calls</h3>
+
+<h4>Generate token</h4>
+
+<p>Because we&rsquo;re going to automate this, we need a preliminary step.  We&rsquo;ll generate a token that can be passed to subsequent steps.
+<code>
+http://localhost/arcgis/rest/tokens
+</code></p>
+
+<h4>Upload the SOE</h4>
+
+<p>The .soe file that gets generated after building in Visual Studio is uploaded to ArcGIS Server and returns an itemID.
+<code>
+http://localhost/arcgis/admin/uploads/upload
+</code></p>
+
+<h4>Update the SOE</h4>
+
+<p>Another call references the uploaded .soe through the itemID and updates the extension.
+<code>
+http://localhost/arcgis/admin/services/types/extensions/update
+</code></p>
+
+<h4>Restart services</h4>
+
+<p>After the SOE is updated, all services that use it are stopped and must be restarted.  This can also be accomplished through REST calls:
+<code>
+http://localhost/arcgis/admin/services/[service_folder]/[service_name]/start
+</code></p>
+
+<p>These calls are all pretty straightford to automate in a Python script using the requests library (<a href="http://docs.python-requests.org/en/latest/">http://docs.python-requests.org/en/latest/</a>).</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[arcpy.da Cursors and Readability Part 2]]></title>
@@ -305,80 +391,6 @@ reorder_fields(in_fc, out_fc, new_field_order)
 </code></p>
 
 <p>I&rsquo;ve tested this in 10.1.1+ &ndash; it may work in 10.0 as well and should work with any license level.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Arcpy: Rename Fields]]></title>
-    <link href="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/"/>
-    <updated>2014-04-01T07:43:15-04:00</updated>
-    <id>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields</id>
-    <content type="html"><![CDATA[<p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
-
-<p><img class="center" src="/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="&lsquo;alter field tool&rsquo; &lsquo;images&rsquo;" ></p>
-
-<p>This works well for a single field, but you may need something different if:</p>
-
-<ul>
-<li>you&rsquo;re still on 10.0/10.1,</li>
-<li>you want to rename several fields at once,</li>
-<li>you would prefer not to rename the fields in-place,</li>
-<li>you need to rename fields in a source unsupported by the Alter Field tool (hint: shapefiles).</li>
-</ul>
-
-
-<p>Here&rsquo;s a great function for renaming fields (and maintaining their order).  It can be used in the python console.</p>
-
-<p>```python
-def rename_fields(table, out_table, new_name_by_old_name):</p>
-
-<pre><code>""" Renames specified fields in input feature class/table 
-:table:                 input table (fc, table, layer, etc)
-:out_table:             output table (fc, table, layer, etc)
-:new_name_by_old_name:  {'old_field_name':'new_field_name',...}
--&gt;  out_table
-"""
-existing_field_names = [field.name for field in arcpy.ListFields(table)]
-
-field_mappings = arcpy.FieldMappings()
-field_mappings.addTable(table)
-
-for old_field_name, new_field_name in new_name_by_old_name.iteritems():
-    if old_field_name not in existing_field_names:
-        message = "Field: {0} not in {1}".format(old_field_name, table)
-        raise Exception(message)
-
-    mapping_index = field_mappings.findFieldMapIndex(old_field_name)
-    field_map = field_mappings.fieldMappings[mapping_index]
-    output_field = field_map.outputField
-    output_field.name = new_field_name
-    output_field.aliasName = new_field_name
-    field_map.outputField = output_field
-    field_mappings.replaceFieldMap(mapping_index, field_map)
-
-# use merge with single input just to use new field_mappings
-arcpy.Merge_management(table, out_table, field_mappings)
-return out_table
-</code></pre>
-
-<p>```</p>
-
-<p>The function accepts the input feature class, path to output, and a dictionary mapping the old names to the new names:</p>
-
-<p>Usage:
-```python</p>
-
-<h1>does need need to include all fields, only those you want to rename</h1>
-
-<p>new_name_by_old_name = { &lsquo;old_name_1&rsquo;:&lsquo;new_name_1&rsquo;,</p>
-
-<pre><code>                     'old_name_2':'new_name_2' }
-</code></pre>
-
-<p>rename_fields(in_fc, renamed_fc, new_name_by_old_name)
-```</p>
-
-<p>This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.</p>
 ]]></content>
   </entry>
   

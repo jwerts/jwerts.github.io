@@ -4,7 +4,7 @@
   <title><![CDATA[Josh Werts]]></title>
   <link href="http://joshwerts.com/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2014-12-21T17:05:18-05:00</updated>
+  <updated>2015-04-13T10:41:58-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -12,6 +12,107 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Debugging Server Object Extensions (SOEs) in Style]]></title>
+    <link href="http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/"/>
+    <updated>2015-04-12T17:09:42-04:00</updated>
+    <id>http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style</id>
+    <content type="html"><![CDATA[<p>Server Object Extensions (SOEs) can be incredibly powerful, but they can also be a pain to debug.</p>
+
+<h4>Typical workflow:</h4>
+
+<ol>
+<li>Rebuild solution</li>
+<li>Open ArcGIS Manager in browser &ndash;> Site &ndash;> Extensions &ndash;> Update Extension by selecting .soe file.</li>
+<li>Restart all of the services that depended on the SOE.</li>
+<li>Attach Visual Studio to process.</li>
+</ol>
+
+
+<p>Steps 2 &amp; 3 are the really annoying ones, but they can be automated!</p>
+
+<p>It turns out this is really a post about REST and Python.</p>
+
+<p>When you update an SOE through the ArcGIS Manager app (<a href="http://localhost/arcgis/manager">http://localhost/arcgis/manager</a>), the web application is actually making calls to ArcGIS Server REST admin endpoints.</p>
+
+<h3>Automate with Python</h3>
+
+<p>I&rsquo;ll cut to the chase.</p>
+
+<p><strong>See the full script here:</strong><br/>
+<a href="https://github.com/jwerts/soe-updater">https://github.com/jwerts/soe-updater</a></p>
+
+<p>Usage (simply run from command line after rebuilding SOE solution):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>C:\Projects\_General\_Code\soe-updater&gt;python update_soe.py
+</span><span class='line'>
+</span><span class='line'>Retrieving token...
+</span><span class='line'>Retrieved: oUK04q-J8ORWDUrSWGPfq8zAU29u3q5_YZ79ZvcFZx8kFneOMb5Z2Y2Yf19
+</span><span class='line'>Uploading SOE...
+</span><span class='line'>Uploaded: ibd792bae-a986-4861-8ac3-c16d42f4d610
+</span><span class='line'>Updating SOE...
+</span><span class='line'>Updated!
+</span><span class='line'>Starting services...
+</span><span class='line'>Starting service_folder/service.MapServer
+</span><span class='line'>Started!</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Your SOE will be updated and services restarted.  You can re-attach to the service processes or if you&rsquo;re using <code>System.Diagnostics.Debugger.Launch();</code> in your <code>Init()</code> function, you&rsquo;ll automatically be greeted with the dialog to attach your process once the script finishes and the services restart.</p>
+
+<br/><br/>
+
+
+<p>Now a little explanation of what&rsquo;s going on&hellip;</p>
+
+<h3>REST API Calls</h3>
+
+<h4>Generate token</h4>
+
+<p>Because we&rsquo;re going to automate this, we need a preliminary step.  We&rsquo;ll generate a token that can be passed to subsequent steps.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost/arcgis/rest/tokens</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Upload the SOE</h4>
+
+<p>The .soe file that gets generated after building in Visual Studio is uploaded to ArcGIS Server and returns an itemID.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost/arcgis/admin/uploads/upload</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Update the SOE</h4>
+
+<p>Another call references the uploaded .soe through the itemID and updates the extension.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost/arcgis/admin/services/types/extensions/update</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Restart services</h4>
+
+<p>After the SOE is updated, all services that use it are stopped and must be restarted.  This can also be accomplished through REST calls:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost/arcgis/admin/services/[service_folder]/[service_name]/start</span></code></pre></td></tr></table></div></figure>
+
+
+<p>These calls are all pretty straightford to automate in a Python script using the requests library (<a href="http://docs.python-requests.org/en/latest/">http://docs.python-requests.org/en/latest/</a>).</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[arcpy.da Cursors and Readability Part 2]]></title>

@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Debugging Server Object Extensions (SOEs) in Style - Josh Werts</title>
+  <meta name="author" content="Josh Werts">
+
+  
+  <meta name="description" content="Server Object Extensions (SOEs) can be incredibly powerful, but they can also be a pain to debug. Typical workflow: Rebuild solution
+Open ArcGIS &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Josh Werts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-49518677-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Josh Werts</a></h1>
+  
+    <h2>{ 'work': ['gis', 'py', 'js' ...], 'fun': ['bike', 'hike', 'paddle', ...] }</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:joshwerts.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+<!--   <li><a href="/about">About</a></li> -->
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Debugging Server Object Extensions (SOEs) in Style</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-04-12T17:09:42-04:00" pubdate data-updated="true">Apr 12<sup>th</sup>, 2015</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://joshwerts.com">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Server Object Extensions (SOEs) can be incredibly powerful, but they can also be a pain to debug.</p>
+
+<h4>Typical workflow:</h4>
+
+<ol>
+<li>Rebuild solution</li>
+<li>Open ArcGIS Manager in browser &ndash;> Site &ndash;> Extensions &ndash;> Update Extension by selecting .soe file.</li>
+<li>Restart all of the services that depended on the SOE.</li>
+<li>Attach Visual Studio to process.</li>
+</ol>
+
+
+<p>Steps 2 &amp; 3 are the really annoying ones, but they can be automated!</p>
+
+<p>It turns out this is really a post about REST and Python.</p>
+
+<p>When you update an SOE through the ArcGIS Manager app (<a href="http://localhost/arcgis/manager">http://localhost/arcgis/manager</a>), the web application is actually making calls to ArcGIS Server REST admin endpoints.</p>
+
+<h3>Automate with Python</h3>
+
+<p>I&rsquo;ll cut to the chase.</p>
+
+<p><strong>See the full script here:</strong><br/>
+<a href="https://github.com/jwerts/soe-updater">https://github.com/jwerts/soe-updater</a></p>
+
+<p>Usage (simply run from command line after rebuilding SOE solution):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>C:\Projects\_General\_Code\soe-updater&gt;python update_soe.py
+</span><span class='line'>
+</span><span class='line'>Retrieving token...
+</span><span class='line'>Retrieved: oUK04q-J8ORWDUrSWGPfq8zAU29u3q5_YZ79ZvcFZx8kFneOMb5Z2Y2Yf19
+</span><span class='line'>Uploading SOE...
+</span><span class='line'>Uploaded: ibd792bae-a986-4861-8ac3-c16d42f4d610
+</span><span class='line'>Updating SOE...
+</span><span class='line'>Updated!
+</span><span class='line'>Starting services...
+</span><span class='line'>Starting service_folder/service.MapServer
+</span><span class='line'>Started!</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Your SOE will be updated and services restarted.  You can re-attach to the service processes or if you&rsquo;re using <code>System.Diagnostics.Debugger.Launch();</code> in your <code>Init()</code> function, you&rsquo;ll automatically be greeted with the dialog to attach your process once the script finishes and the services restart.</p>
+
+<br/><br/>
+
+
+<p>Now a little explanation of what&rsquo;s going on&hellip;</p>
+
+<h3>REST API Calls</h3>
+
+<h4>Generate token</h4>
+
+<p>Because we&rsquo;re going to automate this, we need a preliminary step.  We&rsquo;ll generate a token that can be passed to subsequent steps.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost/arcgis/rest/tokens</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Upload the SOE</h4>
+
+<p>The .soe file that gets generated after building in Visual Studio is uploaded to ArcGIS Server and returns an itemID.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost/arcgis/admin/uploads/upload</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Update the SOE</h4>
+
+<p>Another call references the uploaded .soe through the itemID and updates the extension.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost/arcgis/admin/services/types/extensions/update</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Restart services</h4>
+
+<p>After the SOE is updated, all services that use it are stopped and must be restarted.  This can also be accomplished through REST calls:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://localhost/arcgis/admin/services/[service_folder]/[service_name]/start</span></code></pre></td></tr></table></div></figure>
+
+
+<p>These calls are all pretty straightford to automate in a Python script using the requests library (<a href="http://docs.python-requests.org/en/latest/">http://docs.python-requests.org/en/latest/</a>).</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Josh Werts</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-04-12T17:09:42-04:00" pubdate data-updated="true">Apr 12<sup>th</sup>, 2015</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/arcgis-server/'>arcgis server</a>, <a class='category' href='/blog/categories/arcobjects/'>arcobjects</a>, <a class='category' href='/blog/categories/python/'>python</a>, <a class='category' href='/blog/categories/requests/'>requests</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/" data-via="" data-counturl="http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/" title="Previous Post: arcpy.da Cursors and Readability Part 2">&laquo; arcpy.da Cursors and Readability Part 2</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.  I do roughly equal portions of frontend web and backend ETL/service development primarily within the ESRI framework.  <br/><br/>I &#10084; Python!</p>
+  <p><a href="mailto:joshwerts@gmail.com"/>joshwerts@gmail.com</a></p>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/">Debugging Server Object Extensions (SOEs) in Style</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/">arcpy.da Cursors and Readability Part 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/08/07/arcpy-dot-da-cursors/">arcpy.da Cursors and Readability Part 1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/06/28/python-recursion-with-lists/">Python: Recursion With Lists</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/17/arcpy-reorder-fields/">Arcpy: Reorder Fields</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/jwerts">@jwerts</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'jwerts',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Josh Werts - <a href="mailto:joshwerts@gmail.com">joshwerts@gmail.com</a> - 
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'jwerts';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/';
+        var disqus_url = 'http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
