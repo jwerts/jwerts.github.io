@@ -28,8 +28,19 @@ https://github.com/jwerts/soe-updater
 
 Usage (simply run from command line after rebuilding SOE solution):
 ```
-python update_soe.py
+C:\Projects\_General\_Code\soe-updater>python update_soe.py
+
+Retrieving token...
+Retrieved: oUK04q-J8ORWDUrSWGPfq8zAU29u3q5_YZ79ZvcFZx8kFneOMb5Z2Y2Yf19
+Uploading SOE...
+Uploaded: ibd792bae-a986-4861-8ac3-c16d42f4d610
+Updating SOE...
+Updated!
+Starting services...
+Starting service_folder/service.MapServer
+Started!
 ```
+
 Your SOE will be updated and services restarted.  You can re-attach to the service processes or if you're using ```System.Diagnostics.Debugger.Launch();``` in your ```Init()``` function, you'll automatically be greeted with the dialog to attach your process once the script finishes and the services restart.
 
 <br/><br/>
