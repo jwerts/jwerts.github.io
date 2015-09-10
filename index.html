@@ -9,8 +9,8 @@
   <meta name="author" content="Josh Werts">
 
   
-  <meta name="description" content="Server Object Extensions (SOEs) can be incredibly powerful, but they can also be a pain to debug. Typical workflow: Rebuild solution
-Open ArcGIS &hellip;">
+  <meta name="description" content="It&rsquo;s inevitable that you eventually run into this error when scripting with arcpy (arcpy.Project_management):
+http://help.arcgis.com/en%20/ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,111 @@ Open ArcGIS &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass/">Arcpy Project In_memory Featureclass</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-09-10T14:54:08-04:00" pubdate data-updated="true">Sep 10<sup>th</sup>, 2015</time>
+        
+           | <a href="/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass/#disqus_thread"
+             data-disqus-identifier="http://joshwerts.com/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>It&rsquo;s inevitable that you eventually run into this error when scripting with arcpy (arcpy.Project_management):
+<a href="http://help.arcgis.com/en%20/arcgisdesktop/10.0/help/index.html#//00vp0000000m000944.htm">http://help.arcgis.com/en%20/arcgisdesktop/10.0/help/index.html#//00vp0000000m000944.htm</a></p>
+
+<p>The standard project tool does not support in_memory workspaces.</p>
+
+<p>Here&rsquo;s the workaround &ndash; we just create a new featureclass using the source featureclass as a template and then exploit the spatial_reference parameter of arcpy.da.SearchCursor to project on the fly while inserting into the new featureclass.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">split</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">arcpy</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># ....</span>
+</span><span class='line'><span class="c"># assume we&#39;ve already created this somewhere</span>
+</span><span class='line'><span class="n">source_fc</span> <span class="o">=</span> <span class="s">r&quot;in_memory/source_fc&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># destination featureclass to be created</span>
+</span><span class='line'><span class="n">projected_fc</span> <span class="o">=</span> <span class="s">r&quot;in_memory/projected_source_fc&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># destination projection</span>
+</span><span class='line'><span class="n">web_mercator</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">(</span><span class="mi">102100</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># create destination feature class using the source as a template to establish schema</span>
+</span><span class='line'><span class="c"># and set destination spatial reference</span>
+</span><span class='line'><span class="n">path</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">projected_fc</span><span class="p">)</span>
+</span><span class='line'><span class="n">arcpy</span><span class="o">.</span><span class="n">management</span><span class="o">.</span><span class="n">CreateFeatureclass</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="s">&#39;POLYLINE&#39;</span><span class="p">,</span>
+</span><span class='line'>                                    <span class="n">template</span><span class="o">=</span><span class="n">source_fc</span><span class="p">,</span>
+</span><span class='line'>                                    <span class="n">spatial_reference</span><span class="o">=</span><span class="n">web_mercator</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># specify copy of all fields from source to destination</span>
+</span><span class='line'><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Shape@&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">ListFields</span><span class="p">(</span><span class="n">source_fc</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">required</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># project source geometries on the fly while inserting to destination featureclass</span>
+</span><span class='line'><span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">source_fc</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">spatial_reference</span><span class="o">=</span><span class="n">web_mercator</span><span class="p">)</span> <span class="k">as</span> <span class="n">curs</span><span class="p">,</span> \
+</span><span class='line'>     <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">InsertCursor</span><span class="p">(</span><span class="n">projected_fc</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span> <span class="k">as</span> <span class="n">ins_curs</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">source_fc</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">ins_curs</span><span class="o">.</span><span class="n">insertRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -888,6 +993,10 @@ Open ArcGIS &hellip;">
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass/">Arcpy Project In_memory Featureclass</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/">Debugging Server Object Extensions (SOEs) in Style</a>
       </li>
     
@@ -901,10 +1010,6 @@ Open ArcGIS &hellip;">
     
       <li class="post">
         <a href="/blog/2014/06/28/python-recursion-with-lists/">Python: Recursion With Lists</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/17/arcpy-reorder-fields/">Arcpy: Reorder Fields</a>
       </li>
     
   </ul>

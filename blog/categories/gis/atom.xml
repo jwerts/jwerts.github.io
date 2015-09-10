@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Gis | Josh Werts]]></title>
   <link href="http://joshwerts.com/blog/categories/gis/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2015-04-13T10:41:58-04:00</updated>
+  <updated>2015-09-10T15:16:37-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -12,6 +12,65 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Arcpy Project In_memory Featureclass]]></title>
+    <link href="http://joshwerts.com/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass/"/>
+    <updated>2015-09-10T14:54:08-04:00</updated>
+    <id>http://joshwerts.com/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass</id>
+    <content type="html"><![CDATA[<p>It&rsquo;s inevitable that you eventually run into this error when scripting with arcpy (arcpy.Project_management):
+<a href="http://help.arcgis.com/en%20/arcgisdesktop/10.0/help/index.html#//00vp0000000m000944.htm">http://help.arcgis.com/en%20/arcgisdesktop/10.0/help/index.html#//00vp0000000m000944.htm</a></p>
+
+<p>The standard project tool does not support in_memory workspaces.</p>
+
+<p>Here&rsquo;s the workaround &ndash; we just create a new featureclass using the source featureclass as a template and then exploit the spatial_reference parameter of arcpy.da.SearchCursor to project on the fly while inserting into the new featureclass.</p>
+
+<p>```python
+from os.path import split</p>
+
+<p>import arcpy</p>
+
+<h1>&hellip;.</h1>
+
+<h1>assume we&rsquo;ve already created this somewhere</h1>
+
+<p>source_fc = r"in_memory/source_fc"</p>
+
+<h1>destination featureclass to be created</h1>
+
+<p>projected_fc = r"in_memory/projected_source_fc"</p>
+
+<h1>destination projection</h1>
+
+<p>web_mercator = arcpy.SpatialReference(102100)</p>
+
+<h1>create destination feature class using the source as a template to establish schema</h1>
+
+<h1>and set destination spatial reference</h1>
+
+<p>path, name = split(projected_fc)
+arcpy.management.CreateFeatureclass(path, name, &lsquo;POLYLINE&rsquo;,</p>
+
+<pre><code>                                template=source_fc,
+                                spatial_reference=web_mercator)
+</code></pre>
+
+<h1>specify copy of all fields from source to destination</h1>
+
+<p>fields = [&ldquo;Shape@&rdquo;] + [f.name for f in arcpy.ListFields(source_fc) if not f.required]</p>
+
+<h1>project source geometries on the fly while inserting to destination featureclass</h1>
+
+<p>with arcpy.da.SearchCursor(source_fc, fields, spatial_reference=web_mercator) as curs, \</p>
+
+<pre><code> arcpy.da.InsertCursor(projected_fc, fields) as ins_curs:
+for row in source_fc:
+  ins_curs.insertRow(row)
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[arcpy.da Cursors and Readability Part 2]]></title>
