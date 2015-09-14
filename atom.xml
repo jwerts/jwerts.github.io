@@ -4,7 +4,7 @@
   <title><![CDATA[Josh Werts]]></title>
   <link href="http://joshwerts.com/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2015-09-10T15:16:37-04:00</updated>
+  <updated>2015-09-14T14:02:06-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -79,9 +79,9 @@
 </span><span class='line'><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Shape@&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">ListFields</span><span class="p">(</span><span class="n">source_fc</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">required</span><span class="p">]</span>
 </span><span class='line'>
 </span><span class='line'><span class="c"># project source geometries on the fly while inserting to destination featureclass</span>
-</span><span class='line'><span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">source_fc</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">spatial_reference</span><span class="o">=</span><span class="n">web_mercator</span><span class="p">)</span> <span class="k">as</span> <span class="n">curs</span><span class="p">,</span> \
+</span><span class='line'><span class="k">with</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">SearchCursor</span><span class="p">(</span><span class="n">source_fc</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">spatial_reference</span><span class="o">=</span><span class="n">web_mercator</span><span class="p">)</span> <span class="k">as</span> <span class="n">source_curs</span><span class="p">,</span> \
 </span><span class='line'>     <span class="n">arcpy</span><span class="o">.</span><span class="n">da</span><span class="o">.</span><span class="n">InsertCursor</span><span class="p">(</span><span class="n">projected_fc</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span> <span class="k">as</span> <span class="n">ins_curs</span><span class="p">:</span>
-</span><span class='line'>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">source_fc</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">source_curs</span><span class="p">:</span>
 </span><span class='line'>      <span class="n">ins_curs</span><span class="o">.</span><span class="n">insertRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
 

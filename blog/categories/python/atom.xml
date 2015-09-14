@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | Josh Werts]]></title>
   <link href="http://joshwerts.com/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://joshwerts.com/"/>
-  <updated>2015-09-10T15:16:37-04:00</updated>
+  <updated>2015-09-14T14:02:06-04:00</updated>
   <id>http://joshwerts.com/</id>
   <author>
     <name><![CDATA[Josh Werts]]></name>
@@ -61,10 +61,10 @@ arcpy.management.CreateFeatureclass(path, name, &lsquo;POLYLINE&rsquo;,</p>
 
 <h1>project source geometries on the fly while inserting to destination featureclass</h1>
 
-<p>with arcpy.da.SearchCursor(source_fc, fields, spatial_reference=web_mercator) as curs, \</p>
+<p>with arcpy.da.SearchCursor(source_fc, fields, spatial_reference=web_mercator) as source_curs, \</p>
 
 <pre><code> arcpy.da.InsertCursor(projected_fc, fields) as ins_curs:
-for row in source_fc:
+for row in source_curs:
   ins_curs.insertRow(row)
 </code></pre>
 
