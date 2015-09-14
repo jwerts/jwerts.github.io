@@ -38,8 +38,8 @@ arcpy.management.CreateFeatureclass(path, name, 'POLYLINE',
 fields = ["Shape@"] + [f.name for f in arcpy.ListFields(source_fc) if not f.required]
 
 # project source geometries on the fly while inserting to destination featureclass
-with arcpy.da.SearchCursor(source_fc, fields, spatial_reference=web_mercator) as curs, \
+with arcpy.da.SearchCursor(source_fc, fields, spatial_reference=web_mercator) as source_curs, \
      arcpy.da.InsertCursor(projected_fc, fields) as ins_curs:
-    for row in source_fc:
+    for row in source_curs:
       ins_curs.insertRow(row)
 ```
