@@ -1,115 +1,66 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html lang="en-us">
 <head>
-  <meta charset="utf-8">
-  <title>Arcpy: Rename Fields - Josh Werts</title>
-  <meta name="author" content="Josh Werts">
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  
-  <meta name="description" content="In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field). This works well for a single field, &hellip;">
-  
+    <title>arcpy: Rename Fields &middot; Josh Werts</title>
+    <meta name="author" content="Josh Werts">
+    <meta name="description" content="some lines of code...">
+    <meta name="generator" content="Hugo 0.15" />
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="http://joshwerts.comimg/favicon.ico">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.2/normalize.min.css">
 
-  
-  <link rel="canonical" href="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Josh Werts" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="http://joshwerts.comcss/screen.css">
 
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-49518677-1']);
-    _gaq.push(['_trackPageview']);
+    
+    <link rel="stylesheet" href="http://joshwerts.comcss/github.min.css">
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
+    <link rel="stylesheet" href="http://joshwerts.comjs/lib/bower_components/leaflet/dist/leaflet.css">
 
+  </head>
 
-</head>
+<body class="post-template">
 
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">Josh Werts</a></h1>
-  
-    <h2>{ 'work': ['gis', 'py', 'js' ...], 'fun': ['bike', 'hike', 'paddle', ...] }</h2>
-  
-</hgroup>
+    <header id="site-head">
+	
+	<h1 class="blog-title"><a href="http://joshwerts.com">Josh Werts</a></h1>
+	
+	
+	<h1 class="blog-subtitle">{ &lsquo;work&rsquo;: [&lsquo;gis&rsquo;, &lsquo;py&rsquo;, &lsquo;js&rsquo; &hellip;], &lsquo;fun&rsquo;: [&lsquo;bike&rsquo;, &lsquo;hike&rsquo;, &lsquo;paddle&rsquo;, &hellip;] }</h1>
+	
 
+  <div id="locationMap" data-latlong="36.216795,-81.674552"
+                        data-location="Boone, NC">
+  </div>
 </header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:joshwerts.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-<!--   <li><a href="/about">About</a></li> -->
-</ul>
 
+    
+<nav class="menu" role="nav">
+    <ul>
+        
+        	<li class="nav nav-current"><a href="http://joshwerts.com/blog/1/01/01/about/">About</a></li>
+      	
+    </ul>
 </nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Arcpy: Rename Fields</h1>
-    
-    
-      <p class="meta">
-        
 
 
+    <main class="content" role="main">
+	    <article class="post">
+	        <header>
+	        <h1 class="post-title">arcpy: Rename Fields</h1>
+	        <div class="post-meta"><time datetime="01 April 2014">01 April 2014</time></div>
+	        </header>
 
+	        <section class="post-content">
+	            <p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management -&gt; Alter Field).</p>
 
-
-
-
-
-  
-
-
-<time datetime="2014-04-01T07:43:15-04:00" pubdate data-updated="true">Apr 1<sup>st</sup>, 2014</time>
-        
-           | <a href="#disqus_thread"
-             data-disqus-identifier="http://joshwerts.com">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management &ndash;> Alter Field).</p>
-
-<p><img class="center" src="/images/arcpy_rename_field_alter_field_tool.PNG" width="350" height="350" title="alter field tool" alt="images"></p>
+<p><img src="http://joshwerts.com/img/alter_field_tool.png" alt="Alter Field" /></p>
 
 <p>This works well for a single field, but you may need something different if:</p>
 
@@ -120,266 +71,158 @@
 <li>you need to rename fields in a source unsupported by the Alter Field tool (hint: shapefiles).</li>
 </ul>
 
-
 <p>Here&rsquo;s a great function for renaming fields (and maintaining their order).  It can be used in the python console.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">rename_fields</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">out_table</span><span class="p">,</span> <span class="n">new_name_by_old_name</span><span class="p">):</span>
-</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Renames specified fields in input feature class/table </span>
-</span><span class='line'><span class="sd">    :table:                 input table (fc, table, layer, etc)</span>
-</span><span class='line'><span class="sd">    :out_table:             output table (fc, table, layer, etc)</span>
-</span><span class='line'><span class="sd">    :new_name_by_old_name:  {&#39;old_field_name&#39;:&#39;new_field_name&#39;,...}</span>
-</span><span class='line'><span class="sd">    -&gt;  out_table</span>
-</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
-</span><span class='line'>    <span class="n">existing_field_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">ListFields</span><span class="p">(</span><span class="n">table</span><span class="p">)]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">field_mappings</span> <span class="o">=</span> <span class="n">arcpy</span><span class="o">.</span><span class="n">FieldMappings</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">field_mappings</span><span class="o">.</span><span class="n">addTable</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">for</span> <span class="n">old_field_name</span><span class="p">,</span> <span class="n">new_field_name</span> <span class="ow">in</span> <span class="n">new_name_by_old_name</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-</span><span class='line'>        <span class="k">if</span> <span class="n">old_field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_field_names</span><span class="p">:</span>
-</span><span class='line'>            <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Field: {0} not in {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">old_field_name</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
-</span><span class='line'>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">mapping_index</span> <span class="o">=</span> <span class="n">field_mappings</span><span class="o">.</span><span class="n">findFieldMapIndex</span><span class="p">(</span><span class="n">old_field_name</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">field_map</span> <span class="o">=</span> <span class="n">field_mappings</span><span class="o">.</span><span class="n">fieldMappings</span><span class="p">[</span><span class="n">mapping_index</span><span class="p">]</span>
-</span><span class='line'>        <span class="n">output_field</span> <span class="o">=</span> <span class="n">field_map</span><span class="o">.</span><span class="n">outputField</span>
-</span><span class='line'>        <span class="n">output_field</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">new_field_name</span>
-</span><span class='line'>        <span class="n">output_field</span><span class="o">.</span><span class="n">aliasName</span> <span class="o">=</span> <span class="n">new_field_name</span>
-</span><span class='line'>        <span class="n">field_map</span><span class="o">.</span><span class="n">outputField</span> <span class="o">=</span> <span class="n">output_field</span>
-</span><span class='line'>        <span class="n">field_mappings</span><span class="o">.</span><span class="n">replaceFieldMap</span><span class="p">(</span><span class="n">mapping_index</span><span class="p">,</span> <span class="n">field_map</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c"># use merge with single input just to use new field_mappings</span>
-</span><span class='line'>    <span class="n">arcpy</span><span class="o">.</span><span class="n">Merge_management</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">out_table</span><span class="p">,</span> <span class="n">field_mappings</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">out_table</span>
-</span></code></pre></td></tr></table></div></figure>
+<pre><code class="language-python">def rename_fields(table, out_table, new_name_by_old_name):
+    &quot;&quot;&quot; Renames specified fields in input feature class/table
+    :table:                 input table (fc, table, layer, etc)
+    :out_table:             output table (fc, table, layer, etc)
+    :new_name_by_old_name:  {'old_field_name':'new_field_name',...}
+    -&gt;  out_table
+    &quot;&quot;&quot;
+    existing_field_names = [field.name for field in arcpy.ListFields(table)]
 
+    field_mappings = arcpy.FieldMappings()
+    field_mappings.addTable(table)
+
+    for old_field_name, new_field_name in new_name_by_old_name.iteritems():
+        if old_field_name not in existing_field_names:
+            message = &quot;Field: {0} not in {1}&quot;.format(old_field_name, table)
+            raise Exception(message)
+
+        mapping_index = field_mappings.findFieldMapIndex(old_field_name)
+        field_map = field_mappings.fieldMappings[mapping_index]
+        output_field = field_map.outputField
+        output_field.name = new_field_name
+        output_field.aliasName = new_field_name
+        field_map.outputField = output_field
+        field_mappings.replaceFieldMap(mapping_index, field_map)
+
+    # use merge with single input just to use new field_mappings
+    arcpy.Merge_management(table, out_table, field_mappings)
+    return out_table
+</code></pre>
 
 <p>The function accepts the input feature class, path to output, and a dictionary mapping the old names to the new names:</p>
 
-<p>Usage:</p>
+<p><strong>Usage:</strong></p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># does need need to include all fields, only those you want to rename</span>
-</span><span class='line'><span class="n">new_name_by_old_name</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;old_name_1&#39;</span><span class="p">:</span><span class="s">&#39;new_name_1&#39;</span><span class="p">,</span>
-</span><span class='line'>                         <span class="s">&#39;old_name_2&#39;</span><span class="p">:</span><span class="s">&#39;new_name_2&#39;</span> <span class="p">}</span>
-</span><span class='line'><span class="n">rename_fields</span><span class="p">(</span><span class="n">in_fc</span><span class="p">,</span> <span class="n">renamed_fc</span><span class="p">,</span> <span class="n">new_name_by_old_name</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<pre><code class="language-python"># does need need to include all fields, only those you want to rename
+new_name_by_old_name = { 'old_name_1':'new_name_1',
+                         'old_name_2':'new_name_2' }
+rename_fields(in_fc, renamed_fc, new_name_by_old_name)
+</code></pre>
 
 <p>This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.</p>
-</div>
 
+	        </section>
 
-  <footer>
-    <p class="meta">
-      
-  
+	        <section class="post-tags">
+	            <div class="post-meta tags">
+	            <i class="fa fa-fw fa-tag"></i>
+	            
+	            <a href="http://joshwerts.comtags/python">python </a>
+	            
+	            <a href="http://joshwerts.comtags/arcpy">arcpy </a>
+	            
+	            <a href="http://joshwerts.comtags/gis">gis </a>
+	            
+	            <a href="http://joshwerts.comtags/esri">esri </a>
+	            
+	            </div>
+	        </section>
 
-<span class="byline author vcard">Posted by <span class="fn">Josh Werts</span></span>
+	        <section class="share">
+	            <p class="backtotop"><a data-scroll href="#site-head"><i class="fa fa-lg fa-fw fa-angle-double-up"></i></a><a data-scroll class="backtotoptext" href="#site-head"> Back to top</a></p>
+	            <p class="info prompt">Share</p>
+	            <a href="http://twitter.com/share?text=arcpy%3a%20Rename%20Fields&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2014%2f04%2f01%2farcpy-rename-fields%2f" title="Share on Twitter"
+	                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+	                <i class="fa fa-2x fa-fw fa-twitter-square"></i> <span class="hidden">Twitter</span>
+	            </a>
+	            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fjoshwerts.com%2fblog%2f2014%2f04%2f01%2farcpy-rename-fields%2f" title="Share on Facebook"
+	                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+	                <i class="fa fa-2x fa-fw fa-facebook-square" style="margin-left: -8px"></i> <span class="hidden">Facebook</span>
+	            </a>
+	            <a href="https://plus.google.com/share?url=http%3a%2f%2fjoshwerts.com%2fblog%2f2014%2f04%2f01%2farcpy-rename-fields%2f" title="Share on Google+"
+	               onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+	                <i class="fa fa-2x fa-fw fa-google-plus-square" style="margin-left: -8px"></i> <span class="hidden">Google+</span>
+	            </a>
+	        </section>
 
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-01T07:43:15-04:00" pubdate data-updated="true">Apr 1<sup>st</sup>, 2014</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/arcmap/'>arcmap</a>, <a class='category' href='/blog/categories/arcpy/'>arcpy</a>, <a class='category' href='/blog/categories/gis/'>gis</a>, <a class='category' href='/blog/categories/python/'>python</a>
-  
-</span>
-
-
-    </p>
-    
-      <div class="sharing">
-  
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/" data-via="" data-counturl="http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/" >Tweet</a>
-  
-  
-  
-    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
-  
-</div>
-
-    
-    <p class="meta">
-      
-      
-        <a class="basic-alignment right" href="/blog/2014/04/17/arcpy-reorder-fields/" title="Next Post: arcpy: reorder fields">arcpy: reorder fields &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-  </section>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section>
-  <h1>About Me</h1>
-  <p>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.  I do roughly equal portions of frontend web and backend ETL/service development primarily within the ESRI framework.  <br/><br/>I &#10084; Python!</p>
-  <p><a href="mailto:joshwerts@gmail.com"/>joshwerts@gmail.com</a></p>
-</section>
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2015/11/10/feature-service-applyedits-on-multiple-layers/">Feature Service applyEdits on Multiple Layers</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass/">Arcpy Project In_memory Featureclass</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/">Debugging Server Object Extensions (SOEs) in Style</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/">arcpy.da Cursors and Readability Part 2</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/08/07/arcpy-dot-da-cursors/">arcpy.da Cursors and Readability Part 1</a>
-      </li>
-    
-  </ul>
-</section>
-
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/jwerts">@jwerts</a> on GitHub
-  
-  <script type="text/javascript">
-    $(document).ready(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'jwerts',
-            count: 0,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2015 - Josh Werts - <a href="mailto:joshwerts@gmail.com">joshwerts@gmail.com</a> - 
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
+      			
+              <div style="margin-top:50px">
+  	        	    <div id="disqus_thread"></div>
 <script type="text/javascript">
-      var disqus_shortname = 'jwerts';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/';
-        var disqus_url = 'http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
+    var disqus_shortname = 'jwerts';
+    var disqus_identifier = 'http:\/\/joshwerts.com\/blog\/2014\/04\/01\/arcpy-rename-fields\/';
+    var disqus_title = 'arcpy: Rename Fields';
+    var disqus_url = 'http:\/\/joshwerts.com\/blog\/2014\/04\/01\/arcpy-rename-fields\/';
 
-
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {return;}
-  js = d.createElement(s); js.id = id; js.async = true;
-  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+              </div>
+  	        
+
+      			
+
+	        <footer class="post-footer">
+	            <section class="author">
+    <div class="authorimage" style="background: url(http://joshwerts.comimg/avatar.jpg)"></div>
+    <h4>Josh Werts</h4>
+    <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
+</section>
+
+	        </footer>
+	    </article>
+	</main>
+
+    <footer class="site-footer">
+	<div class="inner">
+		<section class="footer-social">
+			
+		    
+		    <a href="//github.com/jwerts" target="_blank" title="GitHub"><i class="fa fa-2x fa-fw fa-github"></i> <span class="hidden">GitHub</span></a>&nbsp;
+		    
+        
+        <a href="//www.instagram.com/joshwerts" target="_blank" title="Instagram"><i class="fa fa-2x fa-fw fa-instagram"></i><span class="hidden">instagram</span></a>&nbsp;
+        
+		    <a href="" target="_blank" title="RSS"><i class="fa fa-2x fa-fw fa-rss"></i> <span class="hidden">RSS</span></a>
+		</section>
+
+		<section class="copyright">&copy; 2015 <a href="http://joshwerts.com">Josh Werts</a>. All Rights Reserved</section>
+	</div>
+</footer>
+
+    <script src="http://joshwerts.comjs/lib/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="http://joshwerts.comjs/index.js"></script>
+<script src="http://joshwerts.comjs/lib/smooth-scroll.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+<script src="http://joshwerts.comjs/lib/bower_components/leaflet/dist/leaflet.js"></script>
+
+<script>
+    smoothScroll.init({
+        speed: 800,
+        easing: 'easeInOutCubic',
+        updateURL: false,
+        offset: 125,
+    });
+</script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+  <!-- Google Analytics -->
+  <script>
+    var _gaq=[['_setAccount','UA-49518677-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
   </script>
-
-
 
 
 
