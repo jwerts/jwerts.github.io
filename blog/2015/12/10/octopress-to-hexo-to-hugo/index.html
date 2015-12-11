@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Octopress to Hexo to Hugo &middot; Josh Werts</title>
+    <meta name="author" content="Josh Werts">
+    <meta name="description" content="some lines of code...">
+    <meta name="generator" content="Hugo 0.15" />
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <link rel="shortcut icon" href="http://joshwerts.com/img/favicon.ico">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.2/normalize.min.css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="http://joshwerts.com/css/screen.css">
+
+    
+    <link rel="stylesheet" href="http://joshwerts.com/css/github.min.css">
+
+    <link rel="stylesheet" href="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.css">
+
+  </head>
+
+<body class="post-template">
+
+    <header id="site-head">
+	
+	<h1 class="blog-title"><a href="http://joshwerts.com/">Josh Werts</a></h1>
+	
+	
+	<h1 class="blog-subtitle">{ &lsquo;work&rsquo;: [&lsquo;gis&rsquo;, &lsquo;py&rsquo;, &lsquo;js&rsquo; &hellip;], &lsquo;fun&rsquo;: [&lsquo;bike&rsquo;, &lsquo;hike&rsquo;, &lsquo;paddle&rsquo;, &hellip;] }</h1>
+	
+
+  <div id="locationMap" data-latlong="36.216795,-81.674552"
+                        data-location="Boone, NC">
+  </div>
+</header>
+
+    
+<nav class="menu" role="nav">
+    <ul>
+        
+        	<li class="nav nav-current"><a href="http://joshwerts.com/blog/1/01/01/about/">About</a></li>
+      	
+    </ul>
+</nav>
+
+
+    <main class="content" role="main">
+	    <article class="post">
+	        <header>
+	        <h1 class="post-title">Octopress to Hexo to Hugo</h1>
+	        <div class="post-meta"><time datetime="10 December 2015">10 December 2015</time></div>
+	        </header>
+
+	        <section class="post-content">
+	            
+
+<p>This blog post is really just to say <strong>&ldquo;Wow! Hugo is freakin&rsquo; awesome!&rdquo;</strong></p>
+
+<h2 id="a-href-http-octopress-org-octopress-a:955d799df0aa29831b7762c00172d370"><a href="http://octopress.org/">Octopress</a></h2>
+
+<p><img src="http://joshwerts.com/img/octopress.png" alt="Octopress" /></p>
+
+<p>Octopress definitely got the job done and introduced me to static blog generators, but I had no real desire to learn Ruby and lately with Windows 10, I&rsquo;ve booted up to Linux less and less (yes, Windows 10 really is pretty good - if only it had a bash terminal).  Installing Ruby on Windows just wasn&rsquo;t something I wanted to bother with.  Also, if I wanted to change the underlying templates, it just seemed more complicated than it really needed to be and I couldn&rsquo;t find the time or motivation to really bother changing the default template much.</p>
+
+<p><br/></p>
+
+<h2 id="a-href-https-hexo-io-hexo-a:955d799df0aa29831b7762c00172d370"><a href="https://hexo.io/">Hexo</a></h2>
+
+<p><img src="http://joshwerts.com/img/hexo.png" alt="Hexo" /></p>
+
+<p>Soooooooo&hellip; the next logical step seemed to be Hexo.  NodeJS - easy enough on Windows and I&rsquo;ve done a little node development here and there so here we go.  Somehow this just seemed a bit kludgy too.  It&rsquo;s a decent enough project, but just didn&rsquo;t quite feel right.</p>
+
+<p><br/></p>
+
+<h2 id="a-href-https-gohugo-io-hugo-a:955d799df0aa29831b7762c00172d370"><a href="https://gohugo.io/">Hugo</a></h2>
+
+<p><img src="http://joshwerts.com/img/hugo.jpg" alt="Hugo" /></p>
+
+<p>I&rsquo;ve been looking for excuses to learn Go, so on a whim, googled static blog generators and Go.  I&rsquo;m yet to really learn any Go from using Hugo (other than perusing the code), but still it&rsquo;s nice to know it&rsquo;s there if I need to dig through source to figure out what&rsquo;s up or want to dive deeper and contribute to the project.</p>
+
+<p>At any rate, Hugo <em>just feels right.</em>  Not only was I able to migrate my existing blog fairly quickly, but it was not only easy, but also <em>fun</em> to start hacking on an existing theme.</p>
+
+<p>Reasons I love Hugo:</p>
+
+<ul>
+<li>Installation is just a matter of adding a .exe to your PATH and your good to go.  Can&rsquo;t argue with that.</li>
+<li>Good documentation - was fairly easy to get started (one hint though: you need to specify a theme or it will seem like it&rsquo;s failing silently)</li>
+<li>Go templates seem mostly straightforward and powerful</li>
+<li><strong>SPEED</strong> - this wasn&rsquo;t really a criteria for me since this blog is pretty small but with Hugo&rsquo;s speed (100ms to generate this blog) along with its <strong>built-in live reload</strong>, development is easy and fun.</li>
+</ul>
+
+<p>This blog is currently running off a moderately modified <a href="https://github.com/digitalcraftsman/hugo-steam-theme">Steam</a> theme.  Development is fun enough that hopefully it will continue to evolve (in other words, I don&rsquo;t feel like I&rsquo;m <em>fighting the framework</em> with Hugo).</p>
+
+<p>I also found these resources especially helpful for migration:</p>
+
+<ul>
+<li><a href="http://nathanleclaire.com/blog/2014/12/22/migrating-to-hugo-from-octopress/">http://nathanleclaire.com/blog/2014/12/22/migrating-to-hugo-from-octopress/</a></li>
+<li><a href="https://gohugo.io/tutorials/github-pages-blog/">https://gohugo.io/tutorials/github-pages-blog/</a></li>
+</ul>
+
+	        </section>
+
+	        <section class="post-tags">
+	            <div class="post-meta tags">
+	            <i class="fa fa-fw fa-tag"></i>
+	            
+	            <a href="http://joshwerts.com/tags/hugo">hugo </a>
+	            
+	            </div>
+	        </section>
+
+	        <section class="share">
+	            <p class="backtotop"><a data-scroll href="#site-head"><i class="fa fa-lg fa-fw fa-angle-double-up"></i></a><a data-scroll class="backtotoptext" href="#site-head"> Back to top</a></p>
+	            <p class="info prompt">Share</p>
+	            <a href="http://twitter.com/share?text=Octopress%20to%20Hexo%20to%20Hugo&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2015%2f12%2f10%2foctopress-to-hexo-to-hugo%2f" title="Share on Twitter"
+	                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+	                <i class="fa fa-2x fa-fw fa-twitter-square"></i> <span class="hidden">Twitter</span>
+	            </a>
+	            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fjoshwerts.com%2fblog%2f2015%2f12%2f10%2foctopress-to-hexo-to-hugo%2f" title="Share on Facebook"
+	                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+	                <i class="fa fa-2x fa-fw fa-facebook-square" style="margin-left: -8px"></i> <span class="hidden">Facebook</span>
+	            </a>
+	            <a href="https://plus.google.com/share?url=http%3a%2f%2fjoshwerts.com%2fblog%2f2015%2f12%2f10%2foctopress-to-hexo-to-hugo%2f" title="Share on Google+"
+	               onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+	                <i class="fa fa-2x fa-fw fa-google-plus-square" style="margin-left: -8px"></i> <span class="hidden">Google+</span>
+	            </a>
+	        </section>
+
+      			
+              <div style="margin-top:50px">
+  	        	    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jwerts';
+    var disqus_identifier = 'http:\/\/joshwerts.com\/blog\/2015\/12\/10\/octopress-to-hexo-to-hugo\/';
+    var disqus_title = 'Octopress to Hexo to Hugo';
+    var disqus_url = 'http:\/\/joshwerts.com\/blog\/2015\/12\/10\/octopress-to-hexo-to-hugo\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+              </div>
+  	        
+
+      			
+
+	        <footer class="post-footer">
+	            <section class="author">
+    <div class="authorimage" style="background: url(http://joshwerts.com/img/avatar.jpg)"></div>
+    <h4>Josh Werts</h4>
+    <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
+</section>
+
+	        </footer>
+	    </article>
+	</main>
+
+    <footer class="site-footer">
+	<div class="inner">
+		<section class="footer-social">
+			
+		    
+		    <a href="//github.com/jwerts" target="_blank" title="GitHub"><i class="fa fa-2x fa-fw fa-github"></i> <span class="hidden">GitHub</span></a>&nbsp;
+		    
+        
+        <a href="//www.instagram.com/joshwerts" target="_blank" title="Instagram"><i class="fa fa-2x fa-fw fa-instagram"></i><span class="hidden">instagram</span></a>&nbsp;
+        
+		    <a href="" target="_blank" title="RSS"><i class="fa fa-2x fa-fw fa-rss"></i> <span class="hidden">RSS</span></a>
+		</section>
+
+		<section class="copyright">&copy; 2015 <a href="http://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
+	</div>
+</footer>
+
+    <script src="http://joshwerts.com/js/lib/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="http://joshwerts.com/js/index.js"></script>
+<script src="http://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+<script src="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.js"></script>
+
+<script>
+    smoothScroll.init({
+        speed: 800,
+        easing: 'easeInOutCubic',
+        updateURL: false,
+        offset: 125,
+    });
+</script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+  <!-- Google Analytics -->
+  <script>
+    var _gaq=[['_setAccount','UA-49518677-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+
+</body>
+</html>
