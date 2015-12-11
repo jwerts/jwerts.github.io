@@ -15,14 +15,7 @@ body {
 body * {
   max-height: 1000000em;
 }
-h1,
-h2,
-h3,
-h4,
-p,
-li,
-dt,
-dd {
+h1,h2,h3,h4,p,li,dt,dd {
   font-family: "Merriweather", "Open Sans", "Helvetica Neue", Helvetica, Arial, "Nimbus L", sans-serif;
   line-height: 1.4em;
 }
@@ -45,7 +38,7 @@ p,
 li,
 dt,
 dd {
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 100;
   line-height: 28px;
 }
@@ -97,7 +90,7 @@ kbd {
 h1 {
   color: #151515;
   font-family: "Roboto", "Merriweather", "Open Sans", "Helvetica Neue", Helvetica, Arial, "Nimbus L", sans-serif;
-  font-size: 36px;
+  font-size: 30px;
   font-weight: 400;
   line-height: 42px;
   margin: 0;
@@ -111,7 +104,7 @@ article,
 article.preview,
 a.archive-link,
 .article-nav {
-  margin: 20px auto;
+  margin: 0px auto;
   max-width: 1200px;
   width: 90%;
 }
@@ -119,11 +112,12 @@ a.archive-link,
   max-width: 100%;
 }
 article.preview {
-  margin-bottom: 4em;
+  margin-bottom: 2em;
 }
 article.preview p.readmore {
   font-family: "Open Sans Condensed", "Open Sans", "Helvetica Neue", Helvetica, Arial, "Nimbus L", sans-serif;
-  margin-top: 1em;
+  margin-top: 0;
+  line-height: normal;
   text-transform: uppercase;
   font-weight: 400;
 }
@@ -148,17 +142,17 @@ h2.blog-description {
   text-align: left;
 }
 h1.blog-title {
-  font-size: 50px;
+  font-size: 40px;
   line-height: 52px;
-  margin-top: 25px;
-  margin-bottom: 14px;
+  margin-top: 15px;
+  margin-bottom: 8px;
   padding: 0;
 }
 h1.blog-subtitle {
-  font-size: 26px;
+  font-size: 18px;
   line-height: 32px;
   margin-top: -8px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-left: 1px;
   padding: 0;
 }
@@ -243,9 +237,9 @@ blockquote {
 .post-meta {
   color: #95a5a6;
   font-family: "Open Sans Condensed", "Open Sans", "Helvetica Neue", Helvetica, Arial, "Nimbus L", sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 300;
-  margin-top: 0.3em;
+  margin-top: 0;
   text-transform: uppercase;
 }
 .tags {
@@ -263,7 +257,7 @@ div.authorimage {
   float: left;
 }
 h1.post-title {
-  margin-top: 35px;
+  margin-top: 0px;
 }
 h1.post-title a,
 h1.blog-title a {
@@ -347,7 +341,7 @@ nav ul li {
 }
 nav ul li a {
   display: block;
-  padding: .5em 0;
+  padding: .3em 0;
 }
 nav.menu {
   margin-bottom: 0.5em;
