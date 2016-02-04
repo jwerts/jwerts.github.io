@@ -65,36 +65,46 @@
 
 <p>Here&rsquo;s the workaround - we just create a new featureclass using the source featureclass as a template and then exploit the spatial_reference parameter of arcpy.da.SearchCursor to project on the fly while inserting into the new featureclass.</p>
 
-<pre><code class="language-python">from os.path import split
+<p><strong>Function:</strong></p>
 
+<pre><code class="language-python">from os.path import split
 import arcpy
 
-# ....
-# assume we've already created this somewhere
+# create destination feature class using the source as a template to establish schema
+# and set destination spatial reference
+def project(source_fc, out_projected_fc, spatial_reference):
+  &quot;&quot;&quot; projects source_fc to out_projected_fc using cursors (supports in_memory workspace) &quot;&quot;&quot;
+  path, name = split(out_projected_fc)
+  arcpy.management.CreateFeatureclass(path, name,
+                                      arcpy.Describe(source_fc).shapeType,
+                                      template=source_fc,
+                                      spatial_reference=web_mercator)
+
+  # specify copy of all fields from source to destination
+  fields = [&quot;Shape@&quot;] + [f.name for f in arcpy.ListFields(source_fc) if not f.required]
+
+  # project source geometries on the fly while inserting to destination featureclass
+  with arcpy.da.SearchCursor(source_fc, fields, spatial_reference=spatial_reference) as source_curs, \
+       arcpy.da.InsertCursor(out_projected_fc, fields) as ins_curs:
+      for row in source_curs:
+        ins_curs.insertRow(row)
+</code></pre>
+
+<p><strong>Usage:</strong></p>
+
+<pre><code class="language-python"># assume we've already created this somewhere
 source_fc = r&quot;in_memory/source_fc&quot;
 
 # destination featureclass to be created
-projected_fc = r&quot;in_memory/projected_source_fc&quot;
+out_projected_fc = r&quot;in_memory/projected_source_fc&quot;
 
 # destination projection
 web_mercator = arcpy.SpatialReference(102100)
 
-# create destination feature class using the source as a template to establish schema
-# and set destination spatial reference
-path, name = split(projected_fc)
-arcpy.management.CreateFeatureclass(path, name, 'POLYLINE',
-                                    template=source_fc,
-                                    spatial_reference=web_mercator)
-
-# specify copy of all fields from source to destination
-fields = [&quot;Shape@&quot;] + [f.name for f in arcpy.ListFields(source_fc) if not f.required]
-
-# project source geometries on the fly while inserting to destination featureclass
-with arcpy.da.SearchCursor(source_fc, fields, spatial_reference=web_mercator) as source_curs, \
-     arcpy.da.InsertCursor(projected_fc, fields) as ins_curs:
-    for row in source_curs:
-      ins_curs.insertRow(row)
+project(source_fc, out_projected_fc, web_mercator)
 </code></pre>
+
+<p><strong>Edit 2016-02-04:</strong> Changed to function per suggestion by <a href="https://github.com/andygarfield">Andy Garfield</a></p>
 
 	        </section>
 
@@ -183,7 +193,7 @@ with arcpy.da.SearchCursor(source_fc, fields, spatial_reference=web_mercator) as
 		    <a href="" target="_blank" title="RSS"><i class="fa fa-2x fa-fw fa-rss"></i> <span class="hidden">RSS</span></a>
 		</section>
 
-		<section class="copyright">&copy; 2015 <a href="http://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
+		<section class="copyright">&copy; 2016 <a href="http://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
 	</div>
 </footer>
 
