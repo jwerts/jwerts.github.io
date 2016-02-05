@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>arcpy: Efficient Geometry Creation &middot; Josh Werts</title>
+    <meta name="author" content="Josh Werts">
+    <meta name="description" content="some lines of code...">
+    <meta name="generator" content="Hugo 0.15" />
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <link rel="shortcut icon" href="http://joshwerts.com/img/favicon.ico">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.2/normalize.min.css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="http://joshwerts.com/css/screen.css">
+
+    
+    <link rel="stylesheet" href="http://joshwerts.com/css/github.min.css">
+
+    <link rel="stylesheet" href="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.css">
+
+  </head>
+
+<body class="post-template">
+
+    <header id="site-head">
+	
+	<h1 class="blog-title"><a href="http://joshwerts.com/">Josh Werts</a></h1>
+	
+	
+	<h1 class="blog-subtitle">{ &lsquo;work&rsquo;: [&lsquo;gis&rsquo;, &lsquo;py&rsquo;, &lsquo;js&rsquo; &hellip;], &lsquo;fun&rsquo;: [&lsquo;bike&rsquo;, &lsquo;hike&rsquo;, &lsquo;paddle&rsquo;, &hellip;] }</h1>
+	
+
+  <div id="locationMap" data-latlong="36.216795,-81.674552"
+                        data-location="Boone, NC">
+  </div>
+</header>
+
+    
+<nav class="menu" role="nav">
+    <ul>
+        
+        	<li class="nav nav-current"><a href="http://joshwerts.com/blog/1/01/01/about/">About</a></li>
+      	
+    </ul>
+</nav>
+
+
+    <main class="content" role="main">
+	    <article class="post">
+	        <header>
+	        <h1 class="post-title">arcpy: Efficient Geometry Creation</h1>
+	        <div class="post-meta"><time datetime="04 February 2016">04 February 2016</time></div>
+	        </header>
+
+	        <section class="post-content">
+	            
+
+<p>Sometimes every second counts&hellip; and even if it doesn&rsquo;t, it&rsquo;s still interesting to see the quirks of a familiar library.</p>
+
+<p>It turns out that object creation can be somewhat expensive (especially when you&rsquo;re talking about Python &ndash;&gt; ArcObjects &ndash;&gt; COM).  With arcpy (and underlying ArcObjects), there are some objects which can be reused to gain some efficiency.</p>
+
+<p>An interesting example is simply creating a polyline from a pair of points.</p>
+
+<h2 id="example-creating-a-2-point-polyline:a6ccf97ec21661e841aba6ff978f1848">Example: Creating a 2 point polyline</h2>
+
+<h3 id="simplest-form:a6ccf97ec21661e841aba6ff978f1848">Simplest form:</h3>
+
+<p>In its simplest form, you may write:</p>
+
+<pre><code class="language-python">def create_line_simple(point1_x_and_y, point2_x_and_y, spatial_ref):
+    &quot;&quot;&quot; creates polyline from pair of (x,y) tuples &quot;&quot;&quot;
+    start_point = arcpy.Point(*point1_x_and_y)
+    end_point = arcpy.Point(*point2_x_and_y)
+    array = arcpy.Array([start_point, end_point])
+    polyline = arcpy.Polyline(array, spatial_ref)
+    return polyline
+
+# Usage:
+polyline = create_line_simple((-81.60, 36.20), (-81.70, 36.30), arcpy.SpatialReference(4326))
+</code></pre>
+
+<p>There&rsquo;s nothing wrong with this code.  In fact, if you&rsquo;re only creating a few polylines, stop here.  It&rsquo;s readable and gets the job done.</p>
+
+<h3 id="a-little-more-efficient:a6ccf97ec21661e841aba6ff978f1848">A little more efficient:</h3>
+
+<p>However, if you&rsquo;re creating thousands of polylines, some time can be saved by reusing arcpy.Point objects.</p>
+
+<pre><code class="language-python"># modules scoped private variables
+_start_point = arcpy.Point()
+_end_point = arcpy.Point()
+
+def create_line_reuse_points(point1_x_and_y, point2_x_and_y, spatial_ref):
+    &quot;&quot;&quot; creates polyline from pair of (x,y) tuples &quot;&quot;&quot;
+    _start_point.X, _start_point.Y = point1_x_and_y
+    _end_point.X, _end_point.Y = point2_x_and_y
+    array = arcpy.Array([_start_point, _end_point])
+    polyline = arcpy.Polyline(array, spatial_ref)
+    return polyline
+</code></pre>
+
+<p>In this case, we&rsquo;re creating 2 module scoped points only once and then setting the X and Y properties on those points.  The arcpy.Polyline constructor reads X and Y from those points, but it doesn&rsquo;t maintain a reference to the points.  Setting properties on the existing objects is a bit more efficient than creating new objects every time and since references aren&rsquo;t maintained to those objects, we&rsquo;re safe from a memory perspective.</p>
+
+<h3 id="even-more-efficient:a6ccf97ec21661e841aba6ff978f1848">Even more efficient:</h3>
+
+<p>Why not go ahead and reuse the arcpy.Array as well?  Once again, arcpy.Polyline() only reads data from the array and doesn&rsquo;t maintain a reference.  Make sure to removeAll() from array to clean up.</p>
+
+<pre><code class="language-python"># modules scoped private variables
+_start_point = arcpy.Point()
+_end_point = arcpy.Point()
+_array = arcpy.Array()
+
+def create_line_reuse_points_array(point1_x_and_y, point2_x_and_y, spatial_ref):
+    &quot;&quot;&quot; creates polyline from pair of (x,y) tuples &quot;&quot;&quot;
+    _start_point.X, _start_point.Y = point1_x_and_y
+    _end_point.X, _end_point.Y = point2_x_and_y
+    _array.add(_start_point)
+    _array.add(_end_point)
+    polyline = arcpy.Polyline(_array, spatial_ref)
+    _array.removeAll()
+    return polyline
+</code></pre>
+
+<h2 id="how-much-more-efficient-is-this-approach:a6ccf97ec21661e841aba6ff978f1848">How much more efficient is this approach?</h2>
+
+<p>Here are the results (in seconds) for creating 100,000 polylines with each function (Python 3.4.1 w/ ArcGIS Pro on Core i7-4712HQ):</p>
+
+<pre><code>Create line simple:
+0:00:21.071529
+
+Create line reuse points:
+0:00:17.813275
+
+Create line reuse points and array:
+0:00:16.277035
+</code></pre>
+
+<p>Is it a huge difference?  Not really.  But if you have a process that creates a large amount of geometries, it&rsquo;s worth considering reusing a few objects.</p>
+
+<p>Here&rsquo;s the full test script to produce the above results:</p>
+
+<pre><code class="language-python">import arcpy
+from datetime import datetime as dt
+
+
+def time_me(n):
+    &quot;&quot;&quot; decorator to print total time to run function n number of times &quot;&quot;&quot;
+    def time_me_decorator(f):
+        def wrapper(*args):
+            start = dt.now()
+            for _ in range(n):
+                f(*args)
+            print(dt.now() - start)
+        return wrapper
+    return time_me_decorator
+
+
+REPETITIONS = 100000
+
+######## Simple Case
+
+@time_me(REPETITIONS)
+def create_line_simple(point1_x_and_y, point2_x_and_y, spatial_ref):
+    &quot;&quot;&quot; creates polyline from pair of (x,y) tuples &quot;&quot;&quot;
+    start_point = arcpy.Point(*point1_x_and_y)
+    end_point = arcpy.Point(*point2_x_and_y)
+    array = arcpy.Array([start_point, end_point])
+    polyline = arcpy.Polyline(array, spatial_ref)
+    return polyline
+
+
+######## Reuses the point objects
+
+# modules scoped private functions
+_start_point = arcpy.Point()
+_end_point = arcpy.Point()
+
+@time_me(REPETITIONS)
+def create_line_reuse_points(point1_x_and_y, point2_x_and_y, spatial_ref):
+    &quot;&quot;&quot; creates polyline from pair of (x,y) tuples &quot;&quot;&quot;
+    _start_point.X, _start_point.Y = point1_x_and_y
+    _end_point.X, _end_point.Y = point2_x_and_y
+    array = arcpy.Array([_start_point, _end_point])
+    polyline = arcpy.Polyline(array, spatial_ref)
+    return polyline
+
+
+######## Reuses the point and array objects
+
+# modules scoped private functions
+_start_point = arcpy.Point()
+_end_point = arcpy.Point()
+_array = arcpy.Array()
+
+@time_me(REPETITIONS)
+def create_line_reuse_points_array(point1_x_and_y, point2_x_and_y, spatial_ref):
+    &quot;&quot;&quot; creates polyline from pair of (x,y) tuples &quot;&quot;&quot;
+    _start_point.X, _start_point.Y = point1_x_and_y
+    _end_point.X, _end_point.Y = point2_x_and_y
+    _array.add(_start_point)
+    _array.add(_end_point)
+    polyline = arcpy.Polyline(_array, spatial_ref)
+    _array.removeAll()
+    return polyline
+
+
+# Run our tests
+if __name__ == &quot;__main__&quot;:
+    WGS_84 = arcpy.SpatialReference(4326)
+    POINT1 = (-81.674525, 36.216630)
+    POINT2 = (-81.675351, 36.213886)
+
+    print(&quot;Create line simple:&quot;)
+    create_line_simple(POINT1, POINT2, WGS_84)
+    print(&quot;&quot;)
+
+    print(&quot;Create line reuse points:&quot;)
+    create_line_reuse_points(POINT1, POINT2, WGS_84)
+    print(&quot;&quot;)
+
+    print(&quot;Create line reuse points and array:&quot;)
+    create_line_reuse_points_array(POINT1, POINT2, WGS_84)
+</code></pre>
+
+	        </section>
+
+	        <section class="post-tags">
+	            <div class="post-meta tags">
+	            <i class="fa fa-fw fa-tag"></i>
+	            
+	            <a href="http://joshwerts.com/tags/python">python </a>
+	            
+	            <a href="http://joshwerts.com/tags/arcpy">arcpy </a>
+	            
+	            <a href="http://joshwerts.com/tags/gis">gis </a>
+	            
+	            <a href="http://joshwerts.com/tags/esri">esri </a>
+	            
+	            </div>
+	        </section>
+
+	        <section class="share">
+	            <p class="backtotop"><a data-scroll href="#site-head"><i class="fa fa-lg fa-fw fa-angle-double-up"></i></a><a data-scroll class="backtotoptext" href="#site-head"> Back to top</a></p>
+	            <p class="info prompt">Share</p>
+	            <a href="http://twitter.com/share?text=arcpy%3a%20Efficient%20Geometry%20Creation&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2016%2f02%2f04%2farcpy-efficient-geometry-creation%2f" title="Share on Twitter"
+	                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+	                <i class="fa fa-2x fa-fw fa-twitter-square"></i> <span class="hidden">Twitter</span>
+	            </a>
+	            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fjoshwerts.com%2fblog%2f2016%2f02%2f04%2farcpy-efficient-geometry-creation%2f" title="Share on Facebook"
+	                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+	                <i class="fa fa-2x fa-fw fa-facebook-square" style="margin-left: -8px"></i> <span class="hidden">Facebook</span>
+	            </a>
+	            <a href="https://plus.google.com/share?url=http%3a%2f%2fjoshwerts.com%2fblog%2f2016%2f02%2f04%2farcpy-efficient-geometry-creation%2f" title="Share on Google+"
+	               onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+	                <i class="fa fa-2x fa-fw fa-google-plus-square" style="margin-left: -8px"></i> <span class="hidden">Google+</span>
+	            </a>
+	        </section>
+
+            
+
+        			
+                <div style="margin-top:50px">
+    	        	    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jwerts';
+    var disqus_identifier = 'http:\/\/joshwerts.com\/blog\/2016\/02\/04\/arcpy-efficient-geometry-creation\/';
+    var disqus_title = 'arcpy: Efficient Geometry Creation';
+    var disqus_url = 'http:\/\/joshwerts.com\/blog\/2016\/02\/04\/arcpy-efficient-geometry-creation\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+                </div>
+    	        
+
+        			
+
+            
+
+	        <footer class="post-footer">
+	            <section class="author">
+    <div class="authorimage" style="background: url(http://joshwerts.com/img/avatar.jpg)"></div>
+    <h4>Josh Werts</h4>
+    <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
+</section>
+
+	        </footer>
+	    </article>
+	</main>
+
+    <footer class="site-footer">
+	<div class="inner">
+		<section class="footer-social">
+      
+        <a href="mailto:joshwerts@gmail.com" target="_top" title="Email"><i class="fa fa-2x fa-fw fa-envelope"></i> <span class="hidden">Email</span></a>&nbsp;
+      
+			
+	    
+	    <a href="//github.com/jwerts" target="_blank" title="GitHub"><i class="fa fa-2x fa-fw fa-github"></i> <span class="hidden">GitHub</span></a>&nbsp;
+	    
+      
+      <a href="//www.instagram.com/joshwerts" target="_blank" title="Instagram"><i class="fa fa-2x fa-fw fa-instagram"></i><span class="hidden">instagram</span></a>&nbsp;
+      
+		    <a href="" target="_blank" title="RSS"><i class="fa fa-2x fa-fw fa-rss"></i> <span class="hidden">RSS</span></a>
+		</section>
+
+		<section class="copyright">&copy; 2016 <a href="http://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
+	</div>
+</footer>
+
+    <script src="http://joshwerts.com/js/lib/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="http://joshwerts.com/js/index.js"></script>
+<script src="http://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+<script src="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.js"></script>
+
+<script>
+    smoothScroll.init({
+        speed: 800,
+        easing: 'easeInOutCubic',
+        updateURL: false,
+        offset: 125,
+    });
+</script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+  <!-- Google Analytics -->
+  <script>
+    var _gaq=[['_setAccount','UA-49518677-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+
+</body>
+</html>
