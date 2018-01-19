@@ -4,6 +4,13 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
+    
+    <meta name="theme-color" content="#3498db">
+    
+    <meta name="msapplication-navbutton-color" content="#3498db">
+    
+    <meta name="apple-mobile-web-app-status-bar-style" content="#3498db">
+
     <title>ESRI Javascript API 4 with Angular 2 and Typescript &middot; Josh Werts</title>
     <meta name="author" content="Josh Werts">
     <meta name="description" content="some lines of code...">
@@ -20,8 +27,7 @@
 
     
     <link rel="stylesheet" href="http://joshwerts.com/css/github.min.css">
-
-    <link rel="stylesheet" href="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
 
   </head>
 
@@ -35,8 +41,8 @@
 	<h1 class="blog-subtitle">{ &lsquo;work&rsquo;: [&lsquo;gis&rsquo;, &lsquo;py&rsquo;, &lsquo;js&rsquo; &hellip;], &lsquo;fun&rsquo;: [&lsquo;bike&rsquo;, &lsquo;hike&rsquo;, &lsquo;paddle&rsquo;, &hellip;] }</h1>
 	
 
-  <div id="locationMap" data-latlong="36.216795,-81.674552"
-                        data-location="Boone, NC">
+  <div id="locationMap" data-latlong="35.5951,-82.5515"
+                        data-location="Asheville, NC">
   </div>
 </header>
 
@@ -59,6 +65,8 @@
 
 	        <section class="post-content">
 	            
+
+<p><strong>Update 1/8/2017: </strong>I&rsquo;ve transitioned to Webpack since this post: <a href="http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/">link</a></p>
 
 <p>This could really be a post about many things.</p>
 
@@ -86,32 +94,34 @@
 
 <pre><code class="language-ts">import { Injectable } from '@angular/core';
 
-import { Graphic, Point, GraphicsLayer, Collection } from 'esri';
+import Graphic from 'esri/Graphic';
+import GraphicsLayer from 'esri/layers/GraphicsLayer';
+import Collection from 'esri/core/Collection';
 
 @Injectable()
 export class PointsModel {
-  private _points: Collection = new Collection();
+  private points: Collection = new Collection();
   pointsLayer: GraphicsLayer;
   constructor() {
     this.pointsLayer = new GraphicsLayer();
-    this._points = this.pointsLayer.graphics;
+    this.points = this.pointsLayer.graphics;
   }
   addPoint(pointGraphic: Graphic) {
-    this._points.add(pointGraphic);
+    this.points.add(pointGraphic);
   }
   addPoints(pointsGraphics: Graphic[]) {
-    this._points.addMany(pointsGraphics);
+    this.points.addMany(pointsGraphics);
   }
   getPointGraphics() {
-    return this._points;
+    return this.points;
   }
   clear() {
-    this._points.removeAll();
-  }  
+    this.points.removeAll();
+  }
   getIndexSum() {
-    var sum:number = 0;
-    if (this._points !== null) {
-      this._points.forEach(p =&gt; sum += p.attributes.index);
+    let sum = 0;
+    if (this.points !== null) {
+      this.points.forEach(p =&gt; sum += p.attributes.index);
     }
     return sum;
   }
@@ -124,7 +134,7 @@ export class PointsModel {
 
 <pre><code class="language-html">&lt;div&gt;
   &lt;h2&gt;Points!&lt;/h2&gt;
-  &lt;p&gt;Index sum: {{pointsModel.getIndexSum()}}
+  &lt;p&gt;Index Sum: {{pointsModel.getIndexSum()}}
   &lt;ul&gt;
     &lt;li *ngFor=&quot;let point of points.toArray()&quot;&gt;
       &lt;span&gt;{{point.attributes.index}} ({{point.geometry.x | number:'.5-5'}},{{point.geometry.y | number:'.5-5'}})&lt;/span&gt;
@@ -137,20 +147,21 @@ export class PointsModel {
 
 <p>Our map binding to our PointsModel (which is just a matter of adding pointsModel.pointsLayer (our GraphicsLayer) to the map):</p>
 
-<pre><code class="language-ts">import { Injectable, Inject } from '@angular/core';
-import { Map, GraphicsLayer } from 'esri';
+<pre><code class="language-ts">import { Injectable } from '@angular/core';
+
+import Map from 'esri/Map';
+import GraphicsLayer from 'esri/layers/GraphicsLayer';
 
 import { PointsModel } from './points.model';
 
 @Injectable()
 export class MapService {
-  map:Map;
-  pointGraphicsLayer:GraphicsLayer;
-  constructor(@Inject(PointsModel) pointsModel: PointsModel) {
+  map: Map;
+  pointGraphicsLayer: GraphicsLayer;
+  constructor(pointsModel: PointsModel) {
     this.map = new Map({
       basemap: 'topo'
     });
-    console.log(&quot;in map.service.ts&quot;);
     this.map.add(pointsModel.pointsLayer);
   }
 }
@@ -160,54 +171,57 @@ export class MapService {
 
 <pre><code class="language-ts">import { PointsModel } from './points.model';
 
-describe('PointsModel tests', function() {
-  var mockPoint = {
+import Graphic from 'esri/Graphic';
+import Point from 'esri/geometry/Point';
+
+describe('PointsModel tests', () =&gt; {
+  let mockPointGraphic = new Graphic({
     attributes: {
       index: 1
     },
-    geometry: {
+    geometry: new Point({
       x: 1,
       y: 2,
       spatialReference: {
         wkid: 4326
       }
-    }
-  };
+    })
+  });
 
-  var pointsModel;
-  beforeEach(function() {
+  let pointsModel;
+  beforeEach(() =&gt; {
     pointsModel = new PointsModel();
   });
 
-  it('should contstruct it', function() {
+  it('should contstruct it', () =&gt; {
     expect(pointsModel).toBeDefined();
     expect(pointsModel.getPointGraphics()).toBeDefined();
   });
 
-  describe(&quot;adding and removing points&quot;, function() {
-    it('should add a point to collection', function() {
-       pointsModel.addPoint(mockPoint);
-       pointsModel.addPoint(mockPoint);
+  describe('adding and removing points', () =&gt; {
+    it('should add a point to collection', () =&gt; {
+       pointsModel.addPoint(mockPointGraphic);
+       pointsModel.addPoint(mockPointGraphic);
        expect(pointsModel.getPointGraphics().length).toEqual(2);
     });
 
-    it('should add points to collection', function() {
-      pointsModel.addPoints([mockPoint, mockPoint]);
+    it('should add points to collection', () =&gt; {
+      pointsModel.addPoints([mockPointGraphic, mockPointGraphic]);
       expect(pointsModel.getPointGraphics().length).toEqual(2);
     });
 
-    it('should clear points', function() {
-      pointsModel.addPoint(mockPoint);
-      pointsModel.addPoint(mockPoint);
+    it('should clear points', () =&gt; {
+      pointsModel.addPoint(mockPointGraphic);
+      pointsModel.addPoint(mockPointGraphic);
       pointsModel.clear();
       expect(pointsModel.getPointGraphics().length).toEqual(0);
     });
   });
 
-  describe('calculations', function() {
-    it('should calculate the sum of the index attributes', function() {
-      pointsModel.addPoints([mockPoint, mockPoint]);
-      var sum = pointsModel.getIndexSum();
+  describe('calculations', () =&gt; {
+    it('should calculate the sum of the index attributes', () =&gt; {
+      pointsModel.addPoints([mockPointGraphic, mockPointGraphic]);
+      let sum = pointsModel.getIndexSum();
       expect(sum).toEqual(2);
     });
   });
@@ -259,30 +273,31 @@ describe('PointsModel tests', function() {
     ... angular files, etc.
     // ********* esri load ***********
     // must be able to serve these files for dojo require
-    // NOTE: karma gives a cryptic error when
+    // NOTE: karma gives a cryptic error when 
     // files can't be found  (msg || &quot;&quot;).replace is not a function
     { pattern: 'bower_components/dojo/**/*.*', included: false, watched: false },
     { pattern: 'bower_components/dojox/**/*.*', included: false, watched: false },
     { pattern: 'bower_components/dstore/**/*.*', included: false, watched: false },     
     { pattern: 'bower_components/dgrid/**/*.*', included: false, watched: false },
-
+    
     { pattern: 'bower_components/dijit/**/*.*', included: false, watched: false },
-    { pattern: 'bower_components/esri/**/*.*', included: false, watched: false },       
+    { pattern: 'bower_components/esri/**/*.*', included: false, watched: false },    
+    { pattern: 'bower_components/moment/**/*.js', included: false, watched: false },   
 
     // load dojoConfig so dojo knows where to &quot;require&quot; modules from
     'dojoConfigTest.js',
-
+    
     // we need the actual dojo startup file for &quot;requrire&quot; to be defined
     'bower_components/dojo/dojo.js',
-
+    
     // load in esri's systemJs util
     'node_modules/esri-system-js/dist/esriSystem.js',
-
+    
     // load in our array of esri dependencies
     'esriLoadConfig.js',
-
+    
     // bootstrap in the modules using esri-system-js
-    'esriSystemLoadTest.js',
+    'esriSystemLoadTest.js', 
 
     ... more angular files
 ]
@@ -304,11 +319,7 @@ describe('PointsModel tests', function() {
       'esri/geometry/SpatialReference',
       'esri/symbols/SimpleMarkerSymbol',
       'esri/Color'
-    ],
-    outModuleName: 'esri',
-    moduleNameOverrides: {
-      'esri/arcgis/utils': 'arcgisUtils'
-    }
+    ]
   };
 }(window))
 </code></pre>
@@ -319,11 +330,11 @@ describe('PointsModel tests', function() {
 
 <pre><code class="language-js">// load esri modules needed by this application
 // into a System.js module called esri
+start = performance.now();
 esriSystem.register(esriLoadConfig.modules, function () {
-  console.log('loaded esri modules');
-}, {
-  outModuleName: esriLoadConfig.outModuleName,
-  moduleNameOverrides: esriLoadConfig.moduleNameOverrides
+  end = performance.now();
+  time = end - start;
+  console.log('Loaded esri modules', time / 1000.0);
 });
 </code></pre>
 
@@ -333,29 +344,36 @@ esriSystem.register(esriLoadConfig.modules, function () {
 
 <pre><code class="language-js">// load esri modules needed by this application
 // into a System.js module called esri
+console.log(&quot;Loading esri modules: &quot;, esriLoadConfig.modules);
+start = performance.now();
 esriSystem.register(esriLoadConfig.modules, function () {
   // then bootstrap application
-  console.log('loaded esri modules');
+  end = performance.now();
+  time = end - start;
+  console.log('Loaded esri modules', time / 1000.0);
   System.import('app/main').then(function () {
     console.log('app/main imported');
   }, function (error) {
-    console.log(&quot;Esri system error:&quot;, error);
+    console.log(&quot;System import error:&quot;, error);
   });
-}, {
-  outModuleName: esriLoadConfig.outModuleName,
-  moduleNameOverrides: esriLoadConfig.moduleNameOverrides
 });
 </code></pre>
 
 <h2 id="conclusion:9b18d3a8a2156557610aadbdfb7d2ee2">Conclusion</h2>
 
-<p>This is <strong>highly experimental</strong> and there&rsquo;s <strong>a lot of moving parts</strong>, but it&rsquo;s nice to know this is possible.  I&rsquo;ve left out a lot but the full repo&rsquo;s here:</p>
+<p><del>This is <strong>highly experimental</strong> and there&rsquo;s <strong>a lot of moving parts</strong>, but it&rsquo;s nice to know this is possible.</del> This is getting closer to production quality.  I&rsquo;ve left out a lot but the full repo&rsquo;s here:</p>
 
 <p><a href="https://github.com/jwerts/jsapi4-angular2">https://github.com/jwerts/jsapi4-angular2</a></p>
 
 <p>There will likely be updates to the repo as I continue to explore this concept (and learn Angular 2&hellip; and learn Typescript).</p>
 
 <p>It could really benefit from a final build process.  Note that I&rsquo;ve used CDN for most dependencies in index.html for the gh-pages demo to avoid loading local bower and node dependencies to Github.</p>
+
+<p><strong>Edit 2016-06-16:</strong> Updated Angular to <strong>2.0.0.RC2</strong><br />
+<strong>Edit 2016-06-24:</strong> Updated Angular to <strong>2.0.0.RC3</strong><br />
+<strong>Edit 2016-07-05:</strong> Updated Angular to <strong>2.0.0.RC4</strong><br />
+<strong>Edit 2016-07-07:</strong> Updated to use <strong>esri-system-js 1.0 beta</strong> which now preserves esri module names and works correctly with Typescript arcgis-js-api typings.<br />
+<strong>Edit 2016-09-22:</strong> Updated Angular to <strong>2.0.0 final</strong></p>
 
 	        </section>
 
@@ -374,6 +392,8 @@ esriSystem.register(esriLoadConfig.modules, function () {
 	            <a href="http://joshwerts.com/tags/esri">esri </a>
 	            
 	            <a href="http://joshwerts.com/tags/angular">angular </a>
+	            
+	            <a href="http://joshwerts.com/tags/typescript">typescript </a>
 	            
 	            </div>
 	        </section>
@@ -425,7 +445,7 @@ esriSystem.register(esriLoadConfig.modules, function () {
 	            <section class="author">
     <div class="authorimage" style="background: url(http://joshwerts.com/img/avatar.jpg)"></div>
     <h4>Josh Werts</h4>
-    <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
+    <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Asheville, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
 </section>
 
 	        </footer>
@@ -452,11 +472,14 @@ esriSystem.register(esriLoadConfig.modules, function () {
 	</div>
 </footer>
 
-    <script src="http://joshwerts.com/js/lib/bower_components/jquery/dist/jquery.min.js"></script>
+    <script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
 <script src="http://joshwerts.com/js/index.js"></script>
 <script src="http://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
-<script src="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
 
 <script>
     smoothScroll.init({

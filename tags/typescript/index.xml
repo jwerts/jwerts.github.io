@@ -105,5 +105,324 @@ describe(&#39;Coordinate&#39;, () =&amp;gt; {
 </description>
     </item>
     
+    <item>
+      <title>ESRI Javascript API 4 with Angular 2 and Typescript</title>
+      <link>http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</link>
+      <pubDate>Tue, 17 May 2016 20:23:08 -0400</pubDate>
+      
+      <guid>http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</guid>
+      <description>
+
+&lt;p&gt;&lt;strong&gt;Update 1/8/2017: &lt;/strong&gt;I&amp;rsquo;ve transitioned to Webpack since this post: &lt;a href=&#34;http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/&#34;&gt;link&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This could really be a post about many things.&lt;/p&gt;
+
+&lt;p&gt;First, I&amp;rsquo;m a believer in client-side MV*.  Second, I&amp;rsquo;m trying to incorporate better testing into my front-end JS code.  Angular seemed like a natural fit given these 2 primary objectives.  I&amp;rsquo;ve done a fair amount of work now with Angular 1 and the ESRI JSAPI 3.x library.  There have been some solid success here, but Dojo &lt;code&gt;require&lt;/code&gt; throughout the app and especially in unit tests have been a major headache.  You could perhaps mock all dependencies from ESRI in the unit tests or try to keep ESRI in it&amp;rsquo;s own untested sandbox, but both of these strategies seems better in theory than practice.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Aside&lt;/strong&gt;: ESRI does not make any of this easy.  Sure, you can get it to work&amp;hellip; kind of&amp;hellip;. with a lot of headaches along the way.  It all boils down to Dojo.  Don&amp;rsquo;t get me wrong, the ESRI API does some amazing things and some of the new 4.0 features look incredibly promising (&lt;code&gt;.watch()&lt;/code&gt; is brilliant), but there&amp;rsquo;s really no solid reason why we&amp;rsquo;re still forced to use Dojo.&lt;/p&gt;
+
+&lt;p&gt;Anyway, getting to what this post is really about&amp;hellip;.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-app:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;The App&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://joshwerts.com/jsapi4-angular2&#34; target=&#34;_blank&#34; ____&gt;&lt;img src=&#34;http://joshwerts.com/img/jsapi4ang2_tests_liteserver_app.png&#34; alt=&#34;Full setup&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://joshwerts.com/jsapi4-angular2/&#34;&gt;Live Demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;From a high level view, the app simply adds points to the map and shows a list of those points with their geometry and &amp;ldquo;index&amp;rdquo; attribute.  Nothing too special - just there to test some concepts.  As an added bonus, the app is served through lite-server and constantly updates as you code.  Similarly, the unit tests run continuously.&lt;/p&gt;
+
+&lt;p&gt;Building upon experimental work by &lt;a href=&#34;https://github.com/odoe/esrijs4-vm-angular2&#34;&gt;Rene Rubalcava&lt;/a&gt; and &lt;a href=&#34;https://github.com/tomwayson/angular2-esri-example&#34;&gt;Tom Wayson&lt;/a&gt;, I was able to get an Angular 2 app properly loading dojo dependencies both in the browser and in Karma tests.&lt;/p&gt;
+
+&lt;p&gt;The app consists of a &amp;ldquo;model&amp;rdquo; (Angular service) to hold the points (or domain object of your choosing) - the thought being that business logic in this model would be testable without being concerned about the objects&amp;rsquo; relation to the map.  Ideally, this model wouldn&amp;rsquo;t contain ESRI dependencies, but with the JSAPI 4&amp;rsquo;s watch capabilities, it seems to make sense to use an &lt;code&gt;esri/core/Collection&lt;/code&gt; as the underlying data structure in the model.  Also ideally, we&amp;rsquo;d just have the collection in the model, but it seems the only way to achieve the map automagically updating is if we use the points from a GraphicsLayer (passing in our Collection as the graphics property to the GraphicsLayer constructor worked in 4.0beta3, but not in 4.0 final for some reason).&lt;/p&gt;
+
+&lt;h3 id=&#34;pointsmodel-points-model-ts:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;PointsModel (points.model.ts)&lt;/h3&gt;
+
+&lt;p&gt;So here&amp;rsquo;s our PointsModel (in Typescript).  We&amp;rsquo;ve simply wrapped a few &lt;code&gt;Collection&lt;/code&gt; methods and then we can add some additional business logic like &lt;code&gt;getIndexSum()&lt;/code&gt;.  &lt;code&gt;index&lt;/code&gt; is just a made up attribute for sake of testing.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ts&#34;&gt;import { Injectable } from &#39;@angular/core&#39;;
+
+import Graphic from &#39;esri/Graphic&#39;;
+import GraphicsLayer from &#39;esri/layers/GraphicsLayer&#39;;
+import Collection from &#39;esri/core/Collection&#39;;
+
+@Injectable()
+export class PointsModel {
+  private points: Collection = new Collection();
+  pointsLayer: GraphicsLayer;
+  constructor() {
+    this.pointsLayer = new GraphicsLayer();
+    this.points = this.pointsLayer.graphics;
+  }
+  addPoint(pointGraphic: Graphic) {
+    this.points.add(pointGraphic);
+  }
+  addPoints(pointsGraphics: Graphic[]) {
+    this.points.addMany(pointsGraphics);
+  }
+  getPointGraphics() {
+    return this.points;
+  }
+  clear() {
+    this.points.removeAll();
+  }
+  getIndexSum() {
+    let sum = 0;
+    if (this.points !== null) {
+      this.points.forEach(p =&amp;gt; sum += p.attributes.index);
+    }
+    return sum;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;attributecomponent-attribute-component-html:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;AttributeComponent (attribute.component.html)&lt;/h3&gt;
+
+&lt;p&gt;When we add a point to the model, it not only shows up in the map, but also in the attribute list which is wired up through databinding:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;&amp;lt;div&amp;gt;
+  &amp;lt;h2&amp;gt;Points!&amp;lt;/h2&amp;gt;
+  &amp;lt;p&amp;gt;Index Sum: {{pointsModel.getIndexSum()}}
+  &amp;lt;ul&amp;gt;
+    &amp;lt;li *ngFor=&amp;quot;let point of points.toArray()&amp;quot;&amp;gt;
+      &amp;lt;span&amp;gt;{{point.attributes.index}} ({{point.geometry.x | number:&#39;.5-5&#39;}},{{point.geometry.y | number:&#39;.5-5&#39;}})&amp;lt;/span&amp;gt;
+    &amp;lt;/li&amp;gt;
+  &amp;lt;/ul&amp;gt;
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;mapservice-map-service-ts:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;MapService (map.service.ts)&lt;/h3&gt;
+
+&lt;p&gt;Our map binding to our PointsModel (which is just a matter of adding pointsModel.pointsLayer (our GraphicsLayer) to the map):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ts&#34;&gt;import { Injectable } from &#39;@angular/core&#39;;
+
+import Map from &#39;esri/Map&#39;;
+import GraphicsLayer from &#39;esri/layers/GraphicsLayer&#39;;
+
+import { PointsModel } from &#39;./points.model&#39;;
+
+@Injectable()
+export class MapService {
+  map: Map;
+  pointGraphicsLayer: GraphicsLayer;
+  constructor(pointsModel: PointsModel) {
+    this.map = new Map({
+      basemap: &#39;topo&#39;
+    });
+    this.map.add(pointsModel.pointsLayer);
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;pointsmodel-tests-points-model-spec-ts:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;PointsModel Tests (points.model.spec.ts)&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ts&#34;&gt;import { PointsModel } from &#39;./points.model&#39;;
+
+import Graphic from &#39;esri/Graphic&#39;;
+import Point from &#39;esri/geometry/Point&#39;;
+
+describe(&#39;PointsModel tests&#39;, () =&amp;gt; {
+  let mockPointGraphic = new Graphic({
+    attributes: {
+      index: 1
+    },
+    geometry: new Point({
+      x: 1,
+      y: 2,
+      spatialReference: {
+        wkid: 4326
+      }
+    })
+  });
+
+  let pointsModel;
+  beforeEach(() =&amp;gt; {
+    pointsModel = new PointsModel();
+  });
+
+  it(&#39;should contstruct it&#39;, () =&amp;gt; {
+    expect(pointsModel).toBeDefined();
+    expect(pointsModel.getPointGraphics()).toBeDefined();
+  });
+
+  describe(&#39;adding and removing points&#39;, () =&amp;gt; {
+    it(&#39;should add a point to collection&#39;, () =&amp;gt; {
+       pointsModel.addPoint(mockPointGraphic);
+       pointsModel.addPoint(mockPointGraphic);
+       expect(pointsModel.getPointGraphics().length).toEqual(2);
+    });
+
+    it(&#39;should add points to collection&#39;, () =&amp;gt; {
+      pointsModel.addPoints([mockPointGraphic, mockPointGraphic]);
+      expect(pointsModel.getPointGraphics().length).toEqual(2);
+    });
+
+    it(&#39;should clear points&#39;, () =&amp;gt; {
+      pointsModel.addPoint(mockPointGraphic);
+      pointsModel.addPoint(mockPointGraphic);
+      pointsModel.clear();
+      expect(pointsModel.getPointGraphics().length).toEqual(0);
+    });
+  });
+
+  describe(&#39;calculations&#39;, () =&amp;gt; {
+    it(&#39;should calculate the sum of the index attributes&#39;, () =&amp;gt; {
+      pointsModel.addPoints([mockPointGraphic, mockPointGraphic]);
+      let sum = pointsModel.getIndexSum();
+      expect(sum).toEqual(2);
+    });
+  });
+
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The nice thing here is that the tests didn&amp;rsquo;t balk at using the esri &lt;code&gt;Collection&lt;/code&gt; that must be imported into the PointsModel (&lt;strong&gt;this has been an incredibly difficult thing to do w/ Angular 1 / Dojo&lt;/strong&gt;).&lt;/p&gt;
+
+&lt;h2 id=&#34;setup:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;Setup&lt;/h2&gt;
+
+&lt;p&gt;Setup for this is non-trivial and is based heavily on &lt;a href=&#34;https://github.com/Esri/esri-system-js&#34;&gt;esri/esri-system-js&lt;/a&gt; along with custom configuration in the Karma configuration and loading of dependencies locally using the &lt;a href=&#34;https://github.com/Esri/arcgis-js-api&#34;&gt;esri bower jsapi repo&lt;/a&gt;.  In short, the esri-system-js loader loads &lt;strong&gt;ALL&lt;/strong&gt; esri dependencies at the start of the application so they&amp;rsquo;re available through import statements in Typescript files.  This was already figured out for the browser portion by Tom and Rene as referenced previously, so check out their repo&amp;rsquo;s for more information there.&lt;/p&gt;
+
+&lt;p&gt;Getting it wired up for testing was a little more difficult but here are the key highlights.  Note that I&amp;rsquo;ve broken out some different configs for browser vs tests.&lt;/p&gt;
+
+&lt;h3 id=&#34;dojoconfigtest-js:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;dojoConfigTest.js&lt;/h3&gt;
+
+&lt;p&gt;Fairly standard setup for loading from a &lt;strong&gt;local&lt;/strong&gt; bower setup.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;(function(window) {
+  // set up your dojoConfig
+  window.dojoConfig = {
+    baseUrl: &#39;app/node_modules/&#39;,
+    deps: [&#39;app/main&#39;],
+    packages: [
+      &#39;app&#39;,
+      &#39;dijit&#39;,
+      &#39;dojo&#39;,
+      &#39;dojox&#39;,
+      &#39;dstore&#39;,
+      &#39;dgrid&#39;,
+      &#39;esri&#39;, {
+        name: &#39;moment&#39;,
+        location: &#39;moment&#39;,
+        main: &#39;moment&#39;
+      }
+    ]
+  };
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;karma-conf-js:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;karma.conf.js&lt;/h3&gt;
+
+&lt;p&gt;These are the changes that were added to the karma.conf.js configuration included in the &lt;a href=&#34;https://github.com/angular/quickstart&#34;&gt;angular2 quick start repo&lt;/a&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;  ...
+
+  files: [
+    ... angular files, etc.
+    // ********* esri load ***********
+    // must be able to serve these files for dojo require
+    // NOTE: karma gives a cryptic error when 
+    // files can&#39;t be found  (msg || &amp;quot;&amp;quot;).replace is not a function
+    { pattern: &#39;bower_components/dojo/**/*.*&#39;, included: false, watched: false },
+    { pattern: &#39;bower_components/dojox/**/*.*&#39;, included: false, watched: false },
+    { pattern: &#39;bower_components/dstore/**/*.*&#39;, included: false, watched: false },     
+    { pattern: &#39;bower_components/dgrid/**/*.*&#39;, included: false, watched: false },
+    
+    { pattern: &#39;bower_components/dijit/**/*.*&#39;, included: false, watched: false },
+    { pattern: &#39;bower_components/esri/**/*.*&#39;, included: false, watched: false },    
+    { pattern: &#39;bower_components/moment/**/*.js&#39;, included: false, watched: false },   
+
+    // load dojoConfig so dojo knows where to &amp;quot;require&amp;quot; modules from
+    &#39;dojoConfigTest.js&#39;,
+    
+    // we need the actual dojo startup file for &amp;quot;requrire&amp;quot; to be defined
+    &#39;bower_components/dojo/dojo.js&#39;,
+    
+    // load in esri&#39;s systemJs util
+    &#39;node_modules/esri-system-js/dist/esriSystem.js&#39;,
+    
+    // load in our array of esri dependencies
+    &#39;esriLoadConfig.js&#39;,
+    
+    // bootstrap in the modules using esri-system-js
+    &#39;esriSystemLoadTest.js&#39;, 
+
+    ... more angular files
+]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;esriloadconfig-js:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;esriLoadConfig.js&lt;/h3&gt;
+
+&lt;p&gt;Contains &lt;strong&gt;ALL&lt;/strong&gt; esri modules required by the application:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;(function(window) {
+  window.esriLoadConfig = {
+      modules: [
+      &#39;esri/Map&#39;,
+      &#39;esri/views/MapView&#39;,
+      &#39;esri/core/Collection&#39;,
+      &#39;esri/layers/GraphicsLayer&#39;,
+      &#39;esri/Graphic&#39;,
+      &#39;esri/geometry/Point&#39;,
+      &#39;esri/geometry/SpatialReference&#39;,
+      &#39;esri/symbols/SimpleMarkerSymbol&#39;,
+      &#39;esri/Color&#39;
+    ]
+  };
+}(window))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;esrisystemloadtest-js:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;esriSystemLoadTest.js&lt;/h3&gt;
+
+&lt;p&gt;Called by Karma to pre-load the esri modules before the tests run.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// load esri modules needed by this application
+// into a System.js module called esri
+start = performance.now();
+esriSystem.register(esriLoadConfig.modules, function () {
+  end = performance.now();
+  time = end - start;
+  console.log(&#39;Loaded esri modules&#39;, time / 1000.0);
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;esrisystemloadbrowser-js:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;esriSystemLoadBrowser.js&lt;/h3&gt;
+
+&lt;p&gt;Used in the browser code (called from index.html) to load in the esri modules AND bootstrap the application once those modules are available.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// load esri modules needed by this application
+// into a System.js module called esri
+console.log(&amp;quot;Loading esri modules: &amp;quot;, esriLoadConfig.modules);
+start = performance.now();
+esriSystem.register(esriLoadConfig.modules, function () {
+  // then bootstrap application
+  end = performance.now();
+  time = end - start;
+  console.log(&#39;Loaded esri modules&#39;, time / 1000.0);
+  System.import(&#39;app/main&#39;).then(function () {
+    console.log(&#39;app/main imported&#39;);
+  }, function (error) {
+    console.log(&amp;quot;System import error:&amp;quot;, error);
+  });
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;conclusion:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;&lt;del&gt;This is &lt;strong&gt;highly experimental&lt;/strong&gt; and there&amp;rsquo;s &lt;strong&gt;a lot of moving parts&lt;/strong&gt;, but it&amp;rsquo;s nice to know this is possible.&lt;/del&gt; This is getting closer to production quality.  I&amp;rsquo;ve left out a lot but the full repo&amp;rsquo;s here:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/jwerts/jsapi4-angular2&#34;&gt;https://github.com/jwerts/jsapi4-angular2&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;There will likely be updates to the repo as I continue to explore this concept (and learn Angular 2&amp;hellip; and learn Typescript).&lt;/p&gt;
+
+&lt;p&gt;It could really benefit from a final build process.  Note that I&amp;rsquo;ve used CDN for most dependencies in index.html for the gh-pages demo to avoid loading local bower and node dependencies to Github.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Edit 2016-06-16:&lt;/strong&gt; Updated Angular to &lt;strong&gt;2.0.0.RC2&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;Edit 2016-06-24:&lt;/strong&gt; Updated Angular to &lt;strong&gt;2.0.0.RC3&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;Edit 2016-07-05:&lt;/strong&gt; Updated Angular to &lt;strong&gt;2.0.0.RC4&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;Edit 2016-07-07:&lt;/strong&gt; Updated to use &lt;strong&gt;esri-system-js 1.0 beta&lt;/strong&gt; which now preserves esri module names and works correctly with Typescript arcgis-js-api typings.&lt;br /&gt;
+&lt;strong&gt;Edit 2016-09-22:&lt;/strong&gt; Updated Angular to &lt;strong&gt;2.0.0 final&lt;/strong&gt;&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>
