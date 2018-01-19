@@ -3,8 +3,33 @@
   
   <url>
     <loc>http://joshwerts.com/</loc>
-    <lastmod>2016-02-04T15:10:09-05:00</lastmod>
+    <lastmod>2018-01-16T13:51:36-05:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</loc>
+    <lastmod>2018-01-16T13:51:36-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</loc>
+    <lastmod>2017-01-08T14:21:52-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://joshwerts.com/blog/2016/10/14/featureclass-from-json/</loc>
+    <lastmod>2016-10-14T10:07:44-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://joshwerts.com/blog/2016/07/21/fun-with-python-sets-and-arcpy/</loc>
+    <lastmod>2016-07-21T17:38:05-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</loc>
+    <lastmod>2016-05-17T20:23:08-04:00</lastmod>
   </url>
   
   <url>

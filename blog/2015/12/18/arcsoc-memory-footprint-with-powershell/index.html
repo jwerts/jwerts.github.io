@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>ArcSOC Memory Footprint with Powershell &middot; Josh Werts</title>
+    <meta name="author" content="Josh Werts">
+    <meta name="description" content="some lines of code...">
+    <meta name="generator" content="Hugo 0.16" />
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <link rel="shortcut icon" href="http://joshwerts.com/img/favicon.ico">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.2/normalize.min.css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="http://joshwerts.com/css/screen.css">
+
+    
+    <link rel="stylesheet" href="http://joshwerts.com/css/github.min.css">
+
+    <link rel="stylesheet" href="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.css">
+
+  </head>
+
+<body class="post-template">
+
+    <header id="site-head">
+	
+	<h1 class="blog-title"><a href="http://joshwerts.com/">Josh Werts</a></h1>
+	
+	
+	<h1 class="blog-subtitle">{ &lsquo;work&rsquo;: [&lsquo;gis&rsquo;, &lsquo;py&rsquo;, &lsquo;js&rsquo; &hellip;], &lsquo;fun&rsquo;: [&lsquo;bike&rsquo;, &lsquo;hike&rsquo;, &lsquo;paddle&rsquo;, &hellip;] }</h1>
+	
+
+  <div id="locationMap" data-latlong="36.216795,-81.674552"
+                        data-location="Boone, NC">
+  </div>
+</header>
+
+    
+<nav class="menu" role="nav">
+    <ul>
+        
+        	<li class="nav nav-current"><a href="http://joshwerts.com/blog/1/01/01/about/">About</a></li>
+      	
+    </ul>
+</nav>
+
+
+    <main class="content" role="main">
+	    <article class="post">
+	        <header>
+	        <h1 class="post-title">ArcSOC Memory Footprint with Powershell</h1>
+	        <div class="post-meta"><time datetime="18 December 2015">18 December 2015</time></div>
+	        </header>
+
+	        <section class="post-content">
+	            
+
+<p>For years, I&rsquo;ve stubbornly avoided learning Powershell simply relying on batch files for whatever small tasks I needed to accomplish, but recently I ran into some batch file hell and decided it would be easier to learn Powershell than to figure out how to do it in a batch file.</p>
+
+<p>It turns out Powershell can be pretty useful (and not really that hard to learn).  Pipes are an awesome and something they definitely got right.</p>
+
+<p>So when the need arose to determine the memory footprint of some ArcGIS Server services, Powershell seemed the way to go.  I&rsquo;m still pretty much a Powershell beginner but here&rsquo;s some useful commands that got the job done&hellip;</p>
+
+<h4 id="get-all-arcsoc-exe-processes-and-their-memory-working-set">Get all ArcSOC.exe processes and their memory &ldquo;working set&rdquo;</h4>
+
+<pre><code class="language-ps1">Get-WmiObject win32_process |
+  Where-Object {$_.name -eq &quot;ArcSOC.exe&quot;} |
+  Select-Object Name, Commandline, WS |
+  Sort-Object WS -descending |
+  Format-Table Name, @{Label=&quot;Memory (MB)&quot;; Expression={($_.WS / 1MB)}}, CommandLine -AutoSize
+</code></pre>
+
+<h4 id="export-those-processes-to-csv">Export those processes to .csv</h4>
+
+<pre><code class="language-ps1">Get-WmiObject win32_process |
+  Where-Object {$_.name -eq &quot;ArcSOC.exe&quot;} |
+  Sort-Object WS -descending |
+  Select-Object Name, @{Label=&quot;Memory (MB)&quot;; Expression={($_.WS / 1MB)}}, Commandline |
+  Export-Csv ArcSoc_Processes.csv
+</code></pre>
+
+<h4 id="get-the-full-memory-footprint-of-all-arcgis-server-service-instances">Get the full memory footprint of all ArcGIS Server service instances</h4>
+
+<pre><code class="language-ps1">(Get-WmiObject win32_process |
+  Where-Object {$_.name -eq &quot;ArcSOC.exe&quot;} |
+  Select-Object Name, WS |
+  Measure-Object WS -sum) |
+  Format-Table @{Label=&quot;Count&quot;; Expression={$_.Count}}, @{Label=&quot;Memory (MB)&quot;; Expression={$_.Sum / 1MB}} -AutoSize
+</code></pre>
+
+<pre><code class="language-ps1"># Get all ArcSOC.exe processes that match these service names
+Get-WmiObject win32_process |
+  Where-Object {$_.name -eq &quot;ArcSOC.exe&quot; -and
+  ($_.commandline -like '*GPService_ProTools*' -or
+   $_.commandline -like '*MapService_MIP*' -or
+   $_.commandline -like '*NetworkRouter_Fiber*')} |
+  Select-Object Name, Commandline, WS |
+  Sort-Object WS -descending |
+  Format-Table Name, @{Label=&quot;Memory (MB)&quot;; Expression={($_.WS / 1KB)}}, commandline -AutoSize
+
+# Export to csv
+Get-WmiObject win32_process |
+  Where-Object {$_.name -eq &quot;ArcSOC.exe&quot; -and
+  ($_.commandline -like '*GPService_ProTools*' -or
+   $_.commandline -like '*MapService_MIP*' -or
+   $_.commandline -like '*NetworkRouter_Fiber*')} |
+   Sort-Object WS -descending |
+   Select-Object Name, @{Label=&quot;Memory (MB)&quot;; Expression={($_.WS / 1MB)}}, Commandline |
+   Export-Csv ArcSoc_MIP_Processes.csv
+
+# Sum Working memory
+(Get-WmiObject win32_process |
+  Where-Object {$_.name -eq &quot;ArcSOC.exe&quot; -and
+    ($_.commandline -like '*GPService_ProTools*' -or
+     $_.commandline -like '*MapService_MIP*' -or
+     $_.commandline -like '*NetworkRouter_Fiber*')} |
+    Select-Object Name, WS |
+    Measure-Object WS -sum) |
+    Format-Table @{Label=&quot;Count&quot;; Expression={$_.Count}}, @{Label=&quot;Memory (MB)&quot;; Expression={$_.Sum / 1MB}} -AutoSize
+</code></pre>
+
+	        </section>
+
+	        <section class="post-tags">
+	            <div class="post-meta tags">
+	            <i class="fa fa-fw fa-tag"></i>
+	            
+	            </div>
+	        </section>
+
+	        <section class="share">
+	            <p class="backtotop"><a data-scroll href="#site-head"><i class="fa fa-lg fa-fw fa-angle-double-up"></i></a><a data-scroll class="backtotoptext" href="#site-head"> Back to top</a></p>
+	            <p class="info prompt">Share</p>
+	            <a href="http://twitter.com/share?text=ArcSOC%20Memory%20Footprint%20with%20Powershell&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2015%2f12%2f18%2farcsoc-memory-footprint-with-powershell%2f" title="Share on Twitter"
+	                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+	                <i class="fa fa-2x fa-fw fa-twitter-square"></i> <span class="hidden">Twitter</span>
+	            </a>
+	            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fjoshwerts.com%2fblog%2f2015%2f12%2f18%2farcsoc-memory-footprint-with-powershell%2f" title="Share on Facebook"
+	                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+	                <i class="fa fa-2x fa-fw fa-facebook-square" style="margin-left: -8px"></i> <span class="hidden">Facebook</span>
+	            </a>
+	            <a href="https://plus.google.com/share?url=http%3a%2f%2fjoshwerts.com%2fblog%2f2015%2f12%2f18%2farcsoc-memory-footprint-with-powershell%2f" title="Share on Google+"
+	               onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+	                <i class="fa fa-2x fa-fw fa-google-plus-square" style="margin-left: -8px"></i> <span class="hidden">Google+</span>
+	            </a>
+	        </section>
+
+            
+
+        			
+                <div style="margin-top:50px">
+    	        	    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jwerts';
+    var disqus_identifier = 'http:\/\/joshwerts.com\/blog\/2015\/12\/18\/arcsoc-memory-footprint-with-powershell\/';
+    var disqus_title = 'ArcSOC Memory Footprint with Powershell';
+    var disqus_url = 'http:\/\/joshwerts.com\/blog\/2015\/12\/18\/arcsoc-memory-footprint-with-powershell\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+                </div>
+    	        
+
+        			
+
+            
+
+	        <footer class="post-footer">
+	            <section class="author">
+    <div class="authorimage" style="background: url(http://joshwerts.com/img/avatar.jpg)"></div>
+    <h4>Josh Werts</h4>
+    <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
+</section>
+
+	        </footer>
+	    </article>
+	</main>
+
+    <footer class="site-footer">
+	<div class="inner">
+		<section class="footer-social">
+      
+        <a href="mailto:joshwerts@gmail.com" target="_top" title="Email"><i class="fa fa-2x fa-fw fa-envelope"></i> <span class="hidden">Email</span></a>&nbsp;
+      
+			
+	    
+	    <a href="//github.com/jwerts" target="_blank" title="GitHub"><i class="fa fa-2x fa-fw fa-github"></i> <span class="hidden">GitHub</span></a>&nbsp;
+	    
+      
+      <a href="//www.instagram.com/joshwerts" target="_blank" title="Instagram"><i class="fa fa-2x fa-fw fa-instagram"></i><span class="hidden">instagram</span></a>&nbsp;
+      
+		    <a href="" target="_blank" title="RSS"><i class="fa fa-2x fa-fw fa-rss"></i> <span class="hidden">RSS</span></a>
+		</section>
+
+		<section class="copyright">&copy; 2016 <a href="http://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
+	</div>
+</footer>
+
+    <script src="http://joshwerts.com/js/lib/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="http://joshwerts.com/js/index.js"></script>
+<script src="http://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+<script src="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.js"></script>
+
+<script>
+    smoothScroll.init({
+        speed: 800,
+        easing: 'easeInOutCubic',
+        updateURL: false,
+        offset: 125,
+    });
+</script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+  <!-- Google Analytics -->
+  <script>
+    var _gaq=[['_setAccount','UA-49518677-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+
+</body>
+</html>

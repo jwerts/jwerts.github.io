@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Webpack on Josh Werts</title>
+    <link>http://joshwerts.com/tags/webpack/</link>
+    <description>Recent content in Webpack on Josh Werts</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 08 Jan 2017 14:21:52 -0500</lastBuildDate>
+    <atom:link href="http://joshwerts.com/tags/webpack/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ESRI Javascript API 4 with Angular 2 - Transition to Webpack</title>
+      <link>http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</link>
+      <pubDate>Sun, 08 Jan 2017 14:21:52 -0500</pubDate>
+      
+      <guid>http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</guid>
+      <description>&lt;p&gt;Since my &lt;a href=&#34;http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/&#34;&gt;first post&lt;/a&gt; on Angular 2 and the ESRI API, I&amp;rsquo;ve transitioned from SystemJS to Webpack which I&amp;rsquo;m enjoying thoroughly.&lt;/p&gt;
+
+&lt;p&gt;Sample App w/ Webpack setup:&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;http://joshwerts.com/angular2-esri-play&#34;&gt;Demo&lt;/a&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;https://github.com/jwerts/angular2-esri-play&#34;&gt;Repo&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;IMO, Webpack has a few major advantages over SystemJS:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Development build step is much faster and lite-server does not bog down with memory leaks (not sure why that happened with the SystemJS setup but lite-server got slower and slower until restarted).&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;Webpack takes care of bundling code for you (everything expect the ESRI requires).&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;This setup also bundles each components&amp;rsquo; html and css in the main bundle.&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Feels like less of a hack to use with esri - simply require in each module and that&amp;rsquo;s it.  Setup is simply specifying ESRI as an &amp;ldquo;external&amp;rdquo;.  Nothing really special there and it just works.&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;No need for a grunt/gulp step to minimize, etc.  Webpack is pretty comprehensive.&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;This app is just a map with a custom coordinate display component (bottom left):&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://joshwerts.com/img/map_w_coordinates.png&#34; alt=&#34;Coordinate component&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve used a similar webpack configuration to this in a couple production apps over the last several months.  Unit testing w/ this setup and Typescript is finally starting to feel natural (instead of a large very verbose burden w/ es5).  I&amp;rsquo;ve found it fairly straightfoward to test domain classes and models w/ business logic where I feel you get the most bang for your buck from testing.  What I haven&amp;rsquo;t quite figured out yet is how to test components (and when it&amp;rsquo;s actually worth the effort).  This project contains a working test for the coordinate component&amp;hellip;  It works, but I&amp;rsquo;m not yet convinced it&amp;rsquo;s the best way to go about it.  Please comment if you have experience here!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Coordinate Component test&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ts&#34;&gt;import { TestBed, ComponentFixture } from &#39;@angular/core/testing&#39;;
+import { DebugElement } from &#39;@angular/core&#39;;
+
+import { CoordinateComponent } from &#39;./coordinate.component&#39;;
+
+let fixture: ComponentFixture&amp;lt;CoordinateComponent&amp;gt;;
+let component: CoordinateComponent;
+let de: DebugElement;
+let el: HTMLElement;
+let $mapDiv;
+let mapDivEl: Element;
+beforeEach(() =&amp;gt; {
+  // refine the test module by declaring the test component
+  TestBed.configureTestingModule({
+    declarations: [CoordinateComponent]
+  });
+
+  // create component and test fixture
+  fixture = TestBed.createComponent(CoordinateComponent);
+  el = fixture.nativeElement;
+
+  // get test component from the fixture
+  component = fixture.componentInstance;
+
+  // add a div to the body
+  $mapDiv = $(&#39;&amp;lt;div&amp;gt;&#39;, { id: &#39;mapDiv&#39; }).appendTo(&#39;body&#39;);
+  mapDivEl = $mapDiv[0];
+
+  // mock required MapView props/functions
+  component.mapView = &amp;lt;any&amp;gt;{
+    container: mapDivEl,
+    toMap: (point) =&amp;gt; {
+      return {
+        longitude: 5,
+        latitude: 10
+      };
+    },
+    zoom: 7,
+    scale: 500
+  };
+
+  // runs ngOnInit
+  fixture.detectChanges();
+});
+
+describe(&#39;Coordinate&#39;, () =&amp;gt; {
+  it(&#39;should update lat/long on mousemove&#39;, () =&amp;gt; {
+    mapDivEl.dispatchEvent(new Event(&#39;mousemove&#39;, {
+      bubbles: true,
+      cancelable: true
+    }));
+    // pageX, pageY
+    fixture.detectChanges();
+    expect(el.querySelector(&#39;#longitude&#39;).innerHTML).toBe(&#39;5.000000&#39;);
+    expect(el.querySelector(&#39;#latitude&#39;).innerHTML).toBe(&#39;10.000000&#39;);
+    expect(el.querySelector(&#39;#zoom&#39;).innerHTML).toBe(&#39;7&#39;);
+    expect(el.querySelector(&#39;#scale&#39;).innerHTML).toBe(&#39;500&#39;);
+  });
+});
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

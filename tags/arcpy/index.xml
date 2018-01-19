@@ -6,8 +6,191 @@
     <description>Recent content in Arcpy on Josh Werts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 04 Feb 2016 15:10:09 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 16 Jan 2018 13:51:36 -0500</lastBuildDate>
     <atom:link href="http://joshwerts.com/tags/arcpy/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Group by query in a file geodatabase</title>
+      <link>http://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</link>
+      <pubDate>Tue, 16 Jan 2018 13:51:36 -0500</pubDate>
+      
+      <guid>http://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</guid>
+      <description>&lt;p&gt;File geodatabase feature classes and tables lack some of the more advanced ability to query that a true relational database supports.  Sometimes these queries can be simulated with arcpy cursors; one good example is a SQL group by query.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Typical SQL&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SELECT field, count(*) from table group by field order by count(*) desc;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;In arcpy&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from collections import Counter
+
+def group_by_count(table_or_fc, fields):
+    &amp;quot;&amp;quot;&amp;quot; Returns dictionary containing count of unique items &amp;quot;&amp;quot;&amp;quot;
+    counter = Counter()
+    with arcpy.da.SearchCursor(table_or_fc, fields) as curs:
+        for row in curs:
+            # no need to store as a tuple if only 1 field, just store the value
+            if len(row) == 1:
+                row = row[0]
+            counter[row] += 1
+    return counter
+
+
+def group_by_count_formatted(table_or_fc, fields):
+    &amp;quot;&amp;quot;&amp;quot; prints out counts of unique values &amp;quot;&amp;quot;&amp;quot;
+    counter = group_by_count(table_or_fc, fields)
+    # sort yields highest count records first (order by count(*) desc)
+    for key, count in sorted(counter.items(), reverse=True, key=lambda item: item[1]):
+        print(&amp;quot;{}: {:,}&amp;quot;.format(str(key), count))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Example usage in ArcMap Python console (single field)&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; group_by_count(&#39;junctions&#39;, &#39;ImpedanceType&#39;)
+Counter({u&#39;SmallStreet&#39;: 455145, u&#39;LargeStreet&#39;: 28714, u&#39;Stream&#39;: 9375, u&#39;RailRoad&#39;: 1742})
+
+&amp;gt;&amp;gt;&amp;gt; group_by_count_formatted(&#39;junctions&#39;, &#39;ImpedanceType&#39;)
+SmallStreet: 455,145
+LargeStreet: 28,714
+Stream: 9,375
+RailRoad: 1,742
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Example usage in ArcMap Python console (multiple fields)&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; group_by_count(&#39;junctions&#39;, [&#39;ImpedanceType&#39;, &#39;InfrastructureType&#39;])
+Counter({(&#39;SmallStreet&#39;, &#39;New&#39;): 318834, (&#39;LargeStreet&#39;, &#39;New&#39;): 28710, (&#39;Stream&#39;, &#39;New&#39;): 18379, (&#39;Stream&#39;, &#39;Aerial&#39;): 5806, (&#39;RailRoad&#39;, &#39;New&#39;): 4043, (&#39;Stream&#39;, &#39;Underground&#39;): 3227, (&#39;RailRoad&#39;, &#39;Aerial&#39;): 1035, (&#39;RailRoad&#39;, &#39;Underground&#39;): 668})
+
+&amp;gt;&amp;gt;&amp;gt; group_by_count_formatted(&#39;junctions&#39;, [&#39;ImpedanceType&#39;, &#39;InfrastructureType&#39;])
+(&#39;SmallStreet&#39;, &#39;New&#39;): 318,834
+(&#39;LargeStreet&#39;, &#39;New&#39;): 28,710
+(&#39;Stream&#39;, &#39;New&#39;): 18,379
+(&#39;Stream&#39;, &#39;Aerial&#39;): 5,806
+(&#39;RailRoad&#39;, &#39;New&#39;): 4,043
+(&#39;Stream&#39;, &#39;Underground&#39;): 3,227
+(&#39;RailRoad&#39;, &#39;Aerial&#39;): 1,035
+(&#39;RailRoad&#39;, &#39;Underground&#39;): 668
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These functions aren&amp;rsquo;t going to be as efficient as a SQL query, but they can be quite useful sometimes for ad-hoc data exploration - especially in the Arcmap/Pro console.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>FeatureClass from JSON</title>
+      <link>http://joshwerts.com/blog/2016/10/14/featureclass-from-json/</link>
+      <pubDate>Fri, 14 Oct 2016 10:07:44 -0400</pubDate>
+      
+      <guid>http://joshwerts.com/blog/2016/10/14/featureclass-from-json/</guid>
+      <description>&lt;p&gt;I keep forgetting how to do this after several months pass by and it&amp;rsquo;s certainly not obvious&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;ESRI provides a tool for converting JSON to FeatureClass but it requires reading the JSON from a .json file: &lt;a href=&#34;http://pro.arcgis.com/en/pro-app/tool-reference/conversion/json-to-features.htm&#34;&gt;JSON to Features&lt;/a&gt;.  That extra step of writing out and reading from a file just seems completely unnecessary.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the alternative lesser known and not obvious way to do it:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;valid_featureset_json = \
+&amp;quot;&amp;quot;&amp;quot;{
+    &amp;quot;displayFieldName&amp;quot;: &amp;quot;&amp;quot;,
+    &amp;quot;fieldAliases&amp;quot;: {
+        &amp;quot;OBJECTID&amp;quot;: &amp;quot;OBJECTID&amp;quot;,
+        &amp;quot;Description&amp;quot;: &amp;quot;Description&amp;quot;
+    },
+    &amp;quot;geometryType&amp;quot;: &amp;quot;esriGeometryPoint&amp;quot;,
+    &amp;quot;spatialReference&amp;quot;: {
+        &amp;quot;wkid&amp;quot;: 4326,
+        &amp;quot;latestWkid&amp;quot;: 4326
+    },
+    &amp;quot;fields&amp;quot;: [
+        {
+            &amp;quot;name&amp;quot;: &amp;quot;OBJECTID&amp;quot;,
+            &amp;quot;type&amp;quot;: &amp;quot;esriFieldTypeOID&amp;quot;,
+            &amp;quot;alias&amp;quot;: &amp;quot;OBJECTID&amp;quot;
+        },
+        {
+            &amp;quot;name&amp;quot;: &amp;quot;Description&amp;quot;,
+            &amp;quot;type&amp;quot;: &amp;quot;esriFieldTypeString&amp;quot;,
+            &amp;quot;alias&amp;quot;: &amp;quot;Description&amp;quot;,
+            &amp;quot;length&amp;quot;: 50
+        }
+    ],
+    &amp;quot;features&amp;quot;: [
+        {
+            &amp;quot;attributes&amp;quot;: {
+                &amp;quot;OBJECTID&amp;quot;: 1,
+                &amp;quot;Description&amp;quot;: &amp;quot;This is a test feature.&amp;quot;
+            },
+            &amp;quot;geometry&amp;quot;: {
+                &amp;quot;x&amp;quot;: -123.80816799999991,
+                &amp;quot;y&amp;quot;: 39.40451500000006
+            }
+        },
+        {
+            &amp;quot;attributes&amp;quot;: {
+                &amp;quot;OBJECTID&amp;quot;: 2,
+                &amp;quot;Description&amp;quot;: &amp;quot;This is aanother test feature.&amp;quot;
+            },
+            &amp;quot;geometry&amp;quot;: {
+                &amp;quot;x&amp;quot;: -123.80816839299996,
+                &amp;quot;y&amp;quot;: 39.404514814000095
+            }
+        }
+    ]
+}&amp;quot;&amp;quot;&amp;quot;
+
+# convert to RecordSet object (should be able to use this most places FeatureSet would be called for)
+record_set = arcpy.AsShape(valid_featureset_json, True)
+
+# If you need a FeatureClass, just copy into one
+output_fc = r&#39;in_memory\\output_fc&#39;
+arcpy.management.CopyFeatures(record_set, output_fc)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And that&amp;rsquo;s it!  No need to write the json to file.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Fun with Python Sets (and arcpy)</title>
+      <link>http://joshwerts.com/blog/2016/07/21/fun-with-python-sets-and-arcpy/</link>
+      <pubDate>Thu, 21 Jul 2016 17:38:05 -0400</pubDate>
+      
+      <guid>http://joshwerts.com/blog/2016/07/21/fun-with-python-sets-and-arcpy/</guid>
+      <description>&lt;p&gt;I often forget about the Python &lt;code&gt;set&lt;/code&gt;, so this is a fun reminder to myself to keep it in mind.  Here&amp;rsquo;s a neat example of using a set for deleting fields.&lt;/p&gt;
+
+&lt;p&gt;This function deletes all of the fields &lt;em&gt;except&lt;/em&gt; the ones you specify:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def delete_all_fields_except(fc, keep_fields):
+    &amp;quot;&amp;quot;&amp;quot; deletes all fields except those specfied as keep_fields &amp;quot;&amp;quot;&amp;quot; 
+    # create set of all possible fields but exclude OBJECTID, SHAPE, etc.
+    all_fields = set(f.name for f in arcpy.ListFields(fc) if not f.required)
+
+    # get a list of fields in the featureclass but not in the list of fields to keep
+    # using set.difference()
+    
+    delete_fields = list(all_fields.difference(keep_fields))
+    
+    # delete out all the fields
+    arcpy.management.DeleteField(fc, delete_fields)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Usage:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# Assume our feature class has the following fields:
+print([f.name for f in arcpy.ListFields(fc)])
+# [&#39;OBJECTID&#39;, &#39;Shape&#39;, &#39;field1&#39;, &#39;field2&#39;, &#39;field3&#39;, &#39;field4&#39;, &#39;field5&#39;]
+
+keep_fields = [&#39;field1&#39;, &#39;field3&#39;]
+delete_all_fields_except(fc, keep_fields)
+
+print([f.name for f in arcpy.ListFields(fc)])
+# [&#39;OBJECTID&#39;, &#39;Shape&#39;, &#39;field1&#39;, &#39;field3&#39;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is pretty simple example and you could obviously accomplish this without using set, but set is more elegant and more efficient (probably doesn&amp;rsquo;t matter much here).  Perhaps I&amp;rsquo;ll update this post with more advanced usage now that this is here to remind me to think about sets!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>arcpy: Efficient Geometry Creation</title>

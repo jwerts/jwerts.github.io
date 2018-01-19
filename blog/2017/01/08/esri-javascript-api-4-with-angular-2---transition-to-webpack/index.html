@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>ESRI Javascript API 4 with Angular 2 - Transition to Webpack &middot; Josh Werts</title>
+    <meta name="author" content="Josh Werts">
+    <meta name="description" content="some lines of code...">
+    <meta name="generator" content="Hugo 0.16-DEV" />
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <link rel="shortcut icon" href="http://joshwerts.com/img/favicon.ico">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.2/normalize.min.css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="http://joshwerts.com/css/screen.css">
+
+    
+    <link rel="stylesheet" href="http://joshwerts.com/css/github.min.css">
+
+    <link rel="stylesheet" href="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.css">
+
+  </head>
+
+<body class="post-template">
+
+    <header id="site-head">
+	
+	<h1 class="blog-title"><a href="http://joshwerts.com/">Josh Werts</a></h1>
+	
+	
+	<h1 class="blog-subtitle">{ &lsquo;work&rsquo;: [&lsquo;gis&rsquo;, &lsquo;py&rsquo;, &lsquo;js&rsquo; &hellip;], &lsquo;fun&rsquo;: [&lsquo;bike&rsquo;, &lsquo;hike&rsquo;, &lsquo;paddle&rsquo;, &hellip;] }</h1>
+	
+
+  <div id="locationMap" data-latlong="36.216795,-81.674552"
+                        data-location="Boone, NC">
+  </div>
+</header>
+
+    
+<nav class="menu" role="nav">
+    <ul>
+        
+        	<li class="nav nav-current"><a href="http://joshwerts.com/blog/1/01/01/about/">About</a></li>
+      	
+    </ul>
+</nav>
+
+
+    <main class="content" role="main">
+	    <article class="post">
+	        <header>
+	        <h1 class="post-title">ESRI Javascript API 4 with Angular 2 - Transition to Webpack</h1>
+	        <div class="post-meta"><time datetime="08 January 2017">08 January 2017</time></div>
+	        </header>
+
+	        <section class="post-content">
+	            <p>Since my <a href="http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/">first post</a> on Angular 2 and the ESRI API, I&rsquo;ve transitioned from SystemJS to Webpack which I&rsquo;m enjoying thoroughly.</p>
+
+<p>Sample App w/ Webpack setup:<br />
+<strong><a href="http://joshwerts.com/angular2-esri-play">Demo</a></strong><br />
+<strong><a href="https://github.com/jwerts/angular2-esri-play">Repo</a></strong></p>
+
+<p>IMO, Webpack has a few major advantages over SystemJS:</p>
+
+<ul>
+<li>Development build step is much faster and lite-server does not bog down with memory leaks (not sure why that happened with the SystemJS setup but lite-server got slower and slower until restarted).<br /></li>
+<li>Webpack takes care of bundling code for you (everything expect the ESRI requires).<br />
+
+<ul>
+<li>This setup also bundles each components&rsquo; html and css in the main bundle.<br /></li>
+</ul></li>
+<li>Feels like less of a hack to use with esri - simply require in each module and that&rsquo;s it.  Setup is simply specifying ESRI as an &ldquo;external&rdquo;.  Nothing really special there and it just works.<br /></li>
+<li>No need for a grunt/gulp step to minimize, etc.  Webpack is pretty comprehensive.<br /></li>
+</ul>
+
+<p><strong>This app is just a map with a custom coordinate display component (bottom left):</strong></p>
+
+<p><img src="http://joshwerts.com/img/map_w_coordinates.png" alt="Coordinate component" /></p>
+
+<p>I&rsquo;ve used a similar webpack configuration to this in a couple production apps over the last several months.  Unit testing w/ this setup and Typescript is finally starting to feel natural (instead of a large very verbose burden w/ es5).  I&rsquo;ve found it fairly straightfoward to test domain classes and models w/ business logic where I feel you get the most bang for your buck from testing.  What I haven&rsquo;t quite figured out yet is how to test components (and when it&rsquo;s actually worth the effort).  This project contains a working test for the coordinate component&hellip;  It works, but I&rsquo;m not yet convinced it&rsquo;s the best way to go about it.  Please comment if you have experience here!</p>
+
+<p><strong>Coordinate Component test</strong>:</p>
+
+<pre><code class="language-ts">import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { DebugElement } from '@angular/core';
+
+import { CoordinateComponent } from './coordinate.component';
+
+let fixture: ComponentFixture&lt;CoordinateComponent&gt;;
+let component: CoordinateComponent;
+let de: DebugElement;
+let el: HTMLElement;
+let $mapDiv;
+let mapDivEl: Element;
+beforeEach(() =&gt; {
+  // refine the test module by declaring the test component
+  TestBed.configureTestingModule({
+    declarations: [CoordinateComponent]
+  });
+
+  // create component and test fixture
+  fixture = TestBed.createComponent(CoordinateComponent);
+  el = fixture.nativeElement;
+
+  // get test component from the fixture
+  component = fixture.componentInstance;
+
+  // add a div to the body
+  $mapDiv = $('&lt;div&gt;', { id: 'mapDiv' }).appendTo('body');
+  mapDivEl = $mapDiv[0];
+
+  // mock required MapView props/functions
+  component.mapView = &lt;any&gt;{
+    container: mapDivEl,
+    toMap: (point) =&gt; {
+      return {
+        longitude: 5,
+        latitude: 10
+      };
+    },
+    zoom: 7,
+    scale: 500
+  };
+
+  // runs ngOnInit
+  fixture.detectChanges();
+});
+
+describe('Coordinate', () =&gt; {
+  it('should update lat/long on mousemove', () =&gt; {
+    mapDivEl.dispatchEvent(new Event('mousemove', {
+      bubbles: true,
+      cancelable: true
+    }));
+    // pageX, pageY
+    fixture.detectChanges();
+    expect(el.querySelector('#longitude').innerHTML).toBe('5.000000');
+    expect(el.querySelector('#latitude').innerHTML).toBe('10.000000');
+    expect(el.querySelector('#zoom').innerHTML).toBe('7');
+    expect(el.querySelector('#scale').innerHTML).toBe('500');
+  });
+});
+</code></pre>
+
+	        </section>
+
+	        <section class="post-tags">
+	            <div class="post-meta tags">
+	            <i class="fa fa-fw fa-tag"></i>
+	            
+	            <a href="http://joshwerts.com/tags/arcgis">arcgis </a>
+	            
+	            <a href="http://joshwerts.com/tags/gis">gis </a>
+	            
+	            <a href="http://joshwerts.com/tags/javascript">javascript </a>
+	            
+	            <a href="http://joshwerts.com/tags/REST">REST </a>
+	            
+	            <a href="http://joshwerts.com/tags/esri">esri </a>
+	            
+	            <a href="http://joshwerts.com/tags/angular">angular </a>
+	            
+	            <a href="http://joshwerts.com/tags/typescript">typescript </a>
+	            
+	            <a href="http://joshwerts.com/tags/webpack">webpack </a>
+	            
+	            </div>
+	        </section>
+
+	        <section class="share">
+	            <p class="backtotop"><a data-scroll href="#site-head"><i class="fa fa-lg fa-fw fa-angle-double-up"></i></a><a data-scroll class="backtotoptext" href="#site-head"> Back to top</a></p>
+	            <p class="info prompt">Share</p>
+	            <a href="http://twitter.com/share?text=ESRI%20Javascript%20API%204%20with%20Angular%202%20-%20Transition%20to%20Webpack&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2017%2f01%2f08%2fesri-javascript-api-4-with-angular-2---transition-to-webpack%2f" title="Share on Twitter"
+	                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+	                <i class="fa fa-2x fa-fw fa-twitter-square"></i> <span class="hidden">Twitter</span>
+	            </a>
+	            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fjoshwerts.com%2fblog%2f2017%2f01%2f08%2fesri-javascript-api-4-with-angular-2---transition-to-webpack%2f" title="Share on Facebook"
+	                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+	                <i class="fa fa-2x fa-fw fa-facebook-square" style="margin-left: -8px"></i> <span class="hidden">Facebook</span>
+	            </a>
+	            <a href="https://plus.google.com/share?url=http%3a%2f%2fjoshwerts.com%2fblog%2f2017%2f01%2f08%2fesri-javascript-api-4-with-angular-2---transition-to-webpack%2f" title="Share on Google+"
+	               onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+	                <i class="fa fa-2x fa-fw fa-google-plus-square" style="margin-left: -8px"></i> <span class="hidden">Google+</span>
+	            </a>
+	        </section>
+
+            
+
+        			
+                <div style="margin-top:50px">
+    	        	    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jwerts';
+    var disqus_identifier = 'http:\/\/joshwerts.com\/blog\/2017\/01\/08\/esri-javascript-api-4-with-angular-2---transition-to-webpack\/';
+    var disqus_title = 'ESRI Javascript API 4 with Angular 2 - Transition to Webpack';
+    var disqus_url = 'http:\/\/joshwerts.com\/blog\/2017\/01\/08\/esri-javascript-api-4-with-angular-2---transition-to-webpack\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+                </div>
+    	        
+
+        			
+
+            
+
+	        <footer class="post-footer">
+	            <section class="author">
+    <div class="authorimage" style="background: url(http://joshwerts.com/img/avatar.jpg)"></div>
+    <h4>Josh Werts</h4>
+    <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Boone, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
+</section>
+
+	        </footer>
+	    </article>
+	</main>
+
+    <footer class="site-footer">
+	<div class="inner">
+		<section class="footer-social">
+      
+        <a href="mailto:joshwerts@gmail.com" target="_top" title="Email"><i class="fa fa-2x fa-fw fa-envelope"></i> <span class="hidden">Email</span></a>&nbsp;
+      
+			
+	    
+	    <a href="//github.com/jwerts" target="_blank" title="GitHub"><i class="fa fa-2x fa-fw fa-github"></i> <span class="hidden">GitHub</span></a>&nbsp;
+	    
+      
+      <a href="//www.instagram.com/joshwerts" target="_blank" title="Instagram"><i class="fa fa-2x fa-fw fa-instagram"></i><span class="hidden">instagram</span></a>&nbsp;
+      
+		    <a href="" target="_blank" title="RSS"><i class="fa fa-2x fa-fw fa-rss"></i> <span class="hidden">RSS</span></a>
+		</section>
+
+		<section class="copyright">&copy; 2018 <a href="http://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
+	</div>
+</footer>
+
+    <script src="http://joshwerts.com/js/lib/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="http://joshwerts.com/js/index.js"></script>
+<script src="http://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+<script src="http://joshwerts.com/js/lib/bower_components/leaflet/dist/leaflet.js"></script>
+
+<script>
+    smoothScroll.init({
+        speed: 800,
+        easing: 'easeInOutCubic',
+        updateURL: false,
+        offset: 125,
+    });
+</script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+  <!-- Google Analytics -->
+  <script>
+    var _gaq=[['_setAccount','UA-49518677-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+
+</body>
+</html>
