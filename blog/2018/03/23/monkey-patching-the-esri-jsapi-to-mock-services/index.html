@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    
+    <meta name="theme-color" content="#3498db">
+    
+    <meta name="msapplication-navbutton-color" content="#3498db">
+    
+    <meta name="apple-mobile-web-app-status-bar-style" content="#3498db">
+
+    <title>Monkey-patching the ESRI JSAPI to mock services &middot; Josh Werts</title>
+    <meta name="author" content="Josh Werts">
+    <meta name="description" content="some lines of code...">
+    <meta name="generator" content="Hugo 0.16-DEV" />
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <link rel="shortcut icon" href="http://joshwerts.com/img/favicon.ico">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.2/normalize.min.css">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="http://joshwerts.com/css/screen.css">
+
+    
+    <link rel="stylesheet" href="http://joshwerts.com/css/github.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+
+  </head>
+
+<body class="post-template">
+
+    <header id="site-head">
+	
+	<h1 class="blog-title"><a href="http://joshwerts.com/">Josh Werts</a></h1>
+	
+	
+	<h1 class="blog-subtitle">{ &lsquo;work&rsquo;: [&lsquo;gis&rsquo;, &lsquo;py&rsquo;, &lsquo;js&rsquo; &hellip;], &lsquo;fun&rsquo;: [&lsquo;bike&rsquo;, &lsquo;hike&rsquo;, &lsquo;paddle&rsquo;, &hellip;] }</h1>
+	
+
+  <div id="locationMap" data-latlong="35.5951,-82.5515"
+                        data-location="Asheville, NC">
+  </div>
+</header>
+
+    
+<nav class="menu" role="nav">
+    <ul>
+        
+        	<li class="nav nav-current"><a href="http://joshwerts.com/blog/1/01/01/about/">About</a></li>
+      	
+    </ul>
+</nav>
+
+
+    <main class="content" role="main">
+	    <article class="post">
+	        <header>
+	        <h1 class="post-title">Monkey-patching the ESRI JSAPI to mock services</h1>
+	        <div class="post-meta"><time datetime="23 March 2018">23 March 2018</time></div>
+	        </header>
+
+	        <section class="post-content">
+	            
+
+<p>Lately I&rsquo;ve been working on a project where I&rsquo;m unable to access the client&rsquo;s ArcGIS Server services
+directly and don&rsquo;t have the data/environment to publish locally.  Working directly on the server is slow and I wanted a way to mock in a few services just to get started on some UI elements.  There are some online services that help w/ mocking HTTP calls, but I didn&rsquo;t really want to put the data out there in the cloud&hellip;.</p>
+
+<p>So how about some <strong>monkey-patching</strong>?</p>
+
+<h3 id="concept:58365f17369855609e8a0624874f7e55">Concept</h3>
+
+<p>Here&rsquo;s the basic concept - since nothing is really closed in JavaScript, we can intercept global functions, perform some action and then allow the function to continue as usual.  Here&rsquo;s a simple example - let&rsquo;s say we want to log the url of all XHR requests to the console:</p>
+
+<pre><code class="language-js">// place this anonymous closure somewhere in your code before any service calls.
+// could be in a script tag in index.html for instance.
+(function (open) {
+
+  // REPLACE the open function with a new function
+  XMLHttpRequest.prototype.open = function (method, url, async, user, password) {
+
+    // log out the url
+    console.log('XHR request to: ', url);
+
+    // after we do our work, call the ORIGINAL open function so we continue normally.
+    open.apply(this, arguments);
+  };
+
+  // pass the ORIGINAL function in as a parameter.
+})(XMLHttpRequest.prototype.open);
+
+</code></pre>
+
+<p><strong>Example output in Chrome console:</strong><br />
+<img src="http://joshwerts.com/img/xhr_logging.png" alt="XHR logging in chrome console" /></p>
+
+<h3 id="featurelayer-xhr-example:58365f17369855609e8a0624874f7e55">FeatureLayer (XHR) Example</h3>
+
+<p><em>Some</em> of the JSAPI uses XHR to pass queries.  For instance, this is an example of intercepting and mocking out service calls from a JSAPI 4.6 FeatureLayer.  In this case, we&rsquo;re just checking the URL on each call and changing it to our JSON (which is simply previous ArcGIS Server calls saved out into .json files).  There are 3 steps here based on how ESRI has implemented the FeatureLayer:</p>
+
+<ol>
+<li>When the FeatureLayer is instantiated, a call is made to the endpoint w/ <code>f=json</code> to retrieve the service&rsquo;s schema.<br /></li>
+<li>At 4.x ESRI performs a <code>returnCountOnly</code> call to get the total count of features.<br /></li>
+<li>Then, the API tries to iterate through the objectIds with actual query calls to get all of the features, but we&rsquo;re just returning a single response.  There&rsquo;s a major gotcha here:  Make sure <code>&quot;exceededTransferLimit&quot;: false</code> is set to <code>false</code> in the json or the API will just keep iterating indefinitely trying to get all of the features.<br /></li>
+</ol>
+
+<pre><code class="language-js">(function (open) {
+  XMLHttpRequest.prototype.open = function (method, url, async, user, password) {
+    if (url === 'http://server/arcgis/rest/services/myservice/MapServer/5?f=json') {
+      console.log('open', method, url, async, user, password);
+      url = 'http://localhost:8080/app/mocks/ags/my_ags_service_info.json';
+    }
+
+    if (url.indexOf('http://server/arcgis/rest/services/myservice/MapServer/5/query') &gt; -1) {
+      if (url.indexOf('returnCountOnly') &gt; -1) {
+        console.log('open', method, url, async, user, password);
+        url = 'http://localhost:8080/app/mocks/ags/my_ags_service_5_values_count.json';
+      } else {
+        console.log('open', method, url, async, user, password);
+        url = 'http://localhost:8080/app/mocks/ags/my_ags_service_5_values.json';
+      }
+    }
+    open.apply(this, arguments);
+  };
+})(XMLHttpRequest.prototype.open);
+</code></pre>
+
+<h3 id="querytask-jsonp-example:58365f17369855609e8a0624874f7e55">QueryTask (jsonp) Example</h3>
+
+<p>Other parts of the API use jsonp instead of XHR to handle requests so we can&rsquo;t intercept via XMLHttpRequest.  Here&rsquo;s a slightly different approach to handle a <code>QueryTask.execute</code> call by patching the class&rsquo;s <code>execute</code> function itself.</p>
+
+<pre><code class="language-js">// NOTE: requires here are with a Webpack setup.
+import QueryTask = require('esri/tasks/QueryTask');
+import Point = require('esri/geometry/Point');
+import FeatureSet = require('esri/tasks/support/FeatureSet');
+import esriRequest = require('esri/request');
+
+(function (execute) {
+  QueryTask.prototype.execute = function (query, requestOptions?) {
+    if (this.url.indexOf('http://server/arcgis/rest/services/myservice/MapServer/5?f=json') &gt; -1) {
+
+      // create a new Promise and do our own call to the local mocked json response.
+      return new Promise((resolve, reject) =&gt; {
+        esriRequest('http://localhost:8080/app/mocks/ags/my_features.json').then(response =&gt; {
+          let featureSet = new FeatureSet(response.data);
+
+          // In some cases geometries weren't correctly created and needed to fix.
+          for (let f of featureSet.features) {
+            f.geometry = new Point({
+              x: f.geometry.x,
+              y: f.geometry.y,
+              spatialReference: {
+                wkid: 4326
+              }
+            });
+          }
+          // resolve the promise with our mocked FeatureSet
+          resolve(featureSet);
+        }, error =&gt; reject(error));
+      });
+    }
+  }
+  return execute.apply(this, arguments);
+})(QueryTask.prototype.execute);
+</code></pre>
+
+<p>There are probably better ways to accomplish this and I definitely wouldn&rsquo;t suggest doing anything like this for a production app, but it can still be useful in some cases.</p>
+
+	        </section>
+
+	        <section class="post-tags">
+	            <div class="post-meta tags">
+	            <i class="fa fa-fw fa-tag"></i>
+	            
+	            <a href="http://joshwerts.com/tags/arcgis">arcgis </a>
+	            
+	            <a href="http://joshwerts.com/tags/gis">gis </a>
+	            
+	            <a href="http://joshwerts.com/tags/javascript">javascript </a>
+	            
+	            <a href="http://joshwerts.com/tags/REST">REST </a>
+	            
+	            <a href="http://joshwerts.com/tags/esri">esri </a>
+	            
+	            </div>
+	        </section>
+
+	        <section class="share">
+	            <p class="backtotop"><a data-scroll href="#site-head"><i class="fa fa-lg fa-fw fa-angle-double-up"></i></a><a data-scroll class="backtotoptext" href="#site-head"> Back to top</a></p>
+	            <p class="info prompt">Share</p>
+	            <a href="http://twitter.com/share?text=Monkey-patching%20the%20ESRI%20JSAPI%20to%20mock%20services&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2018%2f03%2f23%2fmonkey-patching-the-esri-jsapi-to-mock-services%2f" title="Share on Twitter"
+	                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+	                <i class="fa fa-2x fa-fw fa-twitter-square"></i> <span class="hidden">Twitter</span>
+	            </a>
+	            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fjoshwerts.com%2fblog%2f2018%2f03%2f23%2fmonkey-patching-the-esri-jsapi-to-mock-services%2f" title="Share on Facebook"
+	                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+	                <i class="fa fa-2x fa-fw fa-facebook-square" style="margin-left: -8px"></i> <span class="hidden">Facebook</span>
+	            </a>
+	            <a href="https://plus.google.com/share?url=http%3a%2f%2fjoshwerts.com%2fblog%2f2018%2f03%2f23%2fmonkey-patching-the-esri-jsapi-to-mock-services%2f" title="Share on Google+"
+	               onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+	                <i class="fa fa-2x fa-fw fa-google-plus-square" style="margin-left: -8px"></i> <span class="hidden">Google+</span>
+	            </a>
+	        </section>
+
+            
+
+        			
+                <div style="margin-top:50px">
+    	        	    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jwerts';
+    var disqus_identifier = 'http:\/\/joshwerts.com\/blog\/2018\/03\/23\/monkey-patching-the-esri-jsapi-to-mock-services\/';
+    var disqus_title = 'Monkey-patching the ESRI JSAPI to mock services';
+    var disqus_url = 'http:\/\/joshwerts.com\/blog\/2018\/03\/23\/monkey-patching-the-esri-jsapi-to-mock-services\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+                </div>
+    	        
+
+        			
+
+            
+
+	        <footer class="post-footer">
+	            <section class="author">
+    <div class="authorimage" style="background: url(http://joshwerts.com/img/avatar.jpg)"></div>
+    <h4>Josh Werts</h4>
+    <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Asheville, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
+</section>
+
+	        </footer>
+	    </article>
+	</main>
+
+    <footer class="site-footer">
+	<div class="inner">
+		<section class="footer-social">
+      
+        <a href="mailto:joshwerts@gmail.com" target="_top" title="Email"><i class="fa fa-2x fa-fw fa-envelope"></i> <span class="hidden">Email</span></a>&nbsp;
+      
+			
+	    
+	    <a href="//github.com/jwerts" target="_blank" title="GitHub"><i class="fa fa-2x fa-fw fa-github"></i> <span class="hidden">GitHub</span></a>&nbsp;
+	    
+      
+      <a href="//www.instagram.com/joshwerts" target="_blank" title="Instagram"><i class="fa fa-2x fa-fw fa-instagram"></i><span class="hidden">instagram</span></a>&nbsp;
+      
+		    <a href="" target="_blank" title="RSS"><i class="fa fa-2x fa-fw fa-rss"></i> <span class="hidden">RSS</span></a>
+		</section>
+
+		<section class="copyright">&copy; 2018 <a href="http://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
+	</div>
+</footer>
+
+    <script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+<script src="http://joshwerts.com/js/index.js"></script>
+<script src="http://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+
+<script>
+    smoothScroll.init({
+        speed: 800,
+        easing: 'easeInOutCubic',
+        updateURL: false,
+        offset: 125,
+    });
+</script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+  <!-- Google Analytics -->
+  <script>
+    var _gaq=[['_setAccount','UA-49518677-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+
+</body>
+</html>

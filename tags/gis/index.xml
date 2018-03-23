@@ -6,8 +6,121 @@
     <description>Recent content in Gis on Josh Werts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 16 Jan 2018 13:51:36 -0500</lastBuildDate>
+    <lastBuildDate>Fri, 23 Mar 2018 13:41:03 -0400</lastBuildDate>
     <atom:link href="http://joshwerts.com/tags/gis/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Monkey-patching the ESRI JSAPI to mock services</title>
+      <link>http://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</link>
+      <pubDate>Fri, 23 Mar 2018 13:41:03 -0400</pubDate>
+      
+      <guid>http://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</guid>
+      <description>
+
+&lt;p&gt;Lately I&amp;rsquo;ve been working on a project where I&amp;rsquo;m unable to access the client&amp;rsquo;s ArcGIS Server services
+directly and don&amp;rsquo;t have the data/environment to publish locally.  Working directly on the server is slow and I wanted a way to mock in a few services just to get started on some UI elements.  There are some online services that help w/ mocking HTTP calls, but I didn&amp;rsquo;t really want to put the data out there in the cloud&amp;hellip;.&lt;/p&gt;
+
+&lt;p&gt;So how about some &lt;strong&gt;monkey-patching&lt;/strong&gt;?&lt;/p&gt;
+
+&lt;h3 id=&#34;concept:58365f17369855609e8a0624874f7e55&#34;&gt;Concept&lt;/h3&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the basic concept - since nothing is really closed in JavaScript, we can intercept global functions, perform some action and then allow the function to continue as usual.  Here&amp;rsquo;s a simple example - let&amp;rsquo;s say we want to log the url of all XHR requests to the console:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// place this anonymous closure somewhere in your code before any service calls.
+// could be in a script tag in index.html for instance.
+(function (open) {
+
+  // REPLACE the open function with a new function
+  XMLHttpRequest.prototype.open = function (method, url, async, user, password) {
+
+    // log out the url
+    console.log(&#39;XHR request to: &#39;, url);
+
+    // after we do our work, call the ORIGINAL open function so we continue normally.
+    open.apply(this, arguments);
+  };
+
+  // pass the ORIGINAL function in as a parameter.
+})(XMLHttpRequest.prototype.open);
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Example output in Chrome console:&lt;/strong&gt;&lt;br /&gt;
+&lt;img src=&#34;http://joshwerts.com/img/xhr_logging.png&#34; alt=&#34;XHR logging in chrome console&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;featurelayer-xhr-example:58365f17369855609e8a0624874f7e55&#34;&gt;FeatureLayer (XHR) Example&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Some&lt;/em&gt; of the JSAPI uses XHR to pass queries.  For instance, this is an example of intercepting and mocking out service calls from a JSAPI 4.6 FeatureLayer.  In this case, we&amp;rsquo;re just checking the URL on each call and changing it to our JSON (which is simply previous ArcGIS Server calls saved out into .json files).  There are 3 steps here based on how ESRI has implemented the FeatureLayer:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;When the FeatureLayer is instantiated, a call is made to the endpoint w/ &lt;code&gt;f=json&lt;/code&gt; to retrieve the service&amp;rsquo;s schema.&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;At 4.x ESRI performs a &lt;code&gt;returnCountOnly&lt;/code&gt; call to get the total count of features.&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;Then, the API tries to iterate through the objectIds with actual query calls to get all of the features, but we&amp;rsquo;re just returning a single response.  There&amp;rsquo;s a major gotcha here:  Make sure &lt;code&gt;&amp;quot;exceededTransferLimit&amp;quot;: false&lt;/code&gt; is set to &lt;code&gt;false&lt;/code&gt; in the json or the API will just keep iterating indefinitely trying to get all of the features.&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;(function (open) {
+  XMLHttpRequest.prototype.open = function (method, url, async, user, password) {
+    if (url === &#39;http://server/arcgis/rest/services/myservice/MapServer/5?f=json&#39;) {
+      console.log(&#39;open&#39;, method, url, async, user, password);
+      url = &#39;http://localhost:8080/app/mocks/ags/my_ags_service_info.json&#39;;
+    }
+
+    if (url.indexOf(&#39;http://server/arcgis/rest/services/myservice/MapServer/5/query&#39;) &amp;gt; -1) {
+      if (url.indexOf(&#39;returnCountOnly&#39;) &amp;gt; -1) {
+        console.log(&#39;open&#39;, method, url, async, user, password);
+        url = &#39;http://localhost:8080/app/mocks/ags/my_ags_service_5_values_count.json&#39;;
+      } else {
+        console.log(&#39;open&#39;, method, url, async, user, password);
+        url = &#39;http://localhost:8080/app/mocks/ags/my_ags_service_5_values.json&#39;;
+      }
+    }
+    open.apply(this, arguments);
+  };
+})(XMLHttpRequest.prototype.open);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;querytask-jsonp-example:58365f17369855609e8a0624874f7e55&#34;&gt;QueryTask (jsonp) Example&lt;/h3&gt;
+
+&lt;p&gt;Other parts of the API use jsonp instead of XHR to handle requests so we can&amp;rsquo;t intercept via XMLHttpRequest.  Here&amp;rsquo;s a slightly different approach to handle a &lt;code&gt;QueryTask.execute&lt;/code&gt; call by patching the class&amp;rsquo;s &lt;code&gt;execute&lt;/code&gt; function itself.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// NOTE: requires here are with a Webpack setup.
+import QueryTask = require(&#39;esri/tasks/QueryTask&#39;);
+import Point = require(&#39;esri/geometry/Point&#39;);
+import FeatureSet = require(&#39;esri/tasks/support/FeatureSet&#39;);
+import esriRequest = require(&#39;esri/request&#39;);
+
+(function (execute) {
+  QueryTask.prototype.execute = function (query, requestOptions?) {
+    if (this.url.indexOf(&#39;http://server/arcgis/rest/services/myservice/MapServer/5?f=json&#39;) &amp;gt; -1) {
+
+      // create a new Promise and do our own call to the local mocked json response.
+      return new Promise((resolve, reject) =&amp;gt; {
+        esriRequest(&#39;http://localhost:8080/app/mocks/ags/my_features.json&#39;).then(response =&amp;gt; {
+          let featureSet = new FeatureSet(response.data);
+
+          // In some cases geometries weren&#39;t correctly created and needed to fix.
+          for (let f of featureSet.features) {
+            f.geometry = new Point({
+              x: f.geometry.x,
+              y: f.geometry.y,
+              spatialReference: {
+                wkid: 4326
+              }
+            });
+          }
+          // resolve the promise with our mocked FeatureSet
+          resolve(featureSet);
+        }, error =&amp;gt; reject(error));
+      });
+    }
+  }
+  return execute.apply(this, arguments);
+})(QueryTask.prototype.execute);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There are probably better ways to accomplish this and I definitely wouldn&amp;rsquo;t suggest doing anything like this for a production app, but it can still be useful in some cases.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Group by query in a file geodatabase</title>

@@ -6,8 +6,121 @@
     <description>Recent content in Posts on Josh Werts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 16 Jan 2018 13:51:36 -0500</lastBuildDate>
+    <lastBuildDate>Fri, 23 Mar 2018 13:41:03 -0400</lastBuildDate>
     <atom:link href="http://joshwerts.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Monkey-patching the ESRI JSAPI to mock services</title>
+      <link>http://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</link>
+      <pubDate>Fri, 23 Mar 2018 13:41:03 -0400</pubDate>
+      
+      <guid>http://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</guid>
+      <description>
+
+&lt;p&gt;Lately I&amp;rsquo;ve been working on a project where I&amp;rsquo;m unable to access the client&amp;rsquo;s ArcGIS Server services
+directly and don&amp;rsquo;t have the data/environment to publish locally.  Working directly on the server is slow and I wanted a way to mock in a few services just to get started on some UI elements.  There are some online services that help w/ mocking HTTP calls, but I didn&amp;rsquo;t really want to put the data out there in the cloud&amp;hellip;.&lt;/p&gt;
+
+&lt;p&gt;So how about some &lt;strong&gt;monkey-patching&lt;/strong&gt;?&lt;/p&gt;
+
+&lt;h3 id=&#34;concept:58365f17369855609e8a0624874f7e55&#34;&gt;Concept&lt;/h3&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the basic concept - since nothing is really closed in JavaScript, we can intercept global functions, perform some action and then allow the function to continue as usual.  Here&amp;rsquo;s a simple example - let&amp;rsquo;s say we want to log the url of all XHR requests to the console:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// place this anonymous closure somewhere in your code before any service calls.
+// could be in a script tag in index.html for instance.
+(function (open) {
+
+  // REPLACE the open function with a new function
+  XMLHttpRequest.prototype.open = function (method, url, async, user, password) {
+
+    // log out the url
+    console.log(&#39;XHR request to: &#39;, url);
+
+    // after we do our work, call the ORIGINAL open function so we continue normally.
+    open.apply(this, arguments);
+  };
+
+  // pass the ORIGINAL function in as a parameter.
+})(XMLHttpRequest.prototype.open);
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Example output in Chrome console:&lt;/strong&gt;&lt;br /&gt;
+&lt;img src=&#34;http://joshwerts.com/img/xhr_logging.png&#34; alt=&#34;XHR logging in chrome console&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;featurelayer-xhr-example:58365f17369855609e8a0624874f7e55&#34;&gt;FeatureLayer (XHR) Example&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Some&lt;/em&gt; of the JSAPI uses XHR to pass queries.  For instance, this is an example of intercepting and mocking out service calls from a JSAPI 4.6 FeatureLayer.  In this case, we&amp;rsquo;re just checking the URL on each call and changing it to our JSON (which is simply previous ArcGIS Server calls saved out into .json files).  There are 3 steps here based on how ESRI has implemented the FeatureLayer:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;When the FeatureLayer is instantiated, a call is made to the endpoint w/ &lt;code&gt;f=json&lt;/code&gt; to retrieve the service&amp;rsquo;s schema.&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;At 4.x ESRI performs a &lt;code&gt;returnCountOnly&lt;/code&gt; call to get the total count of features.&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;Then, the API tries to iterate through the objectIds with actual query calls to get all of the features, but we&amp;rsquo;re just returning a single response.  There&amp;rsquo;s a major gotcha here:  Make sure &lt;code&gt;&amp;quot;exceededTransferLimit&amp;quot;: false&lt;/code&gt; is set to &lt;code&gt;false&lt;/code&gt; in the json or the API will just keep iterating indefinitely trying to get all of the features.&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;(function (open) {
+  XMLHttpRequest.prototype.open = function (method, url, async, user, password) {
+    if (url === &#39;http://server/arcgis/rest/services/myservice/MapServer/5?f=json&#39;) {
+      console.log(&#39;open&#39;, method, url, async, user, password);
+      url = &#39;http://localhost:8080/app/mocks/ags/my_ags_service_info.json&#39;;
+    }
+
+    if (url.indexOf(&#39;http://server/arcgis/rest/services/myservice/MapServer/5/query&#39;) &amp;gt; -1) {
+      if (url.indexOf(&#39;returnCountOnly&#39;) &amp;gt; -1) {
+        console.log(&#39;open&#39;, method, url, async, user, password);
+        url = &#39;http://localhost:8080/app/mocks/ags/my_ags_service_5_values_count.json&#39;;
+      } else {
+        console.log(&#39;open&#39;, method, url, async, user, password);
+        url = &#39;http://localhost:8080/app/mocks/ags/my_ags_service_5_values.json&#39;;
+      }
+    }
+    open.apply(this, arguments);
+  };
+})(XMLHttpRequest.prototype.open);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;querytask-jsonp-example:58365f17369855609e8a0624874f7e55&#34;&gt;QueryTask (jsonp) Example&lt;/h3&gt;
+
+&lt;p&gt;Other parts of the API use jsonp instead of XHR to handle requests so we can&amp;rsquo;t intercept via XMLHttpRequest.  Here&amp;rsquo;s a slightly different approach to handle a &lt;code&gt;QueryTask.execute&lt;/code&gt; call by patching the class&amp;rsquo;s &lt;code&gt;execute&lt;/code&gt; function itself.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// NOTE: requires here are with a Webpack setup.
+import QueryTask = require(&#39;esri/tasks/QueryTask&#39;);
+import Point = require(&#39;esri/geometry/Point&#39;);
+import FeatureSet = require(&#39;esri/tasks/support/FeatureSet&#39;);
+import esriRequest = require(&#39;esri/request&#39;);
+
+(function (execute) {
+  QueryTask.prototype.execute = function (query, requestOptions?) {
+    if (this.url.indexOf(&#39;http://server/arcgis/rest/services/myservice/MapServer/5?f=json&#39;) &amp;gt; -1) {
+
+      // create a new Promise and do our own call to the local mocked json response.
+      return new Promise((resolve, reject) =&amp;gt; {
+        esriRequest(&#39;http://localhost:8080/app/mocks/ags/my_features.json&#39;).then(response =&amp;gt; {
+          let featureSet = new FeatureSet(response.data);
+
+          // In some cases geometries weren&#39;t correctly created and needed to fix.
+          for (let f of featureSet.features) {
+            f.geometry = new Point({
+              x: f.geometry.x,
+              y: f.geometry.y,
+              spatialReference: {
+                wkid: 4326
+              }
+            });
+          }
+          // resolve the promise with our mocked FeatureSet
+          resolve(featureSet);
+        }, error =&amp;gt; reject(error));
+      });
+    }
+  }
+  return execute.apply(this, arguments);
+})(QueryTask.prototype.execute);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There are probably better ways to accomplish this and I definitely wouldn&amp;rsquo;t suggest doing anything like this for a production app, but it can still be useful in some cases.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Group by query in a file geodatabase</title>
@@ -1423,71 +1536,6 @@ reorder_fields(in_fc, out_fc, new_field_order)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;I&amp;rsquo;ve tested this in 10.1.1+ - it may work in 10.0 as well and should work with any license level.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>arcpy: Rename Fields</title>
-      <link>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/</link>
-      <pubDate>Tue, 01 Apr 2014 07:43:15 -0400</pubDate>
-      
-      <guid>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/</guid>
-      <description>&lt;p&gt;In ArcMap 10.2.1, esri finally added a tool to allow renaming of fields (Data Management -&amp;gt; Alter Field).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://joshwerts.com/img/alter_field_tool.png&#34; alt=&#34;Alter Field&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;This works well for a single field, but you may need something different if:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;you&amp;rsquo;re still on 10.0/10.1,&lt;/li&gt;
-&lt;li&gt;you want to rename several fields at once,&lt;/li&gt;
-&lt;li&gt;you would prefer not to rename the fields in-place,&lt;/li&gt;
-&lt;li&gt;you need to rename fields in a source unsupported by the Alter Field tool (hint: shapefiles).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Here&amp;rsquo;s a great function for renaming fields (and maintaining their order).  It can be used in the python console.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def rename_fields(table, out_table, new_name_by_old_name):
-    &amp;quot;&amp;quot;&amp;quot; Renames specified fields in input feature class/table
-    :table:                 input table (fc, table, layer, etc)
-    :out_table:             output table (fc, table, layer, etc)
-    :new_name_by_old_name:  {&#39;old_field_name&#39;:&#39;new_field_name&#39;,...}
-    -&amp;gt;  out_table
-    &amp;quot;&amp;quot;&amp;quot;
-    existing_field_names = [field.name for field in arcpy.ListFields(table)]
-
-    field_mappings = arcpy.FieldMappings()
-    field_mappings.addTable(table)
-
-    for old_field_name, new_field_name in new_name_by_old_name.iteritems():
-        if old_field_name not in existing_field_names:
-            message = &amp;quot;Field: {0} not in {1}&amp;quot;.format(old_field_name, table)
-            raise Exception(message)
-
-        mapping_index = field_mappings.findFieldMapIndex(old_field_name)
-        field_map = field_mappings.fieldMappings[mapping_index]
-        output_field = field_map.outputField
-        output_field.name = new_field_name
-        output_field.aliasName = new_field_name
-        field_map.outputField = output_field
-        field_mappings.replaceFieldMap(mapping_index, field_map)
-
-    # use merge with single input just to use new field_mappings
-    arcpy.Merge_management(table, out_table, field_mappings)
-    return out_table
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The function accepts the input feature class, path to output, and a dictionary mapping the old names to the new names:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# does need need to include all fields, only those you want to rename
-new_name_by_old_name = { &#39;old_name_1&#39;:&#39;new_name_1&#39;,
-                         &#39;old_name_2&#39;:&#39;new_name_2&#39; }
-rename_fields(in_fc, renamed_fc, new_name_by_old_name)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This works by duplicating the arcpy.FieldMappings object from the existing feature class, renaming the fields within the mapping based on the input, and then calling a function that will apply that mapping.  Merge with a single input gets the job done.  Using the field mappings is a nice trick for efficiently managing fields.&lt;/p&gt;
 </description>
     </item>
     
