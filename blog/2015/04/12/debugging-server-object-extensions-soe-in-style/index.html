@@ -19,14 +19,14 @@
     <meta name="MobileOptimized" content="320">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-    <link rel="shortcut icon" href="http://joshwerts.com/img/favicon.ico">
+    <link rel="shortcut icon" href="https://joshwerts.com/img/favicon.ico">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.2/normalize.min.css">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="http://joshwerts.com/css/screen.css">
+    <link rel="stylesheet" href="https://joshwerts.com/css/screen.css">
 
     
-    <link rel="stylesheet" href="http://joshwerts.com/css/github.min.css">
+    <link rel="stylesheet" href="https://joshwerts.com/css/github.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
 
   </head>
@@ -35,7 +35,7 @@
 
     <header id="site-head">
 	
-	<h1 class="blog-title"><a href="http://joshwerts.com/">Josh Werts</a></h1>
+	<h1 class="blog-title"><a href="https://joshwerts.com/">Josh Werts</a></h1>
 	
 	
 	<h1 class="blog-subtitle">{ &lsquo;work&rsquo;: [&lsquo;gis&rsquo;, &lsquo;py&rsquo;, &lsquo;js&rsquo; &hellip;], &lsquo;fun&rsquo;: [&lsquo;bike&rsquo;, &lsquo;hike&rsquo;, &lsquo;paddle&rsquo;, &hellip;] }</h1>
@@ -50,7 +50,7 @@
 <nav class="menu" role="nav">
     <ul>
         
-        	<li class="nav nav-current"><a href="http://joshwerts.com/blog/1/01/01/about/">About</a></li>
+        	<li class="nav nav-current"><a href="https://joshwerts.com/blog/1/01/01/about/">About</a></li>
       	
     </ul>
 </nav>
@@ -81,7 +81,7 @@
 
 <p>It turns out this is really a post about REST and Python.</p>
 
-<p>When you update an SOE through the ArcGIS Manager app (<a href="http://localhost/arcgis/manager">http://localhost/arcgis/manager</a>), the web application is actually making calls to ArcGIS Server REST admin endpoints.</p>
+<p>When you update an SOE through the ArcGIS Manager app (<a href="https://localhost/arcgis/manager">https://localhost/arcgis/manager</a>), the web application is actually making calls to ArcGIS Server REST admin endpoints.</p>
 
 <h3 id="automate-with-python:2143b7784ee121ce40ff096ceffe4741">Automate with Python</h3>
 
@@ -116,31 +116,31 @@ Now a little explanation of what&rsquo;s going on&hellip;</p>
 
 <p>Because we&rsquo;re going to automate this, we need a preliminary step.  We&rsquo;ll generate a token that can be passed to subsequent steps.</p>
 
-<pre><code>http://localhost/arcgis/rest/tokens
+<pre><code>https://localhost/arcgis/rest/tokens
 </code></pre>
 
 <h4 id="upload-the-soe:2143b7784ee121ce40ff096ceffe4741">Upload the SOE</h4>
 
 <p>The .soe file that gets generated after building in Visual Studio is uploaded to ArcGIS Server and returns an itemID.</p>
 
-<pre><code>http://localhost/arcgis/admin/uploads/upload
+<pre><code>https://localhost/arcgis/admin/uploads/upload
 </code></pre>
 
 <h4 id="update-the-soe:2143b7784ee121ce40ff096ceffe4741">Update the SOE</h4>
 
 <p>Another call references the uploaded .soe through the itemID and updates the extension.</p>
 
-<pre><code>http://localhost/arcgis/admin/services/types/extensions/update
+<pre><code>https://localhost/arcgis/admin/services/types/extensions/update
 </code></pre>
 
 <h4 id="restart-services:2143b7784ee121ce40ff096ceffe4741">Restart services</h4>
 
 <p>After the SOE is updated, all services that use it are stopped and must be restarted.  This can also be accomplished through REST calls:</p>
 
-<pre><code>http://localhost/arcgis/admin/services/[service_folder]/[service_name]/start
+<pre><code>https://localhost/arcgis/admin/services/[service_folder]/[service_name]/start
 </code></pre>
 
-<p>These calls are all pretty straightford to automate in a Python script using the requests library (<a href="http://docs.python-requests.org/en/latest/">http://docs.python-requests.org/en/latest/</a>).</p>
+<p>These calls are all pretty straightford to automate in a Python script using the requests library (<a href="https://docs.python-requests.org/en/latest/">https://docs.python-requests.org/en/latest/</a>).</p>
 
 	        </section>
 
@@ -148,21 +148,21 @@ Now a little explanation of what&rsquo;s going on&hellip;</p>
 	            <div class="post-meta tags">
 	            <i class="fa fa-fw fa-tag"></i>
 	            
-	            <a href="http://joshwerts.com/tags/ArcObjects">ArcObjects </a>
+	            <a href="https://joshwerts.com/tags/ArcObjects">ArcObjects </a>
 	            
-	            <a href="http://joshwerts.com/tags/python">python </a>
+	            <a href="https://joshwerts.com/tags/python">python </a>
 	            
-	            <a href="http://joshwerts.com/tags/arcgis-server">arcgis-server </a>
+	            <a href="https://joshwerts.com/tags/arcgis-server">arcgis-server </a>
 	            
-	            <a href="http://joshwerts.com/tags/REST">REST </a>
+	            <a href="https://joshwerts.com/tags/REST">REST </a>
 	            
-	            <a href="http://joshwerts.com/tags/requests">requests </a>
+	            <a href="https://joshwerts.com/tags/requests">requests </a>
 	            
-	            <a href="http://joshwerts.com/tags/soe">soe </a>
+	            <a href="https://joshwerts.com/tags/soe">soe </a>
 	            
-	            <a href="http://joshwerts.com/tags/esri">esri </a>
+	            <a href="https://joshwerts.com/tags/esri">esri </a>
 	            
-	            <a href="http://joshwerts.com/tags/gis">gis </a>
+	            <a href="https://joshwerts.com/tags/gis">gis </a>
 	            
 	            </div>
 	        </section>
@@ -170,7 +170,7 @@ Now a little explanation of what&rsquo;s going on&hellip;</p>
 	        <section class="share">
 	            <p class="backtotop"><a data-scroll href="#site-head"><i class="fa fa-lg fa-fw fa-angle-double-up"></i></a><a data-scroll class="backtotoptext" href="#site-head"> Back to top</a></p>
 	            <p class="info prompt">Share</p>
-	            <a href="http://twitter.com/share?text=Debugging%20Server%20Object%20Extensions%20%28SOEs%29%20in%20Style&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2015%2f04%2f12%2fdebugging-server-object-extensions-soe-in-style%2f" title="Share on Twitter"
+	            <a href="https://twitter.com/share?text=Debugging%20Server%20Object%20Extensions%20%28SOEs%29%20in%20Style&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2015%2f04%2f12%2fdebugging-server-object-extensions-soe-in-style%2f" title="Share on Twitter"
 	                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
 	                <i class="fa fa-2x fa-fw fa-twitter-square"></i> <span class="hidden">Twitter</span>
 	            </a>
@@ -201,8 +201,8 @@ Now a little explanation of what&rsquo;s going on&hellip;</p>
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
                 </div>
     	        
 
@@ -212,7 +212,7 @@ Now a little explanation of what&rsquo;s going on&hellip;</p>
 
 	        <footer class="post-footer">
 	            <section class="author">
-    <div class="authorimage" style="background: url(http://joshwerts.com/img/avatar.jpg)"></div>
+    <div class="authorimage" style="background: url(https://joshwerts.com/img/avatar.jpg)"></div>
     <h4>Josh Werts</h4>
     <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Asheville, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
 </section>
@@ -237,7 +237,7 @@ Now a little explanation of what&rsquo;s going on&hellip;</p>
 		    <a href="" target="_blank" title="RSS"><i class="fa fa-2x fa-fw fa-rss"></i> <span class="hidden">RSS</span></a>
 		</section>
 
-		<section class="copyright">&copy; 2018 <a href="http://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
+		<section class="copyright">&copy; 2018 <a href="https://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
 	</div>
 </footer>
 
@@ -245,8 +245,8 @@ Now a little explanation of what&rsquo;s going on&hellip;</p>
   src="https://code.jquery.com/jquery-2.2.4.min.js"
   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
   crossorigin="anonymous"></script>
-<script src="http://joshwerts.com/js/index.js"></script>
-<script src="http://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
+<script src="https://joshwerts.com/js/index.js"></script>
+<script src="https://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
 

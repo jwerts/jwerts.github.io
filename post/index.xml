@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Josh Werts</title>
-    <link>http://joshwerts.com/post/</link>
+    <link>https://joshwerts.com/post/</link>
     <description>Recent content in Posts on Josh Werts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 23 Mar 2018 13:41:03 -0400</lastBuildDate>
-    <atom:link href="http://joshwerts.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://joshwerts.com/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Monkey-patching the ESRI JSAPI to mock services</title>
-      <link>http://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</link>
+      <link>https://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</link>
       <pubDate>Fri, 23 Mar 2018 13:41:03 -0400</pubDate>
       
-      <guid>http://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</guid>
+      <guid>https://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</guid>
       <description>
 
 &lt;p&gt;Lately I&amp;rsquo;ve been working on a project where I&amp;rsquo;m unable to access the client&amp;rsquo;s ArcGIS Server services
@@ -46,7 +46,7 @@ directly and don&amp;rsquo;t have the data/environment to publish locally.  Work
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;strong&gt;Example output in Chrome console:&lt;/strong&gt;&lt;br /&gt;
-&lt;img src=&#34;http://joshwerts.com/img/xhr_logging.png&#34; alt=&#34;XHR logging in chrome console&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;https://joshwerts.com/img/xhr_logging.png&#34; alt=&#34;XHR logging in chrome console&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;featurelayer-xhr-example:58365f17369855609e8a0624874f7e55&#34;&gt;FeatureLayer (XHR) Example&lt;/h3&gt;
 
@@ -60,18 +60,18 @@ directly and don&amp;rsquo;t have the data/environment to publish locally.  Work
 
 &lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;(function (open) {
   XMLHttpRequest.prototype.open = function (method, url, async, user, password) {
-    if (url === &#39;http://server/arcgis/rest/services/myservice/MapServer/5?f=json&#39;) {
+    if (url === &#39;https://server/arcgis/rest/services/myservice/MapServer/5?f=json&#39;) {
       console.log(&#39;open&#39;, method, url, async, user, password);
-      url = &#39;http://localhost:8080/app/mocks/ags/my_ags_service_info.json&#39;;
+      url = &#39;https://localhost:8080/app/mocks/ags/my_ags_service_info.json&#39;;
     }
 
-    if (url.indexOf(&#39;http://server/arcgis/rest/services/myservice/MapServer/5/query&#39;) &amp;gt; -1) {
+    if (url.indexOf(&#39;https://server/arcgis/rest/services/myservice/MapServer/5/query&#39;) &amp;gt; -1) {
       if (url.indexOf(&#39;returnCountOnly&#39;) &amp;gt; -1) {
         console.log(&#39;open&#39;, method, url, async, user, password);
-        url = &#39;http://localhost:8080/app/mocks/ags/my_ags_service_5_values_count.json&#39;;
+        url = &#39;https://localhost:8080/app/mocks/ags/my_ags_service_5_values_count.json&#39;;
       } else {
         console.log(&#39;open&#39;, method, url, async, user, password);
-        url = &#39;http://localhost:8080/app/mocks/ags/my_ags_service_5_values.json&#39;;
+        url = &#39;https://localhost:8080/app/mocks/ags/my_ags_service_5_values.json&#39;;
       }
     }
     open.apply(this, arguments);
@@ -91,11 +91,11 @@ import esriRequest = require(&#39;esri/request&#39;);
 
 (function (execute) {
   QueryTask.prototype.execute = function (query, requestOptions?) {
-    if (this.url.indexOf(&#39;http://server/arcgis/rest/services/myservice/MapServer/5?f=json&#39;) &amp;gt; -1) {
+    if (this.url.indexOf(&#39;https://server/arcgis/rest/services/myservice/MapServer/5?f=json&#39;) &amp;gt; -1) {
 
       // create a new Promise and do our own call to the local mocked json response.
       return new Promise((resolve, reject) =&amp;gt; {
-        esriRequest(&#39;http://localhost:8080/app/mocks/ags/my_features.json&#39;).then(response =&amp;gt; {
+        esriRequest(&#39;https://localhost:8080/app/mocks/ags/my_features.json&#39;).then(response =&amp;gt; {
           let featureSet = new FeatureSet(response.data);
 
           // In some cases geometries weren&#39;t correctly created and needed to fix.
@@ -124,10 +124,10 @@ import esriRequest = require(&#39;esri/request&#39;);
     
     <item>
       <title>Group by query in a file geodatabase</title>
-      <link>http://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</link>
+      <link>https://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</link>
       <pubDate>Tue, 16 Jan 2018 13:51:36 -0500</pubDate>
       
-      <guid>http://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</guid>
+      <guid>https://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</guid>
       <description>&lt;p&gt;File geodatabase feature classes and tables lack some of the more advanced ability to query that a true relational database supports.  Sometimes these queries can be simulated with arcpy cursors; one good example is a SQL group by query.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Typical SQL&lt;/strong&gt;:&lt;/p&gt;
@@ -193,14 +193,14 @@ Counter({(&#39;SmallStreet&#39;, &#39;New&#39;): 318834, (&#39;LargeStreet&#39;,
     
     <item>
       <title>ESRI Javascript API 4 with Angular 2 - Transition to Webpack</title>
-      <link>http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</link>
+      <link>https://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</link>
       <pubDate>Sun, 08 Jan 2017 14:21:52 -0500</pubDate>
       
-      <guid>http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</guid>
-      <description>&lt;p&gt;Since my &lt;a href=&#34;http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/&#34;&gt;first post&lt;/a&gt; on Angular 2 and the ESRI API, I&amp;rsquo;ve transitioned from SystemJS to Webpack which I&amp;rsquo;m enjoying thoroughly.&lt;/p&gt;
+      <guid>https://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</guid>
+      <description>&lt;p&gt;Since my &lt;a href=&#34;https://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/&#34;&gt;first post&lt;/a&gt; on Angular 2 and the ESRI API, I&amp;rsquo;ve transitioned from SystemJS to Webpack which I&amp;rsquo;m enjoying thoroughly.&lt;/p&gt;
 
 &lt;p&gt;Sample App w/ Webpack setup:&lt;br /&gt;
-&lt;strong&gt;&lt;a href=&#34;http://joshwerts.com/angular2-esri-play&#34;&gt;Demo&lt;/a&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;https://joshwerts.com/angular2-esri-play&#34;&gt;Demo&lt;/a&gt;&lt;/strong&gt;&lt;br /&gt;
 &lt;strong&gt;&lt;a href=&#34;https://github.com/jwerts/angular2-esri-play&#34;&gt;Repo&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;IMO, Webpack has a few major advantages over SystemJS:&lt;/p&gt;
@@ -218,7 +218,7 @@ Counter({(&#39;SmallStreet&#39;, &#39;New&#39;): 318834, (&#39;LargeStreet&#39;,
 
 &lt;p&gt;&lt;strong&gt;This app is just a map with a custom coordinate display component (bottom left):&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://joshwerts.com/img/map_w_coordinates.png&#34; alt=&#34;Coordinate component&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://joshwerts.com/img/map_w_coordinates.png&#34; alt=&#34;Coordinate component&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;I&amp;rsquo;ve used a similar webpack configuration to this in a couple production apps over the last several months.  Unit testing w/ this setup and Typescript is finally starting to feel natural (instead of a large very verbose burden w/ es5).  I&amp;rsquo;ve found it fairly straightfoward to test domain classes and models w/ business logic where I feel you get the most bang for your buck from testing.  What I haven&amp;rsquo;t quite figured out yet is how to test components (and when it&amp;rsquo;s actually worth the effort).  This project contains a working test for the coordinate component&amp;hellip;  It works, but I&amp;rsquo;m not yet convinced it&amp;rsquo;s the best way to go about it.  Please comment if you have experience here!&lt;/p&gt;
 
@@ -289,13 +289,13 @@ describe(&#39;Coordinate&#39;, () =&amp;gt; {
     
     <item>
       <title>FeatureClass from JSON</title>
-      <link>http://joshwerts.com/blog/2016/10/14/featureclass-from-json/</link>
+      <link>https://joshwerts.com/blog/2016/10/14/featureclass-from-json/</link>
       <pubDate>Fri, 14 Oct 2016 10:07:44 -0400</pubDate>
       
-      <guid>http://joshwerts.com/blog/2016/10/14/featureclass-from-json/</guid>
+      <guid>https://joshwerts.com/blog/2016/10/14/featureclass-from-json/</guid>
       <description>&lt;p&gt;I keep forgetting how to do this after several months pass by and it&amp;rsquo;s certainly not obvious&amp;hellip;&lt;/p&gt;
 
-&lt;p&gt;ESRI provides a tool for converting JSON to FeatureClass but it requires reading the JSON from a .json file: &lt;a href=&#34;http://pro.arcgis.com/en/pro-app/tool-reference/conversion/json-to-features.htm&#34;&gt;JSON to Features&lt;/a&gt;.  That extra step of writing out and reading from a file just seems completely unnecessary.&lt;/p&gt;
+&lt;p&gt;ESRI provides a tool for converting JSON to FeatureClass but it requires reading the JSON from a .json file: &lt;a href=&#34;https://pro.arcgis.com/en/pro-app/tool-reference/conversion/json-to-features.htm&#34;&gt;JSON to Features&lt;/a&gt;.  That extra step of writing out and reading from a file just seems completely unnecessary.&lt;/p&gt;
 
 &lt;p&gt;Here&amp;rsquo;s the alternative lesser known and not obvious way to do it:&lt;/p&gt;
 
@@ -362,10 +362,10 @@ arcpy.management.CopyFeatures(record_set, output_fc)
     
     <item>
       <title>Fun with Python Sets (and arcpy)</title>
-      <link>http://joshwerts.com/blog/2016/07/21/fun-with-python-sets-and-arcpy/</link>
+      <link>https://joshwerts.com/blog/2016/07/21/fun-with-python-sets-and-arcpy/</link>
       <pubDate>Thu, 21 Jul 2016 17:38:05 -0400</pubDate>
       
-      <guid>http://joshwerts.com/blog/2016/07/21/fun-with-python-sets-and-arcpy/</guid>
+      <guid>https://joshwerts.com/blog/2016/07/21/fun-with-python-sets-and-arcpy/</guid>
       <description>&lt;p&gt;I often forget about the Python &lt;code&gt;set&lt;/code&gt;, so this is a fun reminder to myself to keep it in mind.  Here&amp;rsquo;s a neat example of using a set for deleting fields.&lt;/p&gt;
 
 &lt;p&gt;This function deletes all of the fields &lt;em&gt;except&lt;/em&gt; the ones you specify:&lt;/p&gt;
@@ -403,13 +403,13 @@ print([f.name for f in arcpy.ListFields(fc)])
     
     <item>
       <title>ESRI Javascript API 4 with Angular 2 and Typescript</title>
-      <link>http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</link>
+      <link>https://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</link>
       <pubDate>Tue, 17 May 2016 20:23:08 -0400</pubDate>
       
-      <guid>http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</guid>
+      <guid>https://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</guid>
       <description>
 
-&lt;p&gt;&lt;strong&gt;Update 1/8/2017: &lt;/strong&gt;I&amp;rsquo;ve transitioned to Webpack since this post: &lt;a href=&#34;http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/&#34;&gt;link&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update 1/8/2017: &lt;/strong&gt;I&amp;rsquo;ve transitioned to Webpack since this post: &lt;a href=&#34;https://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/&#34;&gt;link&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;This could really be a post about many things.&lt;/p&gt;
 
@@ -421,9 +421,9 @@ print([f.name for f in arcpy.ListFields(fc)])
 
 &lt;h2 id=&#34;the-app:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;The App&lt;/h2&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://joshwerts.com/jsapi4-angular2&#34; target=&#34;_blank&#34; ____&gt;&lt;img src=&#34;http://joshwerts.com/img/jsapi4ang2_tests_liteserver_app.png&#34; alt=&#34;Full setup&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://joshwerts.com/jsapi4-angular2&#34; target=&#34;_blank&#34; ____&gt;&lt;img src=&#34;https://joshwerts.com/img/jsapi4ang2_tests_liteserver_app.png&#34; alt=&#34;Full setup&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://joshwerts.com/jsapi4-angular2/&#34;&gt;Live Demo&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://joshwerts.com/jsapi4-angular2/&#34;&gt;Live Demo&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;From a high level view, the app simply adds points to the map and shows a list of those points with their geometry and &amp;ldquo;index&amp;rdquo; attribute.  Nothing too special - just there to test some concepts.  As an added bonus, the app is served through lite-server and constantly updates as you code.  Similarly, the unit tests run continuously.&lt;/p&gt;
 
@@ -722,10 +722,10 @@ esriSystem.register(esriLoadConfig.modules, function () {
     
     <item>
       <title>arcpy: Efficient Geometry Creation</title>
-      <link>http://joshwerts.com/blog/2016/02/04/arcpy-efficient-geometry-creation/</link>
+      <link>https://joshwerts.com/blog/2016/02/04/arcpy-efficient-geometry-creation/</link>
       <pubDate>Thu, 04 Feb 2016 15:10:09 -0500</pubDate>
       
-      <guid>http://joshwerts.com/blog/2016/02/04/arcpy-efficient-geometry-creation/</guid>
+      <guid>https://joshwerts.com/blog/2016/02/04/arcpy-efficient-geometry-creation/</guid>
       <description>
 
 &lt;p&gt;Sometimes every second counts&amp;hellip; and even if it doesn&amp;rsquo;t, it&amp;rsquo;s still interesting to see the quirks of a familiar library.&lt;/p&gt;
@@ -898,17 +898,17 @@ if __name__ == &amp;quot;__main__&amp;quot;:
     
     <item>
       <title>Octopress to Hexo to Hugo</title>
-      <link>http://joshwerts.com/blog/2015/12/10/octopress-to-hexo-to-hugo/</link>
+      <link>https://joshwerts.com/blog/2015/12/10/octopress-to-hexo-to-hugo/</link>
       <pubDate>Thu, 10 Dec 2015 18:17:49 -0500</pubDate>
       
-      <guid>http://joshwerts.com/blog/2015/12/10/octopress-to-hexo-to-hugo/</guid>
+      <guid>https://joshwerts.com/blog/2015/12/10/octopress-to-hexo-to-hugo/</guid>
       <description>
 
 &lt;p&gt;This blog post is really just to say &lt;strong&gt;&amp;ldquo;Wow! Hugo is freakin&amp;rsquo; awesome!&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;a-href-http-octopress-org-octopress-a:955d799df0aa29831b7762c00172d370&#34;&gt;&lt;a href=&#34;http://octopress.org/&#34;&gt;Octopress&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-http-octopress-org-octopress-a:955d799df0aa29831b7762c00172d370&#34;&gt;&lt;a href=&#34;https://octopress.org/&#34;&gt;Octopress&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://joshwerts.com/img/octopress.png&#34; alt=&#34;Octopress&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://joshwerts.com/img/octopress.png&#34; alt=&#34;Octopress&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Octopress definitely got the job done and introduced me to static blog generators, but I had no real desire to learn Ruby and lately with Windows 10, I&amp;rsquo;ve booted up to Linux less and less (yes, Windows 10 really is pretty good - if only it had a bash terminal).  Installing Ruby on Windows just wasn&amp;rsquo;t something I wanted to bother with.  Also, if I wanted to change the underlying templates, it just seemed more complicated than it really needed to be and I couldn&amp;rsquo;t find the time or motivation to really bother changing the default template much.&lt;/p&gt;
 
@@ -916,7 +916,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 
 &lt;h2 id=&#34;a-href-https-hexo-io-hexo-a:955d799df0aa29831b7762c00172d370&#34;&gt;&lt;a href=&#34;https://hexo.io/&#34;&gt;Hexo&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://joshwerts.com/img/hexo.png&#34; alt=&#34;Hexo&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://joshwerts.com/img/hexo.png&#34; alt=&#34;Hexo&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Soooooooo&amp;hellip; the next logical step seemed to be Hexo.  NodeJS - easy enough on Windows and I&amp;rsquo;ve done a little node development here and there so here we go.  Somehow this just seemed a bit kludgy too.  It&amp;rsquo;s a decent enough project, but just didn&amp;rsquo;t quite feel right.&lt;/p&gt;
 
@@ -924,7 +924,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 
 &lt;h2 id=&#34;a-href-https-gohugo-io-hugo-a:955d799df0aa29831b7762c00172d370&#34;&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://joshwerts.com/img/hugo.jpg&#34; alt=&#34;Hugo&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://joshwerts.com/img/hugo.jpg&#34; alt=&#34;Hugo&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;I&amp;rsquo;ve been looking for excuses to learn Go, so on a whim, googled static blog generators and Go.  I&amp;rsquo;m yet to really learn any Go from using Hugo (other than perusing the code), but still it&amp;rsquo;s nice to know it&amp;rsquo;s there if I need to dig through source to figure out what&amp;rsquo;s up or want to dive deeper and contribute to the project.&lt;/p&gt;
 
@@ -944,7 +944,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 &lt;p&gt;I also found these resources especially helpful for migration:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://nathanleclaire.com/blog/2014/12/22/migrating-to-hugo-from-octopress/&#34;&gt;http://nathanleclaire.com/blog/2014/12/22/migrating-to-hugo-from-octopress/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nathanleclaire.com/blog/2014/12/22/migrating-to-hugo-from-octopress/&#34;&gt;https://nathanleclaire.com/blog/2014/12/22/migrating-to-hugo-from-octopress/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://gohugo.io/tutorials/github-pages-blog/&#34;&gt;https://gohugo.io/tutorials/github-pages-blog/&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
@@ -952,17 +952,17 @@ if __name__ == &amp;quot;__main__&amp;quot;:
     
     <item>
       <title>Feature Service applyEdits on Multiple Layers</title>
-      <link>http://joshwerts.com/blog/2015/11/10/feature-service-applyedits-on-multiple-layers/</link>
+      <link>https://joshwerts.com/blog/2015/11/10/feature-service-applyedits-on-multiple-layers/</link>
       <pubDate>Tue, 10 Nov 2015 13:09:37 -0500</pubDate>
       
-      <guid>http://joshwerts.com/blog/2015/11/10/feature-service-applyedits-on-multiple-layers/</guid>
+      <guid>https://joshwerts.com/blog/2015/11/10/feature-service-applyedits-on-multiple-layers/</guid>
       <description>
 
 &lt;p&gt;If you&amp;rsquo;ve worked with any of the esri web API&amp;rsquo;s over the last several years, chances are you&amp;rsquo;ve used a Feature Service to edit an SDE feature class at some point.  Using the web API&amp;rsquo;s, the obvious way to do this would be to construct a &lt;a href=&#34;https://developers.arcgis.com/javascript/jsapi/featurelayer-amd.html&#34;&gt;FeatureLayer&lt;/a&gt; and call its &lt;a href=&#34;https://developers.arcgis.com/javascript/jsapi/featurelayer-amd.html#applyedits&#34;&gt;applyEdits&lt;/a&gt; method.  In reality, this is just a wrapper around the ArcGIS Server REST API&amp;rsquo;s applyEdits endpoint on an individual service layer.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Example:&lt;/em&gt;&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;http://[host]/arcgis/rest/services/[folder]/[service]/[layerid]/FeatureServer/applyEdits
+&lt;pre&gt;&lt;code&gt;https://[host]/arcgis/rest/services/[folder]/[service]/[layerid]/FeatureServer/applyEdits
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;But what happens if you want to applyEdits to multiple layers within the Feature Service instead of just one layer?  You&amp;rsquo;ve got a few standard API options after constructing multiple feature layers:&lt;/p&gt;
@@ -970,8 +970,8 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 &lt;p&gt;&lt;em&gt;Call applyEdits on each FeatureLayer with &lt;a href=&#34;https://dojotoolkit.org/api/?qs=1.10/dojo/promise/all&#34;&gt;dojo/promise/all&lt;/a&gt;:&lt;/em&gt;&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// construct FeatureLayers
-flayer1 = new FeatureLayer(&amp;quot;http://MyServer/arcgis/rest/services/MyServiceFolder/MyService/0&amp;quot;);
-flayer2 = new FeatureLayer(&amp;quot;http://MyServer/arcgis/rest/services/MyServiceFolder/MyService/1&amp;quot;);
+flayer1 = new FeatureLayer(&amp;quot;https://MyServer/arcgis/rest/services/MyServiceFolder/MyService/0&amp;quot;);
+flayer2 = new FeatureLayer(&amp;quot;https://MyServer/arcgis/rest/services/MyServiceFolder/MyService/1&amp;quot;);
 
 // call applyEdits
 var deferred1 = flayer.applyEdits(adds1, deletes1, updates1);
@@ -989,8 +989,8 @@ all([deferred1, deferred2]).then(function(results) {
 &lt;p&gt;&lt;em&gt;Chain promises for each FeatureLayer:&lt;/em&gt;&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// construct FeatureLayers
-flayer1 = new FeatureLayer(&amp;quot;http://MyServer/arcgis/rest/services/MyServiceFolder/MyService/0&amp;quot;);
-flayer2 = new FeatureLayer(&amp;quot;http://MyServer/arcgis/rest/services/MyServiceFolder/MyService/1&amp;quot;);
+flayer1 = new FeatureLayer(&amp;quot;https://MyServer/arcgis/rest/services/MyServiceFolder/MyService/0&amp;quot;);
+flayer2 = new FeatureLayer(&amp;quot;https://MyServer/arcgis/rest/services/MyServiceFolder/MyService/1&amp;quot;);
 
 // call applyEdits
 flayer.applyEdits(adds1, deletes1, updates1).then(function(result1) {
@@ -1013,7 +1013,7 @@ flayer.applyEdits(adds1, deletes1, updates1).then(function(result1) {
 
 &lt;h3 id=&#34;one-request-to-rule-them-all:49c8eba68da4672c57330404ff0b31cc&#34;&gt;One Request to Rule Them All&lt;/h3&gt;
 
-&lt;p&gt;It turns out that the ArcGIS Server REST API also has an &lt;a href=&#34;http://resources.arcgis.com/en/help/rest/apiref/fsserviceedits.html&#34;&gt;applyEdits&lt;/a&gt; endpoint on the Feature Service itself - it&amp;rsquo;s just not wrapped in the web API&amp;rsquo;s.&lt;/p&gt;
+&lt;p&gt;It turns out that the ArcGIS Server REST API also has an &lt;a href=&#34;https://resources.arcgis.com/en/help/rest/apiref/fsserviceedits.html&#34;&gt;applyEdits&lt;/a&gt; endpoint on the Feature Service itself - it&amp;rsquo;s just not wrapped in the web API&amp;rsquo;s.&lt;/p&gt;
 
 &lt;p&gt;This makes it possible to send multiple edits in a single request AND make sure nothing gets stored on any layers if any one of the layer edits fails.&lt;/p&gt;
 
@@ -1042,7 +1042,7 @@ require(
   ], function(FeatureService) {
     &#39;use strict&#39;;
 
-    var service = new FeatureService(&amp;quot;http://[server]/arcgis/rest/MyService&amp;quot;);
+    var service = new FeatureService(&amp;quot;https://[server]/arcgis/rest/MyService&amp;quot;);
     var edits = [
       {
         id: 2,  // id of layer in service
@@ -1133,12 +1133,12 @@ require(
     
     <item>
       <title>arcpy.Project in_memory Featureclass</title>
-      <link>http://joshwerts.com/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass</link>
+      <link>https://joshwerts.com/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass</link>
       <pubDate>Thu, 10 Sep 2015 00:00:00 +0000</pubDate>
       
-      <guid>http://joshwerts.com/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass</guid>
+      <guid>https://joshwerts.com/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass</guid>
       <description>&lt;p&gt;It&amp;rsquo;s inevitable that you eventually run into this error when scripting with arcpy (arcpy.Project_management):
-&lt;a href=&#34;http://help.arcgis.com/en%20/arcgisdesktop/10.0/help/index.html#//00vp0000000m000944.htm&#34;&gt;http://help.arcgis.com/en%20/arcgisdesktop/10.0/help/index.html#//00vp0000000m000944.htm&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&#34;https://help.arcgis.com/en%20/arcgisdesktop/10.0/help/index.html#//00vp0000000m000944.htm&#34;&gt;https://help.arcgis.com/en%20/arcgisdesktop/10.0/help/index.html#//00vp0000000m000944.htm&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;The standard project tool does not support in_memory workspaces.&lt;/p&gt;
 
@@ -1189,10 +1189,10 @@ project(source_fc, out_projected_fc, web_mercator)
     
     <item>
       <title>Debugging Server Object Extensions (SOEs) in Style</title>
-      <link>http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/</link>
+      <link>https://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/</link>
       <pubDate>Sun, 12 Apr 2015 00:00:00 +0000</pubDate>
       
-      <guid>http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/</guid>
+      <guid>https://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/</guid>
       <description>
 
 &lt;p&gt;Server Object Extensions (SOEs) can be incredibly powerful, but they can also be a pain to debug.&lt;/p&gt;
@@ -1210,7 +1210,7 @@ project(source_fc, out_projected_fc, web_mercator)
 
 &lt;p&gt;It turns out this is really a post about REST and Python.&lt;/p&gt;
 
-&lt;p&gt;When you update an SOE through the ArcGIS Manager app (&lt;a href=&#34;http://localhost/arcgis/manager&#34;&gt;http://localhost/arcgis/manager&lt;/a&gt;), the web application is actually making calls to ArcGIS Server REST admin endpoints.&lt;/p&gt;
+&lt;p&gt;When you update an SOE through the ArcGIS Manager app (&lt;a href=&#34;https://localhost/arcgis/manager&#34;&gt;https://localhost/arcgis/manager&lt;/a&gt;), the web application is actually making calls to ArcGIS Server REST admin endpoints.&lt;/p&gt;
 
 &lt;h3 id=&#34;automate-with-python:2143b7784ee121ce40ff096ceffe4741&#34;&gt;Automate with Python&lt;/h3&gt;
 
@@ -1245,40 +1245,40 @@ Now a little explanation of what&amp;rsquo;s going on&amp;hellip;&lt;/p&gt;
 
 &lt;p&gt;Because we&amp;rsquo;re going to automate this, we need a preliminary step.  We&amp;rsquo;ll generate a token that can be passed to subsequent steps.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;http://localhost/arcgis/rest/tokens
+&lt;pre&gt;&lt;code&gt;https://localhost/arcgis/rest/tokens
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h4 id=&#34;upload-the-soe:2143b7784ee121ce40ff096ceffe4741&#34;&gt;Upload the SOE&lt;/h4&gt;
 
 &lt;p&gt;The .soe file that gets generated after building in Visual Studio is uploaded to ArcGIS Server and returns an itemID.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;http://localhost/arcgis/admin/uploads/upload
+&lt;pre&gt;&lt;code&gt;https://localhost/arcgis/admin/uploads/upload
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h4 id=&#34;update-the-soe:2143b7784ee121ce40ff096ceffe4741&#34;&gt;Update the SOE&lt;/h4&gt;
 
 &lt;p&gt;Another call references the uploaded .soe through the itemID and updates the extension.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;http://localhost/arcgis/admin/services/types/extensions/update
+&lt;pre&gt;&lt;code&gt;https://localhost/arcgis/admin/services/types/extensions/update
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h4 id=&#34;restart-services:2143b7784ee121ce40ff096ceffe4741&#34;&gt;Restart services&lt;/h4&gt;
 
 &lt;p&gt;After the SOE is updated, all services that use it are stopped and must be restarted.  This can also be accomplished through REST calls:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;http://localhost/arcgis/admin/services/[service_folder]/[service_name]/start
+&lt;pre&gt;&lt;code&gt;https://localhost/arcgis/admin/services/[service_folder]/[service_name]/start
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;These calls are all pretty straightford to automate in a Python script using the requests library (&lt;a href=&#34;http://docs.python-requests.org/en/latest/&#34;&gt;http://docs.python-requests.org/en/latest/&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;These calls are all pretty straightford to automate in a Python script using the requests library (&lt;a href=&#34;https://docs.python-requests.org/en/latest/&#34;&gt;https://docs.python-requests.org/en/latest/&lt;/a&gt;).&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>arcpy.da Cursors and Readability Part 2</title>
-      <link>http://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/</link>
+      <link>https://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/</link>
       <pubDate>Sun, 21 Dec 2014 00:00:00 +0000</pubDate>
       
-      <guid>http://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/</guid>
+      <guid>https://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/</guid>
       <description>
 
 &lt;p&gt;arcpy.da cursors provide the simplest data structure by default (tuples).  Python generators provide a pretty neat way of customizing these cursors to increase readability.&lt;/p&gt;
@@ -1331,10 +1331,10 @@ def rows_as_ordered_dicts(cursor):
     
     <item>
       <title>arcpy.da Cursors and Readability Part 1</title>
-      <link>http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/</link>
+      <link>https://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/</link>
       <pubDate>Thu, 07 Aug 2014 00:00:00 +0000</pubDate>
       
-      <guid>http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/</guid>
+      <guid>https://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/</guid>
       <description>
 
 &lt;p&gt;The arcpy.da cursors (ie: arcpy.da.SearchCursor) are far and away better than the regular cursors (ie: arcpy.SearchCursor).  They&amp;rsquo;re more pythonic, incredibly flexible, faster, and allow context management (with).  However, their straight-out-of-the-box-use may be a little hard to read and maintain.&lt;/p&gt;
@@ -1391,10 +1391,10 @@ with arcpy.da.SearchCursor(costs_table, [&amp;quot;name&amp;quot;, &amp;quot;uni
     
     <item>
       <title>Python: Recursion with Lists</title>
-      <link>http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/</link>
+      <link>https://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/</link>
       <pubDate>Sat, 28 Jun 2014 00:00:00 +0000</pubDate>
       
-      <guid>http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/</guid>
+      <guid>https://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/</guid>
       <description>
 
 &lt;p&gt;I rarely find use cases for recursion in my every day work, but every once in a while, there&amp;rsquo;s a problem that comes up where I instantly think: &amp;ldquo;Recursion!&amp;rdquo; (typically followed by an equal mix of excitement and dread).&lt;/p&gt;
@@ -1475,10 +1475,10 @@ with arcpy.da.SearchCursor(costs_table, [&amp;quot;name&amp;quot;, &amp;quot;uni
     
     <item>
       <title>arcpy: Reorder Fields</title>
-      <link>http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/</link>
+      <link>https://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/</link>
       <pubDate>Thu, 17 Apr 2014 00:00:00 +0000</pubDate>
       
-      <guid>http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/</guid>
+      <guid>https://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/</guid>
       <description>&lt;p&gt;Here&amp;rsquo;s another handy function for re-ordering fields in a feature class.  Like the &lt;code&gt;rename_fields&lt;/code&gt; function previously posted, it recreates the existing field mappings and modifies as necessary.  The output is a new feature class with fields in the order specified.&lt;/p&gt;
 
 &lt;p&gt;The only caveat is that required fields always get pushed to the front (so the featureclass will start with OBJECTID, Shape, rest of fields&amp;hellip;).  After required fields are out of the way, the rest of the fields are added in the order specified in the &lt;code&gt;field_order&lt;/code&gt; list.  If any fields are missing, they are added to the end of the feature class.&lt;/p&gt;

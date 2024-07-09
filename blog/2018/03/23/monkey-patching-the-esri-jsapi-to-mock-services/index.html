@@ -19,14 +19,14 @@
     <meta name="MobileOptimized" content="320">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-    <link rel="shortcut icon" href="http://joshwerts.com/img/favicon.ico">
+    <link rel="shortcut icon" href="https://joshwerts.com/img/favicon.ico">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.2/normalize.min.css">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="http://joshwerts.com/css/screen.css">
+    <link rel="stylesheet" href="https://joshwerts.com/css/screen.css">
 
     
-    <link rel="stylesheet" href="http://joshwerts.com/css/github.min.css">
+    <link rel="stylesheet" href="https://joshwerts.com/css/github.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
 
   </head>
@@ -35,7 +35,7 @@
 
     <header id="site-head">
 	
-	<h1 class="blog-title"><a href="http://joshwerts.com/">Josh Werts</a></h1>
+	<h1 class="blog-title"><a href="https://joshwerts.com/">Josh Werts</a></h1>
 	
 	
 	<h1 class="blog-subtitle">{ &lsquo;work&rsquo;: [&lsquo;gis&rsquo;, &lsquo;py&rsquo;, &lsquo;js&rsquo; &hellip;], &lsquo;fun&rsquo;: [&lsquo;bike&rsquo;, &lsquo;hike&rsquo;, &lsquo;paddle&rsquo;, &hellip;] }</h1>
@@ -50,7 +50,7 @@
 <nav class="menu" role="nav">
     <ul>
         
-        	<li class="nav nav-current"><a href="http://joshwerts.com/blog/1/01/01/about/">About</a></li>
+        	<li class="nav nav-current"><a href="https://joshwerts.com/blog/1/01/01/about/">About</a></li>
       	
     </ul>
 </nav>
@@ -95,7 +95,7 @@ directly and don&rsquo;t have the data/environment to publish locally.  Working 
 </code></pre>
 
 <p><strong>Example output in Chrome console:</strong><br />
-<img src="http://joshwerts.com/img/xhr_logging.png" alt="XHR logging in chrome console" /></p>
+<img src="https://joshwerts.com/img/xhr_logging.png" alt="XHR logging in chrome console" /></p>
 
 <h3 id="featurelayer-xhr-example:58365f17369855609e8a0624874f7e55">FeatureLayer (XHR) Example</h3>
 
@@ -109,18 +109,18 @@ directly and don&rsquo;t have the data/environment to publish locally.  Working 
 
 <pre><code class="language-js">(function (open) {
   XMLHttpRequest.prototype.open = function (method, url, async, user, password) {
-    if (url === 'http://server/arcgis/rest/services/myservice/MapServer/5?f=json') {
+    if (url === 'https://server/arcgis/rest/services/myservice/MapServer/5?f=json') {
       console.log('open', method, url, async, user, password);
-      url = 'http://localhost:8080/app/mocks/ags/my_ags_service_info.json';
+      url = 'https://localhost:8080/app/mocks/ags/my_ags_service_info.json';
     }
 
-    if (url.indexOf('http://server/arcgis/rest/services/myservice/MapServer/5/query') &gt; -1) {
+    if (url.indexOf('https://server/arcgis/rest/services/myservice/MapServer/5/query') &gt; -1) {
       if (url.indexOf('returnCountOnly') &gt; -1) {
         console.log('open', method, url, async, user, password);
-        url = 'http://localhost:8080/app/mocks/ags/my_ags_service_5_values_count.json';
+        url = 'https://localhost:8080/app/mocks/ags/my_ags_service_5_values_count.json';
       } else {
         console.log('open', method, url, async, user, password);
-        url = 'http://localhost:8080/app/mocks/ags/my_ags_service_5_values.json';
+        url = 'https://localhost:8080/app/mocks/ags/my_ags_service_5_values.json';
       }
     }
     open.apply(this, arguments);
@@ -140,11 +140,11 @@ import esriRequest = require('esri/request');
 
 (function (execute) {
   QueryTask.prototype.execute = function (query, requestOptions?) {
-    if (this.url.indexOf('http://server/arcgis/rest/services/myservice/MapServer/5?f=json') &gt; -1) {
+    if (this.url.indexOf('https://server/arcgis/rest/services/myservice/MapServer/5?f=json') &gt; -1) {
 
       // create a new Promise and do our own call to the local mocked json response.
       return new Promise((resolve, reject) =&gt; {
-        esriRequest('http://localhost:8080/app/mocks/ags/my_features.json').then(response =&gt; {
+        esriRequest('https://localhost:8080/app/mocks/ags/my_features.json').then(response =&gt; {
           let featureSet = new FeatureSet(response.data);
 
           // In some cases geometries weren't correctly created and needed to fix.
@@ -175,15 +175,15 @@ import esriRequest = require('esri/request');
 	            <div class="post-meta tags">
 	            <i class="fa fa-fw fa-tag"></i>
 	            
-	            <a href="http://joshwerts.com/tags/arcgis">arcgis </a>
+	            <a href="https://joshwerts.com/tags/arcgis">arcgis </a>
 	            
-	            <a href="http://joshwerts.com/tags/gis">gis </a>
+	            <a href="https://joshwerts.com/tags/gis">gis </a>
 	            
-	            <a href="http://joshwerts.com/tags/javascript">javascript </a>
+	            <a href="https://joshwerts.com/tags/javascript">javascript </a>
 	            
-	            <a href="http://joshwerts.com/tags/REST">REST </a>
+	            <a href="https://joshwerts.com/tags/REST">REST </a>
 	            
-	            <a href="http://joshwerts.com/tags/esri">esri </a>
+	            <a href="https://joshwerts.com/tags/esri">esri </a>
 	            
 	            </div>
 	        </section>
@@ -191,7 +191,7 @@ import esriRequest = require('esri/request');
 	        <section class="share">
 	            <p class="backtotop"><a data-scroll href="#site-head"><i class="fa fa-lg fa-fw fa-angle-double-up"></i></a><a data-scroll class="backtotoptext" href="#site-head"> Back to top</a></p>
 	            <p class="info prompt">Share</p>
-	            <a href="http://twitter.com/share?text=Monkey-patching%20the%20ESRI%20JSAPI%20to%20mock%20services&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2018%2f03%2f23%2fmonkey-patching-the-esri-jsapi-to-mock-services%2f" title="Share on Twitter"
+	            <a href="https://twitter.com/share?text=Monkey-patching%20the%20ESRI%20JSAPI%20to%20mock%20services&url=http%3a%2f%2fjoshwerts.com%2fblog%2f2018%2f03%2f23%2fmonkey-patching-the-esri-jsapi-to-mock-services%2f" title="Share on Twitter"
 	                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
 	                <i class="fa fa-2x fa-fw fa-twitter-square"></i> <span class="hidden">Twitter</span>
 	            </a>
@@ -222,8 +222,8 @@ import esriRequest = require('esri/request');
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
                 </div>
     	        
 
@@ -233,7 +233,7 @@ import esriRequest = require('esri/request');
 
 	        <footer class="post-footer">
 	            <section class="author">
-    <div class="authorimage" style="background: url(http://joshwerts.com/img/avatar.jpg)"></div>
+    <div class="authorimage" style="background: url(https://joshwerts.com/img/avatar.jpg)"></div>
     <h4>Josh Werts</h4>
     <p class="bio"><br/><strong>Senior GIS Software Developer working remotely from Asheville, NC for Patrick Engineering.</strong><br/><br/>I enjoy working with open source technologies though I’m highly proficient in all things ESRI. I prefer to work in multiple languages and constantly learn new ones, but my day to day work is typically full-stack web development in JavaScript, Python, and C#. I’m searching for a project to learn Go!</p>
 </section>
@@ -258,7 +258,7 @@ import esriRequest = require('esri/request');
 		    <a href="" target="_blank" title="RSS"><i class="fa fa-2x fa-fw fa-rss"></i> <span class="hidden">RSS</span></a>
 		</section>
 
-		<section class="copyright">&copy; 2018 <a href="http://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
+		<section class="copyright">&copy; 2018 <a href="https://joshwerts.com/">Josh Werts</a>. All Rights Reserved</section>
 	</div>
 </footer>
 
@@ -266,8 +266,8 @@ import esriRequest = require('esri/request');
   src="https://code.jquery.com/jquery-2.2.4.min.js"
   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
   crossorigin="anonymous"></script>
-<script src="http://joshwerts.com/js/index.js"></script>
-<script src="http://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
+<script src="https://joshwerts.com/js/index.js"></script>
+<script src="https://joshwerts.com/js/lib/smooth-scroll.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
 

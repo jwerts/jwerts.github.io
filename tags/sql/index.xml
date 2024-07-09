@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom">
   <channel>
     <title>Sql on Josh Werts</title>
-    <link>http://joshwerts.com/tags/sql/</link>
+    <link>https://joshwerts.com/tags/sql/</link>
     <description>Recent content in Sql on Josh Werts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 16 Jan 2018 13:51:36 -0500</lastBuildDate>
-    <atom:link href="http://joshwerts.com/tags/sql/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://joshwerts.com/tags/sql/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Group by query in a file geodatabase</title>
-      <link>http://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</link>
+      <link>https://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</link>
       <pubDate>Tue, 16 Jan 2018 13:51:36 -0500</pubDate>
       
-      <guid>http://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</guid>
+      <guid>https://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</guid>
       <description>&lt;p&gt;File geodatabase feature classes and tables lack some of the more advanced ability to query that a true relational database supports.  Sometimes these queries can be simulated with arcpy cursors; one good example is a SQL group by query.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Typical SQL&lt;/strong&gt;:&lt;/p&gt;

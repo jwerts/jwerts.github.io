@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom">
   <channel>
     <title>Angular on Josh Werts</title>
-    <link>http://joshwerts.com/categories/angular/</link>
+    <link>https://joshwerts.com/categories/angular/</link>
     <description>Recent content in Angular on Josh Werts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 08 Jan 2017 14:21:52 -0500</lastBuildDate>
-    <atom:link href="http://joshwerts.com/categories/angular/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://joshwerts.com/categories/angular/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ESRI Javascript API 4 with Angular 2 - Transition to Webpack</title>
-      <link>http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</link>
+      <link>https://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</link>
       <pubDate>Sun, 08 Jan 2017 14:21:52 -0500</pubDate>
       
-      <guid>http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</guid>
-      <description>&lt;p&gt;Since my &lt;a href=&#34;http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/&#34;&gt;first post&lt;/a&gt; on Angular 2 and the ESRI API, I&amp;rsquo;ve transitioned from SystemJS to Webpack which I&amp;rsquo;m enjoying thoroughly.&lt;/p&gt;
+      <guid>https://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</guid>
+      <description>&lt;p&gt;Since my &lt;a href=&#34;https://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/&#34;&gt;first post&lt;/a&gt; on Angular 2 and the ESRI API, I&amp;rsquo;ve transitioned from SystemJS to Webpack which I&amp;rsquo;m enjoying thoroughly.&lt;/p&gt;
 
 &lt;p&gt;Sample App w/ Webpack setup:&lt;br /&gt;
-&lt;strong&gt;&lt;a href=&#34;http://joshwerts.com/angular2-esri-play&#34;&gt;Demo&lt;/a&gt;&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;https://joshwerts.com/angular2-esri-play&#34;&gt;Demo&lt;/a&gt;&lt;/strong&gt;&lt;br /&gt;
 &lt;strong&gt;&lt;a href=&#34;https://github.com/jwerts/angular2-esri-play&#34;&gt;Repo&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;IMO, Webpack has a few major advantages over SystemJS:&lt;/p&gt;
@@ -36,7 +36,7 @@
 
 &lt;p&gt;&lt;strong&gt;This app is just a map with a custom coordinate display component (bottom left):&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://joshwerts.com/img/map_w_coordinates.png&#34; alt=&#34;Coordinate component&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://joshwerts.com/img/map_w_coordinates.png&#34; alt=&#34;Coordinate component&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;I&amp;rsquo;ve used a similar webpack configuration to this in a couple production apps over the last several months.  Unit testing w/ this setup and Typescript is finally starting to feel natural (instead of a large very verbose burden w/ es5).  I&amp;rsquo;ve found it fairly straightfoward to test domain classes and models w/ business logic where I feel you get the most bang for your buck from testing.  What I haven&amp;rsquo;t quite figured out yet is how to test components (and when it&amp;rsquo;s actually worth the effort).  This project contains a working test for the coordinate component&amp;hellip;  It works, but I&amp;rsquo;m not yet convinced it&amp;rsquo;s the best way to go about it.  Please comment if you have experience here!&lt;/p&gt;
 
@@ -107,13 +107,13 @@ describe(&#39;Coordinate&#39;, () =&amp;gt; {
     
     <item>
       <title>ESRI Javascript API 4 with Angular 2 and Typescript</title>
-      <link>http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</link>
+      <link>https://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</link>
       <pubDate>Tue, 17 May 2016 20:23:08 -0400</pubDate>
       
-      <guid>http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</guid>
+      <guid>https://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</guid>
       <description>
 
-&lt;p&gt;&lt;strong&gt;Update 1/8/2017: &lt;/strong&gt;I&amp;rsquo;ve transitioned to Webpack since this post: &lt;a href=&#34;http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/&#34;&gt;link&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update 1/8/2017: &lt;/strong&gt;I&amp;rsquo;ve transitioned to Webpack since this post: &lt;a href=&#34;https://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/&#34;&gt;link&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;This could really be a post about many things.&lt;/p&gt;
 
@@ -125,9 +125,9 @@ describe(&#39;Coordinate&#39;, () =&amp;gt; {
 
 &lt;h2 id=&#34;the-app:9b18d3a8a2156557610aadbdfb7d2ee2&#34;&gt;The App&lt;/h2&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://joshwerts.com/jsapi4-angular2&#34; target=&#34;_blank&#34; ____&gt;&lt;img src=&#34;http://joshwerts.com/img/jsapi4ang2_tests_liteserver_app.png&#34; alt=&#34;Full setup&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://joshwerts.com/jsapi4-angular2&#34; target=&#34;_blank&#34; ____&gt;&lt;img src=&#34;https://joshwerts.com/img/jsapi4ang2_tests_liteserver_app.png&#34; alt=&#34;Full setup&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;http://joshwerts.com/jsapi4-angular2/&#34;&gt;Live Demo&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://joshwerts.com/jsapi4-angular2/&#34;&gt;Live Demo&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;From a high level view, the app simply adds points to the map and shows a list of those points with their geometry and &amp;ldquo;index&amp;rdquo; attribute.  Nothing too special - just there to test some concepts.  As an added bonus, the app is served through lite-server and constantly updates as you code.  Similarly, the unit tests run continuously.&lt;/p&gt;
 

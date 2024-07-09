@@ -1,94 +1,94 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://joshwerts.com/</loc>
+    <loc>https://joshwerts.com/</loc>
     <lastmod>2018-03-23T13:41:03-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</loc>
+    <loc>https://joshwerts.com/blog/2018/03/23/monkey-patching-the-esri-jsapi-to-mock-services/</loc>
     <lastmod>2018-03-23T13:41:03-04:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</loc>
+    <loc>https://joshwerts.com/blog/2018/01/16/group-by-query-in-a-file-geodatabase/</loc>
     <lastmod>2018-01-16T13:51:36-05:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</loc>
+    <loc>https://joshwerts.com/blog/2017/01/08/esri-javascript-api-4-with-angular-2---transition-to-webpack/</loc>
     <lastmod>2017-01-08T14:21:52-05:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2016/10/14/featureclass-from-json/</loc>
+    <loc>https://joshwerts.com/blog/2016/10/14/featureclass-from-json/</loc>
     <lastmod>2016-10-14T10:07:44-04:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2016/07/21/fun-with-python-sets-and-arcpy/</loc>
+    <loc>https://joshwerts.com/blog/2016/07/21/fun-with-python-sets-and-arcpy/</loc>
     <lastmod>2016-07-21T17:38:05-04:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</loc>
+    <loc>https://joshwerts.com/blog/2016/05/17/esri-javascript-api-4-with-angular-2-and-typescript/</loc>
     <lastmod>2016-05-17T20:23:08-04:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2016/02/04/arcpy-efficient-geometry-creation/</loc>
+    <loc>https://joshwerts.com/blog/2016/02/04/arcpy-efficient-geometry-creation/</loc>
     <lastmod>2016-02-04T15:10:09-05:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2015/12/10/octopress-to-hexo-to-hugo/</loc>
+    <loc>https://joshwerts.com/blog/2015/12/10/octopress-to-hexo-to-hugo/</loc>
     <lastmod>2015-12-10T18:17:49-05:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2015/11/10/feature-service-applyedits-on-multiple-layers/</loc>
+    <loc>https://joshwerts.com/blog/2015/11/10/feature-service-applyedits-on-multiple-layers/</loc>
     <lastmod>2015-11-10T13:09:37-05:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass</loc>
+    <loc>https://joshwerts.com/blog/2015/09/10/arcpy-dot-project-in-memory-featureclass</loc>
     <lastmod>2015-09-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/</loc>
+    <loc>https://joshwerts.com/blog/2015/04/12/debugging-server-object-extensions-soe-in-style/</loc>
     <lastmod>2015-04-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/</loc>
+    <loc>https://joshwerts.com/blog/2014/12/21/arcpy-dot-da-cursors-and-readability-part-2/</loc>
     <lastmod>2014-12-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/</loc>
+    <loc>https://joshwerts.com/blog/2014/08/07/arcpy-dot-da-cursors/</loc>
     <lastmod>2014-08-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/</loc>
+    <loc>https://joshwerts.com/blog/2014/06/28/python-recursion-with-lists/</loc>
     <lastmod>2014-06-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/</loc>
+    <loc>https://joshwerts.com/blog/2014/04/17/arcpy-reorder-fields/</loc>
     <lastmod>2014-04-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/</loc>
+    <loc>https://joshwerts.com/blog/2014/04/01/arcpy-rename-fields/</loc>
     <lastmod>2014-04-01T07:43:15-04:00</lastmod>
   </url>
   
   <url>
-    <loc>http://joshwerts.com/blog/1/01/01/about/</loc>
+    <loc>https://joshwerts.com/blog/1/01/01/about/</loc>
   </url>
   
 </urlset>
